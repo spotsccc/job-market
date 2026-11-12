@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Inbox</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F5F6F8}
+a{color:#2450C8}a:hover{color:#1A3C9A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F6F8; font-family: Inter, system-ui, sans-serif; color: #16181D; font-size: 15px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px">
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; padding: 14px 0">
+          <span style="width: 28px; height: 28px; border-radius: 7px; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 14px">jm</span>
+          job-market
+        </div>
+        <nav aria-label="Разделы" style="display: flex; flex-wrap: wrap; gap: 4px">
+          <a href="Inbox.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; color: #16181D; font-weight: 600; text-decoration: none; border-bottom: 2px solid #2450C8">Inbox <span style="font-size: 12px; padding: 0 7px; border-radius: 999px; background: #2450C8; color: #FFFFFF">{{newCount}}</span></a>
+          <a href="Search.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #3E4553; text-decoration: none">База</a>
+          <a href="Profile.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #3E4553; text-decoration: none">Профиль</a>
+        </nav>
+      </div>
+      <div style="color: #586070; font-size: 13px; padding: 8px 0">Сбор: сегодня 08:12 · следующий в 18:00</div>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px">
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+
+      <ul aria-label="Вакансии" style="list-style: none; margin: 0; padding: 0; flex: 1 1 360px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; overflow: hidden">
+        <sc-for list="{{list}}" as="j" hint-placeholder-count="7">
+          <li style="border-bottom: 1px solid #EEF0F3">
+            <button type="button" onClick="{{j.select}}" aria-current="{{j.current}}" style="font: inherit; width: 100%; text-align: left; display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 0; cursor: pointer; background: {{j.rowBg}}; box-shadow: {{j.rowShadow}}; color: #16181D">
+              <span style="flex: none; width: 40px; height: 32px; border-radius: 8px; background: {{j.scoreBg}}; color: {{j.scoreColor}}; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums">{{j.score}}</span>
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                <span style="display: flex; align-items: center; gap: 6px">
+                  <span style="font-weight: {{j.titleWeight}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{j.title}}</span>
+                  <sc-if value="{{j.isNew}}" hint-placeholder-val="{{true}}"><span aria-label="новая" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #2450C8"></span></sc-if>
+                </span>
+                <span style="color: #586070; font-size: 13px">{{j.company}} · {{j.locShort}} · {{j.ago}}</span>
+                <span style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px">
+                  <span style="font-size: 12px; font-weight: 600; padding: 0 7px; border-radius: 999px; background: {{j.groupBg}}; color: {{j.groupColor}}">{{j.group}}</span>
+                  <sc-if value="{{j.dupShort}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; padding: 0 7px; border-radius: 999px; background: #EEF0F3; color: #3E4553">{{j.dupShort}}</span></sc-if>
+                  <sc-if value="{{j.statusLabel}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 0 7px; border-radius: 999px; background: #16181D; color: #FFFFFF">{{j.statusLabel}}</span></sc-if>
+                </span>
+              </span>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+
+      <article style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; gap: 16px; align-items: flex-start">
+          <span style="flex: none; width: 60px; height: 52px; border-radius: 12px; background: {{cur.scoreBg}}; color: {{cur.scoreColor}}; font-weight: 700; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums">{{cur.score}}</span>
+          <div style="min-width: 0">
+            <h1 style="margin: 0; font-size: 22px; line-height: 1.3">{{cur.title}}</h1>
+            <div style="color: #3E4553">{{cur.company}} · {{cur.loc}}</div>
+            <div style="color: #586070; font-size: 14px">{{cur.ago}} · {{cur.applicants}} · {{cur.type}}</div>
+          </div>
+        </div>
+
+        <sc-if value="{{cur.dup}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 14px; color: #3E4553; padding: 8px 12px; background: #F5F6F8; border-radius: 8px">{{cur.dup}}</div>
+        </sc-if>
+
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 14px 16px; border: 1px solid #EEF0F3; border-radius: 10px">
+          <div><dt style="font-size: 12px; color: #586070">Группа роли</dt><dd style="margin: 0; font-weight: 600; color: {{cur.groupColor}}">{{cur.group}}</dd></div>
+          <div><dt style="font-size: 12px; color: #586070">Уровень</dt><dd style="margin: 0; font-weight: 500">{{cur.level}}</dd></div>
+          <div><dt style="font-size: 12px; color: #586070">Зарплата</dt><dd style="margin: 0; font-weight: 500">{{cur.salary}}</dd></div>
+          <div><dt style="font-size: 12px; color: #586070">Компания</dt><dd style="margin: 0; font-weight: 500">{{cur.companyType}}</dd></div>
+          <div style="grid-column: 1 / -1"><dt style="font-size: 12px; color: #586070">Стек из описания</dt><dd style="margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{cur.stack}}" as="s" hint-placeholder-count="4"><span style="font-size: 13px; padding: 1px 9px; border-radius: 6px; background: {{s.bg}}; color: {{s.color}}">{{s.name}}</span></sc-for>
+          </dd></div>
+        </dl>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+          <section>
+            <h2 style="margin: 0 0 6px; font-size: 14px; color: #0A5C43">Почему подходит</h2>
+            <ul style="margin: 0; padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 4px">
+              <sc-for list="{{cur.reasons}}" as="r" hint-placeholder-count="3"><li>{{r}}</li></sc-for>
+            </ul>
+          </section>
+          <section>
+            <h2 style="margin: 0 0 6px; font-size: 14px; color: #7A4E00">Чего не хватает</h2>
+            <ul style="margin: 0; padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 4px">
+              <sc-for list="{{cur.gaps}}" as="r" hint-placeholder-count="1"><li>{{r}}</li></sc-for>
+            </ul>
+          </section>
+          <section>
+            <h2 style="margin: 0 0 6px; font-size: 14px; color: #A3261B">Красные флаги</h2>
+            <sc-if value="{{cur.noFlags}}" hint-placeholder-val="{{false}}"><div style="font-size: 14px; color: #586070">нет</div></sc-if>
+            <ul style="margin: 0; padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 4px">
+              <sc-for list="{{cur.flags}}" as="r" hint-placeholder-count="1"><li>{{r}}</li></sc-for>
+            </ul>
+          </section>
+        </div>
+
+        <div style="border-top: 1px solid #EEF0F3; padding-top: 12px">
+          <button type="button" onClick="{{toggleDesc}}" aria-expanded="{{descExpanded}}" style="font: inherit; font-size: 14px; padding: 4px 0; border: 0; background: transparent; color: #2450C8; cursor: pointer">{{descLabel}}</button>
+          <sc-if value="{{descOpen}}" hint-placeholder-val="{{false}}">
+            <div style="margin-top: 8px; font-size: 14px; color: #3E4553; white-space: pre-line">{{cur.desc}}</div>
+          </sc-if>
+        </div>
+      </article>
+    </div>
+
+    <sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 12px 16px; background: #16181D; color: #FFFFFF; border-radius: 10px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.18)">
+        <span>{{toast}}</span>
+        <button type="button" onClick="{{undo}}" style="font: inherit; font-size: 14px; border: 0; background: transparent; color: #9DB8FF; font-weight: 600; cursor: pointer; min-height: 32px">Отменить</button>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1160}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'a', seen: { a: true }, status: {}, hidden: {}, hideOpen: false, descOpen: false, banner: true, toast: null, lastHidden: null };
+  }
+  jobs() {
+    return [
+      { id: 'a', score: 92, title: 'Product Engineer, AI Agents', company: 'Lumen Labs', loc: 'Remote, EU', locShort: 'Remote EU', ago: '3 ч назад', group: 'adjacent', applicants: '41 отклик', type: 'Full‑time', level: 'Senior', salary: 'не указана', companyType: 'стартап, 25 чел.',
+        stack: [['Next.js', 1], ['React', 1], ['TypeScript', 1], ['LangGraph', 1], ['Postgres', 1], ['Python', 0]],
+        reasons: ['Next.js + React — ваш основной стек', 'Строить UI для агентных пайплайнов — ровно ваш последний год', 'Команда 8 человек, product ownership'],
+        gaps: ['Python в проде — у вас эпизодически'], flags: [], dup: null,
+        desc: 'Lumen Labs строит платформу для операционных агентов в логистике.\n\nЧто делать: проектировать и делать интерфейсы, в которых операторы запускают агентов, видят шаги выполнения и правят результат. Next.js, React Server Components, стриминг, LangGraph на бэкенде.\n\nКого ищем: 5+ лет фронтенда, опыт с LLM‑продуктами, желание владеть фичей от идеи до прода.' },
+      { id: 'b', score: 88, title: 'Senior Frontend Engineer (LLM tooling)', company: 'Northwind AI', loc: 'Buenos Aires, hybrid', locShort: 'Buenos Aires · hybrid', ago: 'вчера', group: 'core', applicants: '120 откликов', type: 'Full‑time', level: 'Senior', salary: '$60–75k', companyType: 'scale‑up, 140 чел.',
+        stack: [['React', 1], ['TypeScript', 1], ['D3', 0], ['OpenTelemetry', 0]],
+        reasons: ['React + TypeScript — основной стек', 'UI для eval и трейсинга LLM — прямо ваш опыт', 'Зарплата указана прямо в вакансии'],
+        gaps: ['D3 / визуализация больших данных'], flags: ['Офис 3 дня в неделю'], dup: null,
+        desc: 'Northwind AI делает инструменты наблюдаемости для LLM‑приложений: трейсинг, eval, датасеты.\n\nВы будете делать интерфейсы для просмотра трейсов и сравнения прогонов моделей.' },
+      { id: 'c', score: 81, title: 'Forward Deployed Engineer', company: 'Fieldnote', loc: 'Remote, US', locShort: 'Remote US', ago: '2 дня назад', group: 'stretch', applicants: '67 откликов', type: 'Full‑time', level: 'Senior', salary: 'не указана', companyType: 'стартап, 60 чел.',
+        stack: [['TypeScript', 1], ['LLM API', 1], ['Python', 0], ['SQL', 1]],
+        reasons: ['Интеграции LLM у клиентов на TypeScript', 'В тексте вы писали, что хотите попробовать forward deployed', '~70% времени — код'],
+        gaps: ['Прямая работа с клиентами', 'Python для скриптов интеграций'], flags: ['До 30% командировок'], dup: 'Та же вакансия ещё в 2 локациях: Remote EU, Buenos Aires — показана одной карточкой',
+        desc: 'Fieldnote внедряет AI‑ассистентов в юридические компании. FDE работает на стороне клиента: собирает прототипы, интегрирует, доводит до прода.' },
+      { id: 'd', score: 78, title: 'Design Engineer', company: 'Parcel', loc: 'Remote, EU', locShort: 'Remote EU', ago: 'вчера', group: 'adjacent', applicants: '88 откликов', type: 'Full‑time', level: 'Senior', salary: '€75–90k', companyType: 'стартап, 12 чел.',
+        stack: [['React', 1], ['TypeScript', 1], ['Framer Motion', 1], ['Figma', 0]],
+        reasons: ['Дизайн‑система и анимации — сильная сторона', 'Маленькая команда, 12 человек', 'AI‑фичи в роадмапе'],
+        gaps: ['Глубокий прототипинг в Figma'], flags: [], dup: null,
+        desc: 'Parcel — инструмент для небольших интернет‑магазинов. Ищем инженера, который одинаково хорошо чувствует код и дизайн.' },
+      { id: 'e', score: 76, title: 'Full‑stack Engineer (TypeScript)', company: 'Quanta Health', loc: 'Buenos Aires, офис', locShort: 'Buenos Aires · офис', ago: '5 ч назад', group: 'adjacent', applicants: '12 откликов', type: 'Full‑time', level: 'Senior', salary: 'не указана', companyType: 'scale‑up, 200 чел.',
+        stack: [['Next.js', 1], ['Node.js', 1], ['Postgres', 1], ['tRPC', 0]],
+        reasons: ['Next.js + Node + Postgres — уверенно', 'Мало откликов — свежая публикация'],
+        gaps: ['Healthtech: процессы GDPR / медданных'], flags: [], dup: 'Перевыложена: первая публикация 3 недели назад (тогда вы её не скрывали)',
+        desc: 'Quanta Health — платформа для клиник. Full‑stack в продуктовой команде записи пациентов.' },
+      { id: 'f', score: 71, title: 'AI Engineer (TypeScript)', company: 'Orbital', loc: 'Remote, EU (CET ±2)', locShort: 'Remote', ago: '2 дня назад', group: 'adjacent', applicants: '150+ откликов', type: 'Contract', level: 'Senior', salary: 'не указана', companyType: 'агентство продуктов, 40 чел.',
+        stack: [['TypeScript', 1], ['Vercel AI SDK', 1], ['Python', 0], ['Fine‑tuning', 0]],
+        reasons: ['TS + Vercel AI SDK', 'Агентные пайплайны'],
+        gaps: ['Около половины задач — Python‑бэкенд', 'Fine‑tuning моделей'], flags: ['Больше 150 откликов'], dup: null,
+        desc: 'Контракт на 6 месяцев с возможностью продления. Строим агентов для B2B‑клиентов.' },
+      { id: 'g', score: 64, title: 'Solutions Engineer (AI)', company: 'Kestrel', loc: 'Remote, US', locShort: 'Remote US', ago: '3 дня назад', group: 'stretch', applicants: '23 отклика', type: 'Full‑time', level: 'Senior', salary: 'от $120k', companyType: 'scale‑up, 300 чел.',
+        stack: [['React', 1], ['LLM API', 1], ['Pre‑sales', 0]],
+        reasons: ['LLM‑демо и прототипы на React'],
+        gaps: ['Пресейл и демо клиентам'], flags: ['Около 40% времени — продажи и звонки'], dup: null,
+        desc: 'Помогаем enterprise‑клиентам запускать AI‑ассистентов на нашей платформе.' }
+    ];
+  }
+  renderVals() {
+    const st = this.state;
+    const groupStyle = { core: ['#E8EEFF', '#1D4ED8'], adjacent: ['#F1EAFF', '#6D28D9'], stretch: ['#FFEEDD', '#8A4200'] };
+    const scoreStyle = (s) => s >= 75 ? ['#DDF3EA', '#0A5C43'] : s >= 55 ? ['#FFF1D6', '#7A4E00'] : ['#EEF0F3', '#4A5160'];
+    const all = this.jobs();
+    const visible = all.filter((j) => !st.hidden[j.id]);
+    const statusText = { saved: 'сохранена', applied: 'откликнулся' };
+
+    const list = visible.map((j) => {
+      const isSel = j.id === st.sel;
+      const ss = scoreStyle(j.score);
+      const gs = groupStyle[j.group];
+      return Object.assign({}, j, {
+        scoreBg: ss[0], scoreColor: ss[1], groupBg: gs[0], groupColor: gs[1],
+        rowBg: isSel ? '#EEF3FF' : '#FFFFFF',
+        rowShadow: isSel ? 'inset 0 0 0 2px #2450C8' : 'none',
+        current: isSel ? 'true' : 'false',
+        isNew: !st.seen[j.id],
+        titleWeight: st.seen[j.id] ? '500' : '700',
+        dupShort: j.id === 'c' ? 'ещё 2 локации' : j.id === 'e' ? 'перевыложена' : '',
+        statusLabel: statusText[st.status[j.id]] || '',
+        select: () => this.setState({ sel: j.id, seen: Object.assign({}, st.seen, { [j.id]: true }), hideOpen: false, descOpen: false })
+      });
+    });
+
+    const curRaw = visible.find((j) => j.id === st.sel) || visible[0] || all[0];
+    const css = scoreStyle(curRaw.score);
+    const cgs = groupStyle[curRaw.group];
+    const cur = Object.assign({}, curRaw, {
+      scoreBg: css[0], scoreColor: css[1], groupColor: cgs[1],
+      stack: curRaw.stack.map((s) => ({ name: s[0], bg: s[1] ? '#DDF3EA' : '#FFF1D6', color: s[1] ? '#0A5C43' : '#7A4E00' })),
+      noFlags: curRaw.flags.length === 0
+    });
+    const curStatus = st.status[cur.id];
+    const setStatus = (v) => () => {
+      const next = Object.assign({}, st.status, { [cur.id]: curStatus === v ? undefined : v });
+      this.setState({ status: next });
+    };
+
+    const hideReasons = ['Не тот стек', 'Не тот уровень', 'Локация / формат', 'Компания', 'Другое'].map((label) => ({
+      label,
+      pick: () => {
+        const idx = visible.findIndex((j) => j.id === cur.id);
+        const rest = visible.filter((j) => j.id !== cur.id);
+        const nextSel = rest.length ? rest[Math.min(idx, rest.length - 1)].id : cur.id;
+        this.setState({
+          hidden: Object.assign({}, st.hidden, { [cur.id]: true }),
+          sel: nextSel,
+          seen: Object.assign({}, st.seen, { [nextSel]: true }),
+          hideOpen: false, descOpen: false,
+          toast: 'Скрыто: ' + cur.title + ' · причина: ' + label.toLowerCase(),
+          lastHidden: cur.id
+        });
+      }
+    }));
+
+    const savedExtra = Object.keys(st.status).filter((k) => st.status[k] === 'saved').length;
+    const appliedExtra = Object.keys(st.status).filter((k) => st.status[k] === 'applied').length;
+    const unseen = visible.filter((j) => !st.seen[j.id]).length;
+
+    return {
+      list, cur,
+      listCount: visible.length + ' вакансий',
+      newCount: unseen,
+      savedCount: 12 + savedExtra,
+      appliedCount: 4 + appliedExtra,
+      showBanner: st.banner,
+      dismissBanner: () => this.setState({ banner: false }),
+      save: setStatus('saved'),
+      apply: setStatus('applied'),
+      saveLabel: curStatus === 'saved' ? 'Сохранено' : 'Сохранить',
+      saveBg: curStatus === 'saved' ? '#2450C8' : '#FFFFFF',
+      saveColor: curStatus === 'saved' ? '#FFFFFF' : '#16181D',
+      saveBorder: curStatus === 'saved' ? '#2450C8' : '#C4CAD4',
+      applyLabel: curStatus === 'applied' ? 'Отклик отмечен' : 'Откликнулся',
+      applyBg: curStatus === 'applied' ? '#0A5C43' : '#FFFFFF',
+      applyColor: curStatus === 'applied' ? '#FFFFFF' : '#16181D',
+      applyBorder: curStatus === 'applied' ? '#0A5C43' : '#C4CAD4',
+      hideOpen: st.hideOpen,
+      hideExpanded: st.hideOpen ? 'true' : 'false',
+      toggleHide: () => this.setState({ hideOpen: !st.hideOpen }),
+      hideReasons,
+      descOpen: st.descOpen,
+      descExpanded: st.descOpen ? 'true' : 'false',
+      descLabel: st.descOpen ? 'Свернуть описание' : 'Полное описание',
+      toggleDesc: () => this.setState({ descOpen: !st.descOpen }),
+      toast: st.toast,
+      undo: () => {
+        const id = st.lastHidden;
+        const h = Object.assign({}, st.hidden);
+        if (id) delete h[id];
+        this.setState({ hidden: h, sel: id || st.sel, toast: null, lastHidden: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

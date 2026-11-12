@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Первый сбор — прогресс</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F5F6F8}
+a{color:#2450C8}a:hover{color:#1A3C9A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F6F8; font-family: Inter, system-ui, sans-serif; color: #16181D; font-size: 15px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px">
+        <span style="width: 28px; height: 28px; border-radius: 7px; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 14px">jm</span>
+        job-market
+      </div>
+      <div style="color: #586070; font-size: 14px">Шаг 3 из 3 · Первый сбор</div>
+    </div>
+  </header>
+
+  <main style="max-width: 1180px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+
+    <section style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 14px; padding: 28px 32px; display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px">
+        <div>
+          <h1 style="margin: 0 0 4px; font-size: 26px; line-height: 1.25">Собираем вакансии за последние 14 дней</h1>
+          <div style="color: #586070">Идёт 34 мин · осталось примерно 25–40 мин · вкладку можно закрыть</div>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: #EAF0FF; color: #1A3C9A; border-radius: 999px; font-size: 14px; font-weight: 500">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #2450C8"></span>
+          Поиски: 31 из 39
+        </span>
+      </div>
+
+      <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px">
+        <sc-for list="{{funnel}}" as="f" hint-placeholder-count="6">
+          <li style="display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px">
+              <span style="font-weight: 500">{{f.label}}</span>
+              <span style="font-variant-numeric: tabular-nums"><strong>{{f.value}}</strong> <span style="color: #586070">{{f.note}}</span></span>
+            </div>
+            <div style="height: 10px; background: #EEF0F3; border-radius: 999px; overflow: hidden">
+              <div style="height: 100%; width: {{f.width}}; background: {{f.color}}; border-radius: 999px"></div>
+            </div>
+          </li>
+        </sc-for>
+      </ol>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; background: #DDF3EA; border-radius: 12px">
+        <div>
+          <div style="font-weight: 600; color: #0A5C43">Уже оценено 64 вакансии</div>
+          <div style="color: #0A5C43; font-size: 14px">Можно начинать разбирать Inbox — сбор продолжится в фоне, новые вакансии будут появляться там же.</div>
+        </div>
+        <a href="Inbox.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; background: #0A5C43; color: #FFFFFF; border-radius: 10px; font-weight: 600; text-decoration: none">Открыть Inbox</a>
+      </div>
+
+      <div>
+        <h2 style="margin: 0 0 10px; font-size: 16px">Журнал</h2>
+        <div style="display: flex; flex-direction: column; border: 1px solid #E2E5EA; border-radius: 10px; overflow: hidden; font-size: 14px">
+          <sc-for list="{{log}}" as="l" hint-placeholder-count="5">
+            <div style="display: flex; gap: 12px; padding: 9px 14px; border-bottom: 1px solid #EEF0F3; background: {{l.bg}}">
+              <span style="flex: none; color: #586070; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px">{{l.time}}</span>
+              <span style="min-width: 0; color: {{l.color}}">{{l.text}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <aside style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 14px; padding: 20px">
+        <div style="font-weight: 600; margin-bottom: 4px">Лучшие на сейчас</div>
+        <div style="color: #586070; font-size: 13px; margin-bottom: 12px">По оценкам на текущий момент</div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <sc-for list="{{top}}" as="t" hint-placeholder-count="3">
+            <div style="display: flex; gap: 12px; align-items: flex-start">
+              <span style="flex: none; width: 40px; height: 32px; border-radius: 8px; background: #DDF3EA; color: #0A5C43; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums">{{t.score}}</span>
+              <div style="min-width: 0">
+                <div style="font-weight: 500; font-size: 14px">{{t.title}}</div>
+                <div style="color: #586070; font-size: 13px">{{t.meta}}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 14px; padding: 20px; display: flex; gap: 12px; align-items: flex-start">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2450C8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <div style="font-size: 14px; color: #3E4553">Дальше сбор идёт сам — в 08:00 и 18:00. Новые вакансии появляются в Inbox, отсортированные по оценке.</div>
+      </div>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const max = 1284;
+    const step = (label, value, note, color) => ({
+      label, note, color,
+      value: value.toLocaleString('ru-RU'),
+      width: Math.max(2, Math.round((value / max) * 100)) + '%'
+    });
+    return {
+      funnel: [
+        step('Найдено карточек на LinkedIn', 1284, '', '#2450C8'),
+        step('Прошли ваши исключения', 1102, '−182: Angular, Junior, агентства', '#2450C8'),
+        step('Прошли отбор по названию (LLM)', 418, '−684 явно не про вас', '#2450C8'),
+        step('Загружено описаний', 196, 'из 418', '#6E8BDB'),
+        step('Уникальных после склейки дублей', 171, '25 копий: одна роль в нескольких городах', '#6E8BDB'),
+        step('Оценено под ваш профиль', 64, 'из 171', '#0A7C5A')
+      ],
+      log: [
+        { time: '08:41', text: '"product engineer" AND (React OR "Next.js") · Аргентина — стр. 3 из 5, 21 новая карточка', color: '#16181D', bg: '#FFFFFF' },
+        { time: '08:40', text: 'LinkedIn ответил 429 — пауза 2 мин, сбор продолжится сам', color: '#6B4500', bg: '#FFF6E5' },
+        { time: '08:37', text: '"AI engineer" AND TypeScript · ЕС (remote) — готово, 64 карточки', color: '#16181D', bg: '#FFFFFF' },
+        { time: '08:35', text: 'Оценка: пачка из 20 вакансий, средний балл 58', color: '#16181D', bg: '#FFFFFF' },
+        { time: '08:33', text: '"design engineer" · США (remote) — готово, 18 карточек', color: '#16181D', bg: '#FFFFFF' }
+      ],
+      top: [
+        { score: 92, title: 'Product Engineer, AI Agents', meta: 'Lumen Labs · Remote EU' },
+        { score: 88, title: 'Senior Frontend Engineer (LLM tooling)', meta: 'Northwind AI · Buenos Aires, hybrid' },
+        { score: 81, title: 'Forward Deployed Engineer', meta: 'Fieldnote · Remote US + ещё 2 локации' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

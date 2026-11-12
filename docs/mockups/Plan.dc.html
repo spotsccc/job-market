@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Онбординг — запросы для поиска</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F5F6F8}
+a{color:#2450C8}a:hover{color:#1A3C9A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F6F8; font-family: Inter, system-ui, sans-serif; color: #16181D; font-size: 15px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px">
+        <span style="width: 28px; height: 28px; border-radius: 7px; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 14px">jm</span>
+        job-market
+      </div>
+      <div style="color: #586070; font-size: 14px">Настройка · примерно 10 минут</div>
+    </div>
+  </header>
+
+  <nav aria-label="Шаги настройки" style="max-width: 1180px; margin: 0 auto; padding: 24px 24px 0">
+    <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+      <li style="flex: 1 1 200px; display: flex"><a href="Main.dc.html" style="flex: 1 1 auto; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 10px; color: #16181D; text-decoration: none">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #DDF3EA; color: #0A5C43; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+        О себе</a></li>
+      <li style="flex: 1 1 200px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 2px solid #2450C8; border-radius: 10px">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px">2</span>
+        <span style="font-weight: 600">Запросы</span>
+      </li>
+      <li style="flex: 1 1 200px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 10px; color: #586070">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #EEF0F3; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px">3</span>
+        Первый сбор
+      </li>
+    </ol>
+  </nav>
+
+  <main style="max-width: 1180px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+
+    <section style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 14px; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px">
+      <div>
+        <h1 style="margin: 0 0 6px; font-size: 26px; line-height: 1.25">Запросы, которые будут выполняться</h1>
+        <p style="margin: 0; color: #586070">Система составила их по вашему резюме и тексту. Ровно эти строки уйдут в поиск LinkedIn — дважды в день, в каждой выбранной локации. Задайте, где искать, выключите лишние запросы или добавьте свой.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border: 1px solid #E2E5EA; border-radius: 12px; background: #FAFBFC">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px">
+          <h2 style="margin: 0; font-size: 17px">Где искать</h2>
+          <span style="color: #586070; font-size: 13px">Форматы внутри одной локации ищутся одним запросом и не увеличивают число поисков</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{locs}}" as="l" hint-placeholder-count="3">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 12px; background: #FFFFFF; border: 1px solid {{l.border}}; border-radius: 10px">
+              <div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column">
+                <span style="font-weight: 600">{{l.name}}</span>
+                <code style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #586070">{{l.param}}</code>
+              </div>
+              <div role="group" aria-label="Формат работы" style="display: inline-flex; gap: 6px; flex-wrap: wrap">
+                <sc-for list="{{l.modes}}" as="m" hint-placeholder-count="3">
+                  <button type="button" aria-pressed="{{m.pressed}}" onClick="{{m.toggle}}" style="font: inherit; font-size: 14px; min-height: 36px; padding: 0 14px; border-radius: 999px; cursor: pointer; border: 1px solid {{m.border}}; background: {{m.bg}}; color: {{m.color}}; font-weight: {{m.weight}}">{{m.label}}</button>
+                </sc-for>
+              </div>
+              <span style="flex: none; width: 120px; text-align: right; font-size: 13px; color: {{l.countColor}}">{{l.countText}}</span>
+              <button type="button" aria-label="Удалить локацию" onClick="{{l.remove}}" style="flex: none; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #586070; cursor: pointer; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+          <label for="{{locInputId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Добавить локацию</label>
+          <input id="{{locInputId}}" value="{{draft}}" onChange="{{onDraft}}" placeholder="Страна, регион или город" style="flex: 0 1 260px; min-width: 0; font: inherit; font-size: 14px; padding: 8px 12px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF">
+          <button type="button" onClick="{{addDraft}}" style="font: inherit; font-size: 14px; min-height: 38px; padding: 0 14px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF; cursor: pointer">+ Добавить</button>
+          <span style="font-size: 13px; color: #586070; margin-left: 4px">Часто:</span>
+          <sc-for list="{{suggest}}" as="s" hint-placeholder-count="4">
+            <button type="button" onClick="{{s.add}}" style="font: inherit; font-size: 13px; min-height: 32px; padding: 0 10px; border: 1px dashed #8A93A3; border-radius: 999px; background: #FFFFFF; color: #2450C8; cursor: pointer">+ {{s.name}}</button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{hasEmpty}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 13px; color: #8C1F15">У локации не выбран ни один формат — она не будет искаться.</div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 13px; color: #586070">
+        <span><strong style="color: #3E4553">Период:</strong> первый сбор — 14 дней, дальше — с прошлого прогона</span>
+        <span><strong style="color: #3E4553">Сортировка:</strong> по дате, до 5 страниц на поиск</span>
+      </div>
+
+      <div style="overflow-x: auto; border: 1px solid #E2E5EA; border-radius: 10px">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 820px">
+          <thead>
+            <tr style="text-align: left; color: #586070; font-size: 13px; background: #FAFBFC">
+              <th scope="col" style="padding: 10px 12px; font-weight: 500; width: 56px">Вкл</th>
+              <th scope="col" style="padding: 10px 12px; font-weight: 500">Запрос</th>
+              <th scope="col" style="padding: 10px 12px; font-weight: 500">Под какую роль</th>
+              <th scope="col" style="padding: 10px 12px; font-weight: 500">Группа</th>
+              <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: right">Поисков</th>
+              <th scope="col" style="padding: 10px 12px; font-weight: 500; width: 110px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Действия</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{queries}}" as="q" hint-placeholder-count="13">
+              <tr style="border-top: 1px solid #EEF0F3; background: {{q.rowBg}}; color: {{q.textColor}}">
+                <td style="padding: 8px 12px"><input type="checkbox" aria-label="Запрос включён" checked="{{q.on}}" onChange="{{q.toggle}}" style="width: 16px; height: 16px"></td>
+                <td style="padding: 8px 12px"><code style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; word-break: break-word">{{q.text}}</code></td>
+                <td style="padding: 8px 12px; color: #3E4553">{{q.role}}</td>
+                <td style="padding: 8px 12px"><span style="font-size: 12px; font-weight: 600; padding: 0 7px; border-radius: 999px; background: {{q.groupBg}}; color: {{q.groupColor}}">{{q.group}}</span></td>
+                <td style="padding: 8px 12px; text-align: right; font-variant-numeric: tabular-nums">{{q.runs}}</td>
+                <td style="padding: 8px 12px; text-align: right; white-space: nowrap">
+                  <button type="button" onClick="{{q.flip}}" aria-expanded="{{q.expanded}}" style="font: inherit; font-size: 13px; padding: 4px 6px; border: 0; background: transparent; color: #2450C8; cursor: pointer">{{q.flipLabel}}</button>
+                </td>
+              </tr>
+              <sc-if value="{{q.open}}" hint-placeholder-val="{{false}}">
+                <tr style="background: #F7F9FF">
+                  <td></td>
+                  <td colspan="5" style="padding: 4px 12px 12px">
+                    <div style="font-size: 12px; color: #586070; margin-bottom: 4px">Что именно откроет сборщик:</div>
+                    <div style="display: flex; flex-direction: column; gap: 4px">
+                      <sc-for list="{{q.urls}}" as="u" hint-placeholder-count="3">
+                        <code style="display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; padding: 5px 8px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 6px; word-break: break-all; color: #3E4553">{{u}}</code>
+                      </sc-for>
+                    </div>
+                  </td>
+                </tr>
+              </sc-if>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <label for="custom" style="font-weight: 500">Свой запрос</label>
+        <input id="custom" placeholder="например: &quot;frontend&quot; AND &quot;Vercel AI SDK&quot;" style="flex: 1 1 320px; min-width: 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 14px; padding: 10px 12px; border: 1px solid #C4CAD4; border-radius: 8px">
+        <button type="button" style="font: inherit; min-height: 44px; padding: 0 16px; border: 1px solid #C4CAD4; border-radius: 10px; background: #FFFFFF; cursor: pointer">Добавить</button>
+      </div>
+      <div style="font-size: 13px; color: #586070">Группы: <strong style="color: #1D4ED8">core</strong> — то, чем вы занимаетесь сейчас; <strong style="color: #6D28D9">adjacent</strong> — тот же стек, другой акцент; <strong style="color: #8A4200">stretch</strong> — переход, под который есть опыт.</div>
+    </section>
+
+    <section style="position: sticky; bottom: 0; background: #16181D; color: #FFFFFF; border-radius: 14px; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-weight: 600">{{summary}}</span>
+        <span style="color: #C3C8D2; font-size: 14px">Первый сбор — за последние 14 дней, 30–90 минут в фоне. Можно закрыть вкладку.</span>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid #4A5160; border-radius: 10px; color: #FFFFFF; text-decoration: none">Назад</a>
+        <a href="Progress.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 22px; background: #FFFFFF; color: #16181D; border-radius: 10px; font-weight: 600; text-decoration: none">Запустить первый сбор
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      off: { q14: true, q15: true },
+      open: { q1: true },
+      draft: '',
+      locs: [
+        { name: 'Аргентина', li: 'Argentina', remote: true, hybrid: true, office: true },
+        { name: 'США', li: 'United States', remote: true, hybrid: false, office: false },
+        { name: 'Европейский союз', li: 'European Union', remote: true, hybrid: false, office: false }
+      ]
+    };
+  }
+  renderVals() {
+    const st = this.state;
+    const groupStyle = { core: ['#E8EEFF', '#1D4ED8'], adjacent: ['#F1EAFF', '#6D28D9'], stretch: ['#FFEEDD', '#8A4200'] };
+    const raw = [
+      ['q1', '"frontend engineer" AND (AI OR LLM OR agents)', 'Senior Frontend Engineer', 'core'],
+      ['q2', '"senior frontend" AND (React OR "Next.js")', 'Senior Frontend Engineer', 'core'],
+      ['q3', '"react engineer"', 'React / Next.js Engineer', 'core'],
+      ['q4', '"next.js" AND engineer', 'React / Next.js Engineer', 'core'],
+      ['q5', '"UI engineer" AND React', 'UI Engineer', 'core'],
+      ['q6', '"product engineer" AND (React OR "Next.js")', 'Product Engineer', 'adjacent'],
+      ['q7', '"full stack" AND TypeScript AND (React OR Node)', 'Full‑stack (TypeScript)', 'adjacent'],
+      ['q8', '"AI engineer" AND TypeScript', 'AI Engineer (TypeScript)', 'adjacent'],
+      ['q9', '"design engineer"', 'Design Engineer', 'adjacent'],
+      ['q10', '"founding engineer" AND (TypeScript OR React)', 'Founding Engineer', 'adjacent'],
+      ['q11', '"AI agent" AND engineer', 'Applied AI / AI Agent Engineer', 'stretch'],
+      ['q12', '"applied AI" AND TypeScript', 'Applied AI / AI Agent Engineer', 'stretch'],
+      ['q13', '"forward deployed engineer"', 'Forward Deployed Engineer', 'stretch'],
+      ['q14', '"solutions engineer" AND (LLM OR AI)', 'Solutions Engineer (AI)', 'stretch'],
+      ['q15', '"developer experience" OR devrel', 'Developer Experience / DevRel', 'stretch']
+    ];
+    const activeQ = raw.filter((r) => !st.off[r[0]]).length;
+    const LOC_SUGGEST = [['Германия', 'Germany'], ['Канада', 'Canada'], ['Великобритания', 'United Kingdom'], ['Испания', 'Spain'], ['Весь мир', 'Worldwide']];
+    const MODE_DEFS = [['remote', 'Remote', '2'], ['hybrid', 'Hybrid', '3'], ['office', 'Офис', '1']];
+    const setLocs = (locs) => this.setState({ locs });
+    const locs = st.locs.map((loc, idx) => {
+      const chosen = MODE_DEFS.filter((m) => loc[m[0]]);
+      const valid = chosen.length > 0;
+      return {
+        name: loc.name,
+        param: 'location=' + loc.li + (valid ? ' · f_WT=' + chosen.map((m) => m[2]).join(',') : ''),
+        border: valid ? '#E2E5EA' : '#F2B8B2',
+        countText: valid ? '× ' + activeQ + ' поисков' : 'не ищется',
+        countColor: valid ? '#3E4553' : '#8C1F15',
+        modes: MODE_DEFS.map((m) => {
+          const on = !!loc[m[0]];
+          return {
+            label: (on ? '✓ ' : '') + m[1],
+            pressed: on ? 'true' : 'false',
+            bg: on ? '#EAF0FF' : '#FFFFFF',
+            border: on ? '#2450C8' : '#C4CAD4',
+            color: on ? '#1A3C9A' : '#3E4553',
+            weight: on ? '600' : '400',
+            toggle: () => setLocs(st.locs.map((x, j) => j === idx ? Object.assign({}, x, { [m[0]]: !on }) : x))
+          };
+        }),
+        remove: () => setLocs(st.locs.filter((x, j) => j !== idx))
+      };
+    });
+    const validLocs = st.locs.filter((l) => l.remote || l.hybrid || l.office);
+    const addLoc = (name, li) => this.setState({ locs: st.locs.concat([{ name, li, remote: true, hybrid: false, office: false }]), draft: '' });
+    const suggest = LOC_SUGGEST.filter((s) => !st.locs.some((l) => l.li === s[1])).map((s) => ({ name: s[0], add: () => addLoc(s[0], s[1]) }));
+    const wt = (l) => MODE_DEFS.filter((m) => l[m[0]]).map((m) => m[2]).join(',');
+    const queries = raw.map((r) => {
+      const id = r[0];
+      const on = !st.off[id];
+      const open = !!st.open[id];
+      const gs = groupStyle[r[3]];
+      return {
+        text: r[1], role: r[2], group: r[3], on, open,
+        runs: on ? '× ' + validLocs.length : '—',
+        groupBg: gs[0], groupColor: gs[1],
+        rowBg: on ? '#FFFFFF' : '#FAFBFC',
+        textColor: on ? '#16181D' : '#8A93A3',
+        expanded: open ? 'true' : 'false',
+        flipLabel: open ? 'Скрыть' : 'Показать URL',
+        urls: validLocs.map((l) => 'linkedin.com/jobs/search?keywords=' + encodeURIComponent(r[1]) + '&location=' + encodeURIComponent(l.li) + '&f_WT=' + encodeURIComponent(wt(l)) + '&f_TPR=r1209600&sortBy=DD'),
+        toggle: () => this.setState({ off: Object.assign({}, st.off, { [id]: on }) }),
+        flip: () => this.setState({ open: Object.assign({}, st.open, { [id]: !open }) })
+      };
+    });
+    return {
+      queries, locs, suggest,
+      locInputId: 'plan-loc',
+      draft: st.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      addDraft: () => { const v = (st.draft || '').trim(); if (v) addLoc(v, v); },
+      hasEmpty: validLocs.length < st.locs.length,
+      summary: activeQ + ' запросов × ' + validLocs.length + ' локации = ' + (activeQ * validLocs.length) + ' поисков за прогон'
+    };
+  }
+}
+</script>
+</body>
+</html>
