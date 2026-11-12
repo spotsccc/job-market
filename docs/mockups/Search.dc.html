@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Поиск по базе</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F5F6F8}
+a{color:#2450C8}a:hover{color:#1A3C9A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F6F8; font-family: Inter, system-ui, sans-serif; color: #16181D; font-size: 15px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px">
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; padding: 14px 0">
+          <span style="width: 28px; height: 28px; border-radius: 7px; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 14px">jm</span>
+          job-market
+        </div>
+        <nav aria-label="Разделы" style="display: flex; flex-wrap: wrap; gap: 4px">
+          <a href="Inbox.dc.html" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; color: #3E4553; text-decoration: none">Inbox <span style="font-size: 12px; padding: 0 7px; border-radius: 999px; background: #2450C8; color: #FFFFFF">6</span></a>
+          <a href="Search.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #16181D; font-weight: 600; text-decoration: none; border-bottom: 2px solid #2450C8">База</a>
+          <a href="Profile.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #3E4553; text-decoration: none">Профиль</a>
+        </nav>
+      </div>
+      <div style="color: #586070; font-size: 13px; padding: 8px 0">В базе 9 412 вакансий за 41 день</div>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px">
+
+    <div style="display: flex; flex-direction: column; gap: 10px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; padding: 18px 20px">
+      <label for="q" style="font-weight: 600">Поиск по названию, компании и тексту описания</label>
+      <div style="display: flex; gap: 8px; align-items: center; border: 1px solid #8A93A3; border-radius: 10px; padding: 0 12px; background: #FFFFFF">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#586070" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input id="q" value="{{query}}" onChange="{{onType}}" style="flex: 1 1 auto; min-width: 0; font: inherit; font-size: 16px; padding: 12px 0; border: 0; outline: none">
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <span style="font-size: 13px; color: #586070">Быстрые сценарии:</span>
+        <sc-for list="{{presets}}" as="p" hint-placeholder-count="3">
+          <button type="button" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="font: inherit; font-size: 13px; min-height: 34px; padding: 0 12px; border-radius: 999px; cursor: pointer; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{p.color}}">{{p.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding-top: 10px; border-top: 1px solid #EEF0F3">
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Формат
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>Любой</option><option>Remote</option><option>Hybrid</option><option>Onsite</option></select></label>
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Локация
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>Все</option><option>Аргентина</option><option>США</option><option>ЕС</option></select></label>
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Дата
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>{{period}}</option><option>7 дней</option><option>Всё время</option></select></label>
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Группа роли
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>Все</option><option>Core</option><option>Adjacent</option><option>Stretch</option><option>Off</option></select></label>
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Оценка
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>Любая, вкл. неоценённые</option><option>≥ 60</option><option>≥ 75</option></select></label>
+        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3E4553">Статус
+          <select style="font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid #C4CAD4; border-radius: 8px; background: #FFFFFF"><option>{{statusFilter}}</option><option>Любой</option><option>Только активные</option><option>Новые</option><option>Закрытые</option></select></label>
+        <div style="margin-left: auto; display: inline-flex; border: 1px solid #C4CAD4; border-radius: 8px; overflow: hidden" role="group" aria-label="Сортировка">
+          <button type="button" aria-pressed="true" style="font: inherit; font-size: 13px; padding: 6px 12px; border: 0; background: #16181D; color: #FFFFFF; cursor: pointer">По дате</button>
+          <button type="button" aria-pressed="false" style="font: inherit; font-size: 13px; padding: 6px 12px; border: 0; background: #FFFFFF; color: #3E4553; cursor: pointer">По оценке</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="color: #586070; font-size: 14px">{{resultLine}}</div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; overflow-x: auto">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 880px">
+        <thead>
+          <tr style="text-align: left; color: #586070; font-size: 13px">
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA; width: 72px">Дата</th>
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA; width: 120px">Оценка</th>
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA">Вакансия и совпадение</th>
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA">Локация</th>
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA">Группа</th>
+            <th scope="col" style="padding: 10px 14px; font-weight: 500; border-bottom: 1px solid #E2E5EA">Статус</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+            <tr style="border-bottom: 1px solid #EEF0F3; vertical-align: top">
+              <td style="padding: 12px 14px; color: #3E4553; white-space: nowrap">{{r.date}}</td>
+              <td style="padding: 12px 14px">
+                <sc-if value="{{r.scored}}" hint-placeholder-val="{{true}}">
+                  <span style="display: inline-flex; width: 38px; height: 28px; border-radius: 7px; align-items: center; justify-content: center; font-weight: 700; background: {{r.scoreBg}}; color: {{r.scoreColor}}; font-variant-numeric: tabular-nums">{{r.score}}</span>
+                </sc-if>
+                <sc-if value="{{r.unscored}}" hint-placeholder-val="{{false}}">
+                  <div style="color: #586070; font-size: 13px; line-height: 1.35"><span style="font-weight: 700; color: #3E4553">—</span><br>{{r.why}}</div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px 14px">
+                <div style="font-weight: 600">{{r.title}} <span style="font-weight: 400; color: #586070">· {{r.company}}</span></div>
+                <div style="color: #3E4553; font-size: 13px">{{r.pre}}<mark style="background: #FFE7A3; color: #16181D; padding: 0 2px; border-radius: 3px">{{r.hit}}</mark>{{r.post}}</div>
+              </td>
+              <td style="padding: 12px 14px; color: #3E4553">{{r.loc}}</td>
+              <td style="padding: 12px 14px; color: #3E4553">{{r.group}}</td>
+              <td style="padding: 12px 14px"><span style="font-size: 13px; padding: 2px 9px; border-radius: 999px; background: {{r.statusBg}}; color: {{r.statusColor}}; white-space: nowrap">{{r.status}}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { preset: 0, query: 'LangGraph' };
+  }
+  renderVals() {
+    const st = this.state;
+    const scoreStyle = (s) => s >= 75 ? ['#DDF3EA', '#0A5C43'] : s >= 55 ? ['#FFF1D6', '#7A4E00'] : ['#EEF0F3', '#4A5160'];
+    const statusStyle = {
+      'новая': ['#EAF0FF', '#1A3C9A'], 'просмотрена': ['#EEF0F3', '#3E4553'], 'закрыта': ['#FDECEA', '#8C1F15'], 'устарела': ['#EEF0F3', '#586070'], 'активна': ['#DDF3EA', '#0A5C43']
+    };
+    const r = (date, score, why, title, company, pre, hit, post, loc, group, status) => {
+      const ss = typeof score === 'number' ? scoreStyle(score) : ['', ''];
+      const stl = statusStyle[status];
+      return {
+        date, score, why, title, company, pre, hit, post, loc, group, status,
+        scored: typeof score === 'number', unscored: typeof score !== 'number',
+        scoreBg: ss[0], scoreColor: ss[1], statusBg: stl[0], statusColor: stl[1]
+      };
+    };
+    const sets = [
+      {
+        label: 'Всё с LangGraph за месяц', query: 'LangGraph', period: '30 дней', status: 'Любой',
+        line: '23 вакансии · из них 9 не оценивались (отсеяны по названию или правилом) — в Inbox их не было',
+        rows: [
+          r('12 ноя', 92, '', 'Product Engineer, AI Agents', 'Lumen Labs', '…интерфейсы для агентных пайплайнов на ', 'LangGraph', ' и Next.js…', 'Remote EU', 'adjacent', 'новая'),
+          r('11 ноя', null, 'отсеяна по названию', 'Python Developer — LangGraph / LangChain', 'Kitewing', 'в названии: Python Developer — ', 'LangGraph', ' / LangChain', 'Remote EU', '—', 'активна'),
+          r('10 ноя', 71, '', 'AI Engineer (TypeScript)', 'Orbital', '…опыт с ', 'LangGraph', ' или аналогами будет плюсом…', 'Remote', 'adjacent', 'просмотрена'),
+          r('7 ноя', 45, '', 'ML Platform Engineer', 'Corvid', '…оркестрация агентов (', 'LangGraph', ', Temporal), Kubernetes…', 'Buenos Aires, hybrid', 'off', 'просмотрена'),
+          r('3 ноя', 83, '', 'AI Product Engineer', 'Brightwave', '…прототипы на ', 'LangGraph', ' → продакшн на TypeScript…', 'Remote EU', 'adjacent', 'просмотрена'),
+          r('29 окт', 78, '', 'Frontend Engineer, Agents', 'Halcyon', '…визуализация графов ', 'LangGraph', ' в реальном времени…', 'Remote EU', 'core', 'закрыта'),
+          r('24 окт', null, 'исключение: Junior', 'Junior AI Developer', 'Novaline', '…учебные проекты на ', 'LangGraph', '…', 'Córdoba, офис', '—', 'устарела')
+        ]
+      },
+      {
+        label: 'Что открыто у Northwind AI', query: 'company:"Northwind AI"', period: 'Всё время', status: 'Только активные',
+        line: '4 активные вакансии у Northwind AI · 2 из них не про вас и не оценивались',
+        rows: [
+          r('11 ноя', 88, '', 'Senior Frontend Engineer (LLM tooling)', 'Northwind AI', 'компания: ', 'Northwind AI', ' · scale‑up, 140 чел.', 'Buenos Aires, hybrid', 'core', 'просмотрена'),
+          r('8 ноя', 58, '', 'Developer Advocate', 'Northwind AI', 'компания: ', 'Northwind AI', ' · 30% — конференции', 'Remote EU', 'stretch', 'просмотрена'),
+          r('6 ноя', null, 'отсеяна по названию', 'Backend Engineer (Go)', 'Northwind AI', 'компания: ', 'Northwind AI', '', 'Buenos Aires, hybrid', '—', 'активна'),
+          r('2 ноя', null, 'отсеяна по названию', 'Staff Product Designer', 'Northwind AI', 'компания: ', 'Northwind AI', '', 'Buenos Aires, hybrid', '—', 'активна')
+        ]
+      },
+      {
+        label: 'Все Design Engineer', query: 'title:"design engineer"', period: '30 дней', status: 'Любой',
+        line: '9 вакансий Design Engineer за 30 дней, независимо от оценки',
+        rows: [
+          r('11 ноя', 78, '', 'Design Engineer', 'Parcel', 'в названии: ', 'Design Engineer', '', 'Remote EU', 'adjacent', 'новая'),
+          r('9 ноя', 66, '', 'Design Engineer', 'Halcyon', 'в названии: ', 'Design Engineer', '', 'Remote EU', 'adjacent', 'просмотрена'),
+          r('5 ноя', 61, '', 'Senior Design Engineer', 'Mosaic', 'в названии: Senior ', 'Design Engineer', '', 'Remote US', 'adjacent', 'устарела'),
+          r('3 ноя', 52, '', 'Design Engineer (Marketing site)', 'Copperleaf', 'в названии: ', 'Design Engineer', ' (Marketing site)', 'Buenos Aires, hybrid', 'adjacent', 'просмотрена'),
+          r('31 окт', null, 'правило: агентство', 'Design Engineer (Webflow)', 'Pixelworks Agency', 'в названии: ', 'Design Engineer', ' (Webflow)', 'Remote', '—', 'активна')
+        ]
+      }
+    ];
+    const cur = sets[st.preset];
+    return {
+      query: st.query,
+      onType: (e) => this.setState({ query: e.target.value }),
+      presets: sets.map((s, i) => {
+        const on = i === st.preset;
+        return {
+          label: s.label,
+          pressed: on ? 'true' : 'false',
+          bg: on ? '#16181D' : '#FFFFFF',
+          color: on ? '#FFFFFF' : '#16181D',
+          border: on ? '#16181D' : '#C4CAD4',
+          pick: () => this.setState({ preset: i, query: s.query })
+        };
+      }),
+      period: cur.period,
+      statusFilter: cur.status,
+      resultLine: cur.line,
+      rows: cur.rows
+    };
+  }
+}
+</script>
+</body>
+</html>

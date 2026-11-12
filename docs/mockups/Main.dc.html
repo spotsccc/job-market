@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Онбординг — о себе</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F5F6F8}
+a{color:#2450C8}a:hover{color:#1A3C9A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F6F8; font-family: Inter, system-ui, sans-serif; color: #16181D; font-size: 15px; line-height: 1.5">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px">
+        <span style="width: 28px; height: 28px; border-radius: 7px; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 14px">jm</span>
+        job-market
+      </div>
+      <div style="color: #586070; font-size: 14px">Настройка · примерно 10 минут</div>
+    </div>
+  </header>
+
+  <nav aria-label="Шаги настройки" style="max-width: 1180px; margin: 0 auto; padding: 24px 24px 0">
+    <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+      <li style="flex: 1 1 200px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 2px solid #2450C8; border-radius: 10px">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #2450C8; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px">1</span>
+        <span style="font-weight: 600">О себе</span>
+      </li>
+      <li style="flex: 1 1 200px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 10px; color: #586070">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #EEF0F3; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px">2</span>
+        Запросы
+      </li>
+      <li style="flex: 1 1 200px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 10px; color: #586070">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #EEF0F3; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px">3</span>
+        Первый сбор
+      </li>
+    </ol>
+  </nav>
+
+  <main style="max-width: 1180px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+    <section style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 14px; padding: 32px; display: flex; flex-direction: column; gap: 28px">
+      <div>
+        <h1 style="margin: 0 0 6px; font-size: 26px; line-height: 1.25">Расскажите о себе</h1>
+        <p style="margin: 0; color: #586070">Поисковые запросы писать не нужно. По резюме и тексту ниже система сама подберёт роли — в том числе смежные, которые вы не стали бы искать по названию.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-weight: 600">Резюме <span style="color: #A3261B; font-weight: 500">*</span></div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #C9D6F5; background: #F4F7FF; border-radius: 10px">
+          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2450C8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M9 13h6M9 17h4"></path></svg>
+          <div style="flex: 1 1 auto; min-width: 0">
+            <div style="font-weight: 600">resume.pdf</div>
+            <div style="color: #586070; font-size: 13px">2 страницы · распознано: 6 лет опыта, 4 места работы, 23 навыка</div>
+          </div>
+          <button type="button" style="font: inherit; font-size: 14px; padding: 8px 14px; border: 1px solid #E2E5EA; background: #FFFFFF; border-radius: 8px; color: #16181D; cursor: pointer">Заменить</button>
+        </div>
+        <div style="color: #586070; font-size: 13px">PDF или текст. Подойдёт экспорт профиля LinkedIn в PDF.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="looking" style="font-weight: 600">Что я ищу <span style="color: #A3261B; font-weight: 500">*</span></label>
+        <div style="color: #586070; font-size: 13px">3–10 предложений: что нравится делать, куда хочется расти, чего не хочется.</div>
+        <textarea id="looking" rows="8" style="font: inherit; font-size: 15px; line-height: 1.6; padding: 14px 16px; border: 1px solid #C4CAD4; border-radius: 10px; resize: vertical; color: #16181D; background: #FFFFFF">Последние 4 года делаю фронтенд на React / Next.js, последний год — интерфейсы для LLM‑пайплайнов и агентов: стриминг ответов, трейсинг шагов, экраны ревью результатов.
+Хочу остаться ближе к продукту и AI: product engineer или frontend в AI‑команде. Интересно попробовать forward deployed / solutions, если там много кода.
+Не хочу: вёрстку лендингов, Angular, большие enterprise с офисом 5 дней в неделю.
+Важно: маленькая команда, влияние на продукт.</textarea>
+        <div style="display: flex; justify-content: space-between; color: #586070; font-size: 13px"><span>Хорошо: есть и «что нравится», и «чего не хочу»</span><span>4 предложения</span></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 8px; border-top: 1px solid #E2E5EA">
+        <a href="Plan.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 22px; background: #2450C8; color: #FFFFFF; border-radius: 10px; font-weight: 600; text-decoration: none">Далее: запросы
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
