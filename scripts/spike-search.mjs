@@ -4,6 +4,7 @@
 //
 // Без зависимостей, без LLM, без логина. Запуск с домашнего IP (Node 22+):
 //   node scripts/spike-search.mjs            # сбор + отчёт (~25 поисковых запросов + ≤60 вакансий, ~8–12 мин)
+//   NODE_USE_ENV_PROXY=1 node scripts/spike-search.mjs   # то же за HTTPS‑прокси (облачная среда)
 //   node scripts/spike-search.mjs --offline  # только пересобрать отчёт из сохранённого HTML, без сети
 //
 // Весь HTML кэшируется в spike-out/raw, поэтому повторный запуск ничего не скачивает заново:
