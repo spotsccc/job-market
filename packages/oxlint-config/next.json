@@ -19,6 +19,7 @@
   },
   "rules": {
     "react/jsx-key": "error",
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/react-in-jsx-scope": "off",
@@ -35,7 +36,12 @@
           {
             "from": "package",
             "package": "react",
-            "name": ["ReactNode", "ReactElement", "JSX.Element"]
+            "name": ["ReactNode", "ReactElement", "JSX.Element", "SubmitEvent"]
+          },
+          {
+            "from": "package",
+            "package": "@opentelemetry/sdk-trace",
+            "name": ["ReadableSpan"]
           }
         ],
         "treatMethodsAsReadonly": true

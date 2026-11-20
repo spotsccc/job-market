@@ -5,20 +5,32 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "pnpm db:up && pnpm db:migrate && next dev",
     "build": "next build",
     "start": "next start",
     "check-types": "next typegen && tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "db:up": "docker compose -f ../../compose.yaml up -d --wait postgres",
+    "db:migrate": "node scripts/migrate.ts",
+    "db:migrate:test": "NODE_ENV=test node scripts/migrate.ts"
   },
   "dependencies": {
     "@job-market/channel-linkedin": "workspace:*",
+    "@job-market/core": "workspace:*",
+    "@job-market/db": "workspace:*",
+    "@job-market/logger": "workspace:*",
+    "@mantine/core": "9.8.2",
+    "@mantine/hooks": "9.8.2",
+    "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/context-async-hooks": "3.1.1",
+    "@opentelemetry/sdk-trace": "3.1.1",
     "next": "16.4.6",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@job-market/oxfmt-config": "workspace:*",
@@ -30,6 +42,12 @@
     "oxfmt": "0.79.0",
     "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2007",
+    "postcss": "8.5.33",
+    "postcss-preset-mantine": "1.18.0",
+    "postcss-simple-vars": "7.0.1",
     "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

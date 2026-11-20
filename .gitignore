@@ -11,6 +11,8 @@ dist/
 .env
 .env.*
 !.env.example
+# Только локальная тестовая база, без секретов.
+!apps/web/.env.test
 
 .DS_Store
 next-env.d.ts

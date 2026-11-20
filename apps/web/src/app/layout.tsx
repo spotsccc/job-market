@@ -1,5 +1,9 @@
+import '@mantine/core/styles.css';
+import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+
+import { theme } from '@/theme';
 
 export const metadata: Metadata = {
   title: 'job-market',
@@ -12,8 +16,13 @@ type RootLayoutProps = Readonly<{
 
 export default function RootLayout({ children }: RootLayoutProps): ReactNode {
   return (
-    <html lang="ru">
-      <body>{children}</body>
+    <html lang="ru" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
+      </body>
     </html>
   );
 }

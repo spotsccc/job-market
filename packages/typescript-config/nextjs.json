@@ -10,6 +10,7 @@
     "allowJs": false,
     "incremental": true,
     "rewriteRelativeImportExtensions": false,
+    "allowImportingTsExtensions": true,
     "plugins": [{ "name": "next" }]
   }
 }

@@ -36,9 +36,9 @@ export type SearchPostsOptions = {
    * «все», а платим за каждый пост.
    */
   readonly maxPosts?: number;
-  readonly postedLimit?: PostedLimit;
+  readonly postedLimit?: PostedLimit | undefined;
   /** `date` — сначала новые. По умолчанию решает актор (релевантность). */
-  readonly sortBy?: 'relevance' | 'date';
+  readonly sortBy?: 'relevance' | 'date' | undefined;
   /** Сколько секунд ждать окончания запуска. Без него ждём, пока запуск не закончится. */
   readonly waitSecs?: number;
 };
