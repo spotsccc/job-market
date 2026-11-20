@@ -8,6 +8,7 @@ import {
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
+  customType,
   index,
   integer,
   jsonb,
@@ -20,6 +21,22 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { posts } from './post.ts';
+
+/** Тип Postgres `tsvector`: в TypeScript — строка, читать его приложению не нужно. */
+const tsvector = customType<{ data: string }>({
+  dataType: () => 'tsvector',
+});
+
+/**
+ * Текст для полнотекстового поиска. Конфигурация `russian` стеммит кириллицу
+ * русским стеммером, а латиницу — английским, поэтому подходит постам на обоих
+ * языках: «разработчик» находит «разработчиков», «developer» — «Developers».
+ * Массивы склеиваем функцией `immutable_array_to_string` из миграции: обычный
+ * `array_to_string` не immutable, и генерируемый столбец его не принимает.
+ */
+const searchVector = sql`setweight(to_tsvector('russian', "title"), 'A')
+  || setweight(to_tsvector('russian', coalesce("company", '') || ' ' || immutable_array_to_string("skills", ' ')), 'B')
+  || setweight(to_tsvector('russian', "summary" || ' ' || immutable_array_to_string("locations", ' ') || ' ' || coalesce("salary_raw", '')), 'C')`;
 
 /** Как откликнуться. Все пустые и `directMessage: false` — способ в посте не указан. */
 export type VacancyApply = {
@@ -79,10 +96,17 @@ export const vacancies = pgTable(
       .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
+    /**
+     * Поисковый вектор по названию (вес A), компании и навыкам (B), описанию,
+     * локациям и зарплате (C). Postgres пересчитывает его сам при каждой записи
+     * строки. Текста поста в нём нет: генерируемый столбец не видит другие таблицы.
+     */
+    searchVector: tsvector().notNull().generatedAlwaysAs(searchVector),
   },
   (table) => [
     unique('vacancies_post_id_position_unique').on(table.postId, table.position),
     index().on(table.createdAt),
+    index().using('gin', table.searchVector),
   ],
 );
 

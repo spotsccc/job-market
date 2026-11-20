@@ -1,11 +1,16 @@
-import Link from 'next/link';
+import { Anchor, Container, Stack, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
 
 export default function HomePage(): ReactNode {
   return (
-    <main>
-      <h1>job-market</h1>
-      <Link href="/linkedin">Поиск постов LinkedIn</Link>
-    </main>
+    <Container component="main" size="md" py="xl">
+      <Title order={1} mb="lg">
+        job-market
+      </Title>
+      <Stack gap="xs">
+        <Anchor href="/vacancies">Вакансии</Anchor>
+        <Anchor href="/linkedin">Поиск постов LinkedIn</Anchor>
+      </Stack>
+    </Container>
   );
 }
