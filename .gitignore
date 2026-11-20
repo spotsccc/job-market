@@ -1,2 +1,18 @@
 node_modules/
 spike-out/
+
+# build & tooling
+.turbo/
+dist/
+.next/
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+!.env.example
+
+.DS_Store
+next-env.d.ts
+
+.pnpm-store/
