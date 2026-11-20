@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # drizzle-kit generate спрашивает интерактивно о переименованиях — без лимита CI бы висел.
+    timeout-minutes: 15
+    services:
+      # Как в compose.yaml: тот же порт и база из apps/web/.env.test.
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: job_market
+          POSTGRES_PASSWORD: job_market
+          POSTGRES_DB: job_market_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U job_market -d job_market_test"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Migrations match the schema
+        run: |
+          pnpm db:generate
+          if [ -n "$(git status --porcelain packages/db/migrations)" ]; then
+            echo "Схема в packages/db/src изменилась без миграции: запустите pnpm db:generate и закоммитьте результат"
+            git status --porcelain packages/db/migrations
+            exit 1
+          fi
+
+      - name: Apply migrations to the test database
+        run: pnpm db:migrate:test
+
+      - run: pnpm check
+      - run: pnpm test
