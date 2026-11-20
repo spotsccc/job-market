@@ -42,6 +42,11 @@
             "from": "package",
             "package": "@opentelemetry/sdk-trace",
             "name": ["ReadableSpan"]
+          },
+          {
+            "from": "package",
+            "package": "ai",
+            "name": ["LanguageModel"]
           }
         ],
         "treatMethodsAsReadonly": true

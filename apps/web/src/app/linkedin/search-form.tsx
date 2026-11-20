@@ -3,6 +3,7 @@
 import {
   Alert,
   Anchor,
+  Badge,
   Button,
   Divider,
   Group,
@@ -17,7 +18,7 @@ import type { ReactNode, SubmitEvent } from 'react';
 
 import { searchLinkedinPosts } from './actions.ts';
 import { INITIAL_SEARCH_STATE, MAX_POSTS_LIMIT } from './search-state.ts';
-import type { PostView, SearchState } from './search-state.ts';
+import type { PostVerdictView, PostView, SearchState } from './search-state.ts';
 
 const dateFormat = new Intl.DateTimeFormat('ru', { dateStyle: 'medium', timeStyle: 'short' });
 
@@ -35,9 +36,40 @@ const SORT_BY_OPTIONS = [
   { value: 'date', label: 'сначала новые' },
 ];
 
+function Verdict({ verdict }: Readonly<{ verdict: PostVerdictView }>): ReactNode {
+  if (verdict.status === 'error') {
+    return (
+      <Badge color="red" variant="light">
+        не удалось разобрать
+      </Badge>
+    );
+  }
+  if (verdict.status === 'not_vacancy') {
+    return (
+      <Group gap="xs">
+        <Badge color="gray" variant="light">
+          не вакансия
+        </Badge>
+        <Text size="sm" c="dimmed">
+          {verdict.note}
+        </Text>
+      </Group>
+    );
+  }
+  return (
+    <Group gap="xs">
+      <Badge color="green" variant="light">
+        вакансия
+      </Badge>
+      <Text size="sm">{verdict.titles.join(', ')}</Text>
+    </Group>
+  );
+}
+
 function PostItem({ post }: Readonly<{ post: PostView }>): ReactNode {
   return (
     <Stack gap="xs">
+      <Verdict verdict={post.verdict} />
       <Text>
         <Anchor href={post.authorUrl} target="_blank" rel="noreferrer" fw={700}>
           {post.authorName}
@@ -82,7 +114,11 @@ function Result({ state }: Readonly<{ state: SearchState }>): ReactNode {
   return (
     <Stack gap="md">
       <Text>
-        Найдено постов: {state.posts.length} за {(state.elapsedMs / 1000).toFixed(0)} с
+        Найдено постов: {state.posts.length} за {(state.elapsedMs / 1000).toFixed(0)} с, сохранено
+        вакансий: {state.savedVacancies}
+        {state.failedPosts === 0
+          ? null
+          : `, не удалось разобрать постов: ${String(state.failedPosts)}`}
       </Text>
       {state.posts.map((post) => (
         <Fragment key={post.id}>
@@ -152,7 +188,7 @@ export function SearchForm(): ReactNode {
           </Group>
           {isPending ? (
             <Text size="sm" c="dimmed">
-              Ищем… запуск актора занимает до пары минут
+              Ищем и разбираем посты… запуск актора занимает до пары минут
             </Text>
           ) : null}
         </Stack>

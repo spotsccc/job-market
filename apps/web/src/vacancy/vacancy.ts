@@ -1,7 +1,6 @@
 import {
   EMPLOYMENT_TYPES,
   HIRING_PARTIES,
-  NOT_VACANCY_REASONS,
   SALARY_PERIODS,
   SENIORITIES,
   WORKPLACES,
@@ -94,26 +93,6 @@ export const extractedVacancySchema = z
     },
   );
 
-/** Ответ модели. Корень structured outputs — объект, поэтому объединение лежит в `result`. */
-export const postExtractionSchema = z.strictObject({
-  // Не `discriminatedUnion`: он даёт в JSON-схеме `oneOf`, а structured outputs принимают `anyOf`.
-  result: z.union([
-    z.strictObject({
-      kind: z.literal('vacancies'),
-      vacancies: z
-        .array(extractedVacancySchema)
-        .refine((vacancies: readonly unknown[]) => vacancies.length > 0, 'Вакансия без единой роли')
-        .describe('Каждая отдельная роль из поста — отдельный элемент'),
-    }),
-    z.strictObject({
-      kind: z.literal('not_vacancy'),
-      reason: z.enum(NOT_VACANCY_REASONS),
-      note: z.string().describe('Коротко, почему это не вакансия'),
-    }),
-  ]),
-});
-
 export type Salary = z.infer<typeof salarySchema>;
 export type ApplyChannels = z.infer<typeof applySchema>;
 export type ExtractedVacancy = z.infer<typeof extractedVacancySchema>;
-export type PostExtraction = z.infer<typeof postExtractionSchema>['result'];

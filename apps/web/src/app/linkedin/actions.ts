@@ -5,12 +5,17 @@ import type { LinkedinPost, SearchPostsOptions } from '@job-market/channel-linke
 import { log as rootLog } from '@job-market/logger';
 import { z } from 'zod';
 
+import { processLinkedinPost } from '../../post-processing/index.ts';
+import { savePostWithVacancies } from './save-post.ts';
 import { MAX_POSTS_LIMIT, POSTED_LIMITS, SORT_OPTIONS } from './search-state.ts';
-import type { PostView, SearchState } from './search-state.ts';
+import type { PostVerdictView, PostView, SearchState } from './search-state.ts';
 
 const TOKEN_ENV = 'LINKEDINN_CHANNEL_KEY';
 
 const log = rootLog.with({ module: 'linkedin', action: 'searchLinkedinPosts' });
+
+/** Сколько постов разбираем моделями одновременно: держимся в лимитах AI Gateway. */
+const PROCESSING_CONCURRENCY = 5;
 
 /** Пустое значение `<select>` — «не задано». */
 function optionalEnum<const T extends readonly [string, ...string[]]>(values: T) {
@@ -42,7 +47,7 @@ const searchInputSchema = z.object({
   sortBy: optionalEnum(SORT_OPTIONS),
 }) satisfies z.ZodType<SearchPostsOptions>;
 
-function toView(post: LinkedinPost): PostView {
+function toView(post: LinkedinPost, verdict: PostVerdictView): PostView {
   return {
     id: post.id,
     url: post.url,
@@ -51,12 +56,86 @@ function toView(post: LinkedinPost): PostView {
     authorName: post.author.name,
     authorUrl: post.author.url,
     authorHeadline: post.author.headline,
+    verdict,
   };
+}
+
+type PostOutcome = { readonly verdict: PostVerdictView; readonly savedVacancies: number };
+
+/** Разбирает пост моделями и сохраняет вакансию в базу. Ошибки логирует и не пробрасывает. */
+async function processAndSave(post: LinkedinPost): Promise<PostOutcome> {
+  const postLog = log.with({ postId: post.id, postUrl: post.url });
+
+  const processed = await processLinkedinPost(post);
+  if (processed instanceof Error) {
+    postLog.error('LinkedIn post processing failed', { err: processed });
+    return { verdict: { status: 'error' }, savedVacancies: 0 };
+  }
+  if (processed.kind === 'not_vacancy') {
+    postLog.debug('LinkedIn post is not a vacancy', {
+      reason: processed.reason,
+      note: processed.note,
+    });
+    return { verdict: { status: 'not_vacancy', note: processed.note }, savedVacancies: 0 };
+  }
+
+  const saved = await savePostWithVacancies(processed.post, processed.vacancies);
+  if (saved instanceof Error) {
+    postLog.error('LinkedIn vacancy save failed', { err: saved });
+    return { verdict: { status: 'error' }, savedVacancies: 0 };
+  }
+  postLog.info('LinkedIn vacancy saved', {
+    dbPostId: saved,
+    vacanciesCount: processed.vacancies.length,
+  });
+  return {
+    verdict: { status: 'vacancy', titles: processed.vacancies.map((vacancy) => vacancy.title) },
+    savedVacancies: processed.vacancies.length,
+  };
+}
+
+/** `Promise.all` по `items`, но не больше `limit` вызовов `fn` одновременно. */
+async function mapConcurrent<T, R>(
+  items: readonly T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = [];
+  // Один итератор на всех: каждый воркер берёт следующий ещё не взятый элемент.
+  const queue = items.entries();
+  async function worker(): Promise<void> {
+    for (const [index, item] of queue) {
+      // Последовательно внутри воркера — так и ограничивается параллельность.
+      // oxlint-disable-next-line eslint/no-await-in-loop
+      results[index] = await fn(item);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
 }
 
 function describeError(error: Readonly<Error>): string {
   const cause = error.cause instanceof Error ? `: ${error.cause.message}` : '';
   return `${error.message}${cause}`;
+}
+
+type ProcessedPosts = Pick<
+  Extract<SearchState, { status: 'ok' }>,
+  'posts' | 'savedVacancies' | 'failedPosts'
+>;
+
+async function processPosts(posts: readonly LinkedinPost[]): Promise<ProcessedPosts> {
+  // Разные запросы находят одни и те же посты: разбираем каждый один раз.
+  const uniquePosts = [...new Map(posts.map((post) => [post.id, post])).values()];
+
+  const outcomes = await mapConcurrent(uniquePosts, PROCESSING_CONCURRENCY, processAndSave);
+  return {
+    posts: uniquePosts.map((post, index) =>
+      toView(post, outcomes[index]?.verdict ?? { status: 'error' }),
+    ),
+    savedVacancies: outcomes.reduce((sum, outcome) => sum + outcome.savedVacancies, 0),
+    failedPosts: outcomes.filter((outcome) => outcome.verdict.status === 'error').length,
+  };
 }
 
 export async function searchLinkedinPosts(
@@ -95,5 +174,14 @@ export async function searchLinkedinPosts(
     postsCount: posts.length,
     elapsedMs,
   });
-  return { status: 'ok', posts: posts.map((post) => toView(post)), elapsedMs };
+
+  const processed = await processPosts(posts);
+  const totalElapsedMs = Date.now() - startedAt;
+  log.info('LinkedIn posts processed', {
+    postsCount: processed.posts.length,
+    savedVacancies: processed.savedVacancies,
+    failedPosts: processed.failedPosts,
+    elapsedMs: totalElapsedMs,
+  });
+  return { status: 'ok', ...processed, elapsedMs: totalElapsedMs };
 }
