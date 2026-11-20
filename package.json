@@ -11,7 +11,12 @@
     "format:check": "turbo run format:check",
     "check": "turbo run format:check lint check-types",
     "test": "turbo run test",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "db:up": "docker compose up -d --wait postgres",
+    "db:down": "docker compose down",
+    "db:generate": "pnpm --filter @job-market/db generate",
+    "db:migrate": "pnpm --filter @job-market/web db:migrate",
+    "db:migrate:test": "pnpm --filter @job-market/web db:migrate:test"
   },
   "devDependencies": {
     "@job-market/typescript-config": "workspace:*",
