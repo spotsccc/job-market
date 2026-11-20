@@ -44,6 +44,13 @@ function Verdict({ verdict }: Readonly<{ verdict: PostVerdictView }>): ReactNode
       </Badge>
     );
   }
+  if (verdict.status === 'duplicate') {
+    return (
+      <Badge color="gray" variant="light">
+        уже в базе
+      </Badge>
+    );
+  }
   if (verdict.status === 'not_vacancy') {
     return (
       <Group gap="xs">

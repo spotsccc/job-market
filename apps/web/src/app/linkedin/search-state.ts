@@ -2,6 +2,8 @@
 export type PostVerdictView =
   | { readonly status: 'vacancy'; readonly titles: readonly string[] }
   | { readonly status: 'not_vacancy'; readonly note: string }
+  /** Пост уже есть в базе: повторно не разбирали. */
+  | { readonly status: 'duplicate' }
   | { readonly status: 'error' };
 
 /** Пост для клиента: только сериализуемые поля, дата строкой ISO. */

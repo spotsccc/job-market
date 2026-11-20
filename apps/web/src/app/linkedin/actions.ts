@@ -5,6 +5,7 @@ import type { LinkedinPost, SearchPostsOptions } from '@job-market/channel-linke
 import { log as rootLog } from '@job-market/logger';
 import { z } from 'zod';
 
+import { findSavedPosts } from '../../dedup/index.ts';
 import { processLinkedinPost } from '../../post-processing/index.ts';
 import { savePostWithVacancies } from './save-post.ts';
 import { MAX_POSTS_LIMIT, POSTED_LIMITS, SORT_OPTIONS } from './search-state.ts';
@@ -128,7 +129,24 @@ async function processPosts(posts: readonly LinkedinPost[]): Promise<ProcessedPo
   // Разные запросы находят одни и те же посты: разбираем каждый один раз.
   const uniquePosts = [...new Map(posts.map((post) => [post.id, post])).values()];
 
-  const outcomes = await mapConcurrent(uniquePosts, PROCESSING_CONCURRENCY, processAndSave);
+  // Посты, которые уже есть в базе, моделями повторно не разбираем.
+  const lookup = await findSavedPosts(
+    'linkedin',
+    uniquePosts.map((post) => post.id),
+  );
+  // Без дедупликации разбираем всё: сохранение — upsert, дублей в базе не будет.
+  if (lookup instanceof Error) log.error('LinkedIn dedup lookup failed', { err: lookup });
+  const known: ReadonlySet<string> = lookup instanceof Error ? new Set() : lookup;
+  if (known.size > 0) log.info('LinkedIn posts already saved, skipping', { count: known.size });
+
+  const outcomes = await mapConcurrent(
+    uniquePosts,
+    PROCESSING_CONCURRENCY,
+    async (post): Promise<PostOutcome> =>
+      known.has(post.id)
+        ? { verdict: { status: 'duplicate' }, savedVacancies: 0 }
+        : processAndSave(post),
+  );
   return {
     posts: uniquePosts.map((post, index) =>
       toView(post, outcomes[index]?.verdict ?? { status: 'error' }),
