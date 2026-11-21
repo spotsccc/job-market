@@ -31,8 +31,10 @@ function parseHop(raw: string | null): Error | number {
 }
 
 /**
- * Ежедневный сбор Telegram-каналов (расписание — в `vercel.json`). Vercel Cron зовёт
- * его с `Authorization: Bearer $CRON_SECRET`. Отвечает сразу 202, а работу делает в
+ * Ежедневный сбор Telegram-каналов: расписание `telegram-crawl` в `schedules` из
+ * `vercel.json`. Vercel Schedules зовёт его GET-запросом с `Authorization: Bearer $CRON_SECRET`.
+ * Vercel может доставить запуск дважды: повтор безопасен, сбор пишет без дублей, а
+ * сообщения в разбор берутся с блокировкой. Отвечает сразу 202, а работу делает в
  * `after()`: так продолжение цепочки не ждёт, пока доработает предыдущее звено.
  */
 // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- сигнатура обработчика Next.js
