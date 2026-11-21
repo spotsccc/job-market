@@ -4,7 +4,7 @@
  */
 
 /** Откуда пост. Новый источник — новое значение здесь, миграция не нужна. */
-export const POST_SOURCES = ['linkedin'] as const;
+export const POST_SOURCES = ['linkedin', 'telegram'] as const;
 export type PostSource = (typeof POST_SOURCES)[number];
 
 export const WORKPLACES = ['remote', 'hybrid', 'onsite'] as const;

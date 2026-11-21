@@ -6,8 +6,9 @@ import { log as rootLog } from '@job-market/logger';
 import { z } from 'zod';
 
 import { findSavedPosts } from '../../dedup/index.ts';
-import { processLinkedinPost } from '../../post-processing/index.ts';
-import { savePostWithVacancies } from './save-post.ts';
+import { mapConcurrent } from '../../map-concurrent.ts';
+import { processPost, savePostWithVacancies } from '../../post-processing/index.ts';
+import type { Post } from '../../post-processing/index.ts';
 import { MAX_POSTS_LIMIT, POSTED_LIMITS, SORT_OPTIONS } from './search-state.ts';
 import type { PostVerdictView, PostView, SearchState } from './search-state.ts';
 
@@ -61,13 +62,27 @@ function toView(post: LinkedinPost, verdict: PostVerdictView): PostView {
   };
 }
 
+function toPost(post: LinkedinPost): Post {
+  return {
+    source: 'linkedin',
+    externalId: post.id,
+    url: post.url,
+    content: post.content,
+    postedAt: post.postedAt,
+    authorName: post.author.name,
+    authorUrl: post.author.url,
+    authorHeadline: post.author.headline,
+    authorHandle: post.author.publicIdentifier,
+  };
+}
+
 type PostOutcome = { readonly verdict: PostVerdictView; readonly savedVacancies: number };
 
 /** Разбирает пост моделями и сохраняет вакансию в базу. Ошибки логирует и не пробрасывает. */
 async function processAndSave(post: LinkedinPost): Promise<PostOutcome> {
   const postLog = log.with({ postId: post.id, postUrl: post.url });
 
-  const processed = await processLinkedinPost(post);
+  const processed = await processPost(toPost(post));
   if (processed instanceof Error) {
     postLog.error('LinkedIn post processing failed', { err: processed });
     return { verdict: { status: 'error' }, savedVacancies: 0 };
@@ -93,26 +108,6 @@ async function processAndSave(post: LinkedinPost): Promise<PostOutcome> {
     verdict: { status: 'vacancy', titles: processed.vacancies.map((vacancy) => vacancy.title) },
     savedVacancies: processed.vacancies.length,
   };
-}
-
-/** `Promise.all` по `items`, но не больше `limit` вызовов `fn` одновременно. */
-async function mapConcurrent<T, R>(
-  items: readonly T[],
-  limit: number,
-  fn: (item: T) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = [];
-  // Один итератор на всех: каждый воркер берёт следующий ещё не взятый элемент.
-  const queue = items.entries();
-  async function worker(): Promise<void> {
-    for (const [index, item] of queue) {
-      // Последовательно внутри воркера — так и ограничивается параллельность.
-      // oxlint-disable-next-line eslint/no-await-in-loop
-      results[index] = await fn(item);
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return results;
 }
 
 function describeError(error: Readonly<Error>): string {

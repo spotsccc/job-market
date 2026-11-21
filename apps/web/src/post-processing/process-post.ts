@@ -1,4 +1,3 @@
-import type { LinkedinPost } from '@job-market/channel-linkedin';
 import type { NotVacancyReason } from '@job-market/core';
 import type { NewPostRow, NewVacancyRow } from '@job-market/db';
 import { generateText, Output } from 'ai';
@@ -8,6 +7,18 @@ import { defaultPostProcessingModels } from './models.ts';
 import type { PostProcessingModels } from './models.ts';
 import { CLASSIFIER_INSTRUCTIONS, EXTRACTOR_INSTRUCTIONS, formatPost } from './prompts.ts';
 import { postClassificationSchema, vacancyExtractionSchema } from './schemas.ts';
+
+/**
+ * Предел одного вызова модели вместе с повторами AI SDK. Без него зависший вызов
+ * держит функцию до `maxDuration`, и Vercel обрывает её посреди работы.
+ */
+const MODEL_CALL_TIMEOUT_MS = 60_000;
+
+/**
+ * Без рассуждений: классификация и извлечение полей — простые задачи, а токены
+ * рассуждений оплачиваются как выход и в разы удорожают вызов.
+ */
+const REASONING = 'none';
 import type { PostClassification } from './schemas.ts';
 
 /** Пост в виде строки таблицы `posts`, без полей, которые заполняет база. */
@@ -38,20 +49,6 @@ export type ProcessedPost =
       readonly note: string;
     };
 
-function toPost(post: LinkedinPost): Post {
-  return {
-    source: 'linkedin',
-    externalId: post.id,
-    url: post.url,
-    content: post.content,
-    postedAt: post.postedAt,
-    authorName: post.author.name,
-    authorUrl: post.author.url,
-    authorHeadline: post.author.headline,
-    authorHandle: post.author.publicIdentifier,
-  };
-}
-
 // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- тип выведен из zod-схемы, массивы в нём изменяемые
 function toVacancy(vacancy: ExtractedVacancy, position: number): Vacancy {
   const { salary, ...fields } = vacancy;
@@ -67,41 +64,49 @@ function toVacancy(vacancy: ExtractedVacancy, position: number): Vacancy {
 }
 
 async function classify(
-  post: LinkedinPost,
+  post: Post,
   models: PostProcessingModels,
 ): Promise<Error | PostClassification> {
   const result = await generateText({
     model: models.classifier,
+    abortSignal: AbortSignal.timeout(MODEL_CALL_TIMEOUT_MS),
+    reasoning: REASONING,
     instructions: CLASSIFIER_INSTRUCTIONS,
     prompt: formatPost(post),
     output: Output.object({ schema: postClassificationSchema }),
-  }).catch((cause: unknown) => new Error(`Post ${post.id} classification failed`, { cause }));
+  }).catch(
+    (cause: unknown) => new Error(`Post ${post.externalId} classification failed`, { cause }),
+  );
   if (result instanceof Error) return result;
   return result.output;
 }
 
 async function extract(
-  post: LinkedinPost,
+  post: Post,
   models: PostProcessingModels,
 ): Promise<Error | readonly Vacancy[]> {
   const result = await generateText({
     model: models.extractor,
+    abortSignal: AbortSignal.timeout(MODEL_CALL_TIMEOUT_MS),
+    reasoning: REASONING,
     instructions: EXTRACTOR_INSTRUCTIONS,
     prompt: formatPost(post),
     output: Output.object({ schema: vacancyExtractionSchema }),
-  }).catch((cause: unknown) => new Error(`Post ${post.id} vacancy extraction failed`, { cause }));
+  }).catch(
+    (cause: unknown) => new Error(`Post ${post.externalId} vacancy extraction failed`, { cause }),
+  );
   if (result instanceof Error) return result;
   // Позиция роли — её индекс в ответе модели: по `(postId, position)` повторный разбор перезаписывает строки.
   return result.output.vacancies.map(toVacancy);
 }
 
 /**
- * Разбирает пост LinkedIn в две модели: классификатор решает, вакансия ли это, и
- * только для вакансий экстрактор достаёт поля ролей. Ничего не сохраняет: пост и
- * вакансии возвращаются готовыми строками для базы.
+ * Разбирает пост из любого источника в две модели: классификатор решает, вакансия
+ * ли это, и только для вакансий экстрактор достаёт поля ролей. Ничего не сохраняет:
+ * вакансии возвращаются готовыми строками для базы, рядом с исходным постом.
  */
-export async function processLinkedinPost(
-  post: LinkedinPost,
+export async function processPost(
+  post: Post,
   models: PostProcessingModels = defaultPostProcessingModels,
 ): Promise<Error | ProcessedPost> {
   // Репост или пост из одних картинок: классифицировать нечего, модель не зовём.
@@ -118,9 +123,5 @@ export async function processLinkedinPost(
   const vacancies = await extract(post, models);
   if (vacancies instanceof Error) return vacancies;
 
-  return {
-    kind: 'vacancy',
-    post: toPost(post),
-    vacancies,
-  };
+  return { kind: 'vacancy', post, vacancies };
 }

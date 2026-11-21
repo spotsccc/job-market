@@ -3,8 +3,8 @@ import { after, before, describe, test } from 'node:test';
 
 import { db, getDb, inArray, posts } from '@job-market/db';
 
+import { savePostWithVacancies } from '../../post-processing/index.ts';
 import type { Post, Vacancy } from '../../post-processing/index.ts';
-import { savePostWithVacancies } from '../linkedin/save-post.ts';
 import { searchVacancies } from './search-vacancies.ts';
 
 /** Тесты идут в тестовую базу из `.env.test`: `pnpm db:up && pnpm db:migrate:test`. */

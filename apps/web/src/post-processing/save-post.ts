@@ -1,6 +1,6 @@
 import { and, db, gte, eq, posts, sql, vacancies } from '@job-market/db';
 
-import type { Post, Vacancy } from '../../post-processing/index.ts';
+import type { Post, Vacancy } from './process-post.ts';
 
 /** `excluded.<столбец>` — значение из отвергнутой вставки в `ON CONFLICT DO UPDATE`. */
 function excludedColumns(keys: readonly string[]): Record<string, ReturnType<typeof sql.raw>> {

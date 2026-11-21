@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
-import type { LinkedinPost } from '@job-market/channel-linkedin';
 import { MockLanguageModelV4 } from 'ai/test';
 
 import type { ExtractedVacancy } from '../vacancy/vacancy.ts';
 import type { PostProcessingModels } from './models.ts';
-import { processLinkedinPost } from './process-post.ts';
+import { processPost } from './process-post.ts';
+import type { Post } from './process-post.ts';
 
 /** Модель, которая отвечает JSON текстом, как провайдер при structured outputs. */
 function mockModel(output: unknown): MockLanguageModelV4 {
@@ -23,19 +23,18 @@ function mockModel(output: unknown): MockLanguageModelV4 {
   });
 }
 
-function linkedinPost(overrides: Partial<LinkedinPost> = {}): LinkedinPost {
+function post(overrides: Partial<Post> = {}): Post {
   return {
-    id: '7330988768578920448',
+    source: 'linkedin',
+    externalId: '7330988768578920448',
     url: 'https://www.linkedin.com/posts/jane_hiring-activity-7330988768578920448',
     content:
       "We're hiring a Senior Frontend Engineer in Berlin, €80–95k. Apply: https://acme.dev/jobs",
     postedAt: new Date('2026-11-19T10:00:00.000Z'),
-    author: {
-      name: 'Jane Doe',
-      url: 'https://www.linkedin.com/in/jane',
-      headline: 'Engineering Manager at Acme',
-      publicIdentifier: 'jane',
-    },
+    authorName: 'Jane Doe',
+    authorUrl: 'https://www.linkedin.com/in/jane',
+    authorHeadline: 'Engineering Manager at Acme',
+    authorHandle: 'jane',
     ...overrides,
   };
 }
@@ -74,7 +73,7 @@ function models(
   return { models: { classifier, extractor }, classifier, extractor };
 }
 
-describe('processLinkedinPost', () => {
+describe('processPost', () => {
   test('returns the post and vacancies as rows when the classifier says vacancy', async () => {
     const second = extractedVacancy({ title: 'QA Engineer', salary: null, seniority: null });
     const mocks = models(
@@ -82,22 +81,11 @@ describe('processLinkedinPost', () => {
       { vacancies: [extractedVacancy(), second] },
     );
 
-    const result = await processLinkedinPost(linkedinPost(), mocks.models);
+    const result = await processPost(post(), mocks.models);
 
     assert.ok(!(result instanceof Error), result instanceof Error ? result.message : '');
     assert.ok(result.kind === 'vacancy');
-    assert.deepEqual(result.post, {
-      source: 'linkedin',
-      externalId: '7330988768578920448',
-      url: 'https://www.linkedin.com/posts/jane_hiring-activity-7330988768578920448',
-      content:
-        "We're hiring a Senior Frontend Engineer in Berlin, €80–95k. Apply: https://acme.dev/jobs",
-      postedAt: new Date('2026-11-19T10:00:00.000Z'),
-      authorName: 'Jane Doe',
-      authorUrl: 'https://www.linkedin.com/in/jane',
-      authorHeadline: 'Engineering Manager at Acme',
-      authorHandle: 'jane',
-    });
+    assert.deepEqual(result.post, post());
     assert.deepEqual(
       result.vacancies.map((vacancy) => [vacancy.position, vacancy.title]),
       [
@@ -119,13 +107,37 @@ describe('processLinkedinPost', () => {
     // Пост доходит до обеих моделей.
     assert.match(JSON.stringify(mocks.classifier.doGenerateCalls[0]?.prompt), /Senior Frontend/u);
     assert.match(JSON.stringify(mocks.extractor.doGenerateCalls[0]?.prompt), /Senior Frontend/u);
+    // Рассуждения выключены у обеих моделей: их токены оплачиваются как выход.
+    assert.equal(mocks.classifier.doGenerateCalls[0]?.reasoning, 'none');
+    assert.equal(mocks.extractor.doGenerateCalls[0]?.reasoning, 'none');
+  });
+
+  test('tells the models which source the post came from', async () => {
+    const mocks = models({ verdict: 'not_hiring', note: 'Статья' }, null);
+
+    await processPost(
+      post({
+        source: 'telegram',
+        externalId: 'forproducts/10907',
+        authorName: 'Job for Products and Projects',
+        authorUrl: 'https://t.me/forproducts',
+        authorHeadline: null,
+        authorHandle: 'forproducts',
+      }),
+      mocks.models,
+    );
+
+    const prompt = JSON.stringify(mocks.classifier.doGenerateCalls[0]?.prompt);
+    assert.match(prompt, /Источник: Telegram-канал/u);
+    assert.match(prompt, /Автор: Job for Products and Projects/u);
+    assert.doesNotMatch(prompt, /Подпись автора/u);
   });
 
   test('does not call the extractor when the post is not a vacancy', async () => {
     const mocks = models({ verdict: 'job_seeker', note: 'Автор ищет работу' }, null);
 
-    const result = await processLinkedinPost(
-      linkedinPost({ content: 'Open to work as a frontend developer' }),
+    const result = await processPost(
+      post({ content: 'Open to work as a frontend developer' }),
       mocks.models,
     );
 
@@ -140,7 +152,7 @@ describe('processLinkedinPost', () => {
   test('skips posts without text without calling models', async () => {
     const mocks = models({ verdict: 'vacancy', note: '' }, null);
 
-    const result = await processLinkedinPost(linkedinPost({ content: '  \n' }), mocks.models);
+    const result = await processPost(post({ content: '  \n' }), mocks.models);
 
     assert.ok(!(result instanceof Error));
     assert.equal(result.kind, 'not_vacancy');
@@ -150,7 +162,7 @@ describe('processLinkedinPost', () => {
   test('returns an error when the classifier answer does not match the schema', async () => {
     const mocks = models({ verdict: 'maybe', note: '' }, null);
 
-    const result = await processLinkedinPost(linkedinPost(), mocks.models);
+    const result = await processPost(post(), mocks.models);
 
     assert.ok(result instanceof Error);
     assert.match(result.message, /classification failed/u);
@@ -160,7 +172,7 @@ describe('processLinkedinPost', () => {
   test('returns an error when the extractor finds no roles in a vacancy post', async () => {
     const mocks = models({ verdict: 'vacancy', note: '' }, { vacancies: [] });
 
-    const result = await processLinkedinPost(linkedinPost(), mocks.models);
+    const result = await processPost(post(), mocks.models);
 
     assert.ok(result instanceof Error);
     assert.match(result.message, /vacancy extraction failed/u);
@@ -172,7 +184,7 @@ describe('processLinkedinPost', () => {
     });
     const extractor = new MockLanguageModelV4();
 
-    const result = await processLinkedinPost(linkedinPost(), { classifier, extractor });
+    const result = await processPost(post(), { classifier, extractor });
 
     assert.ok(result instanceof Error);
     assert.match(result.message, /classification failed/u);

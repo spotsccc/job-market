@@ -15,6 +15,13 @@
       "when": 1795217869771,
       "tag": "0001_vacancy_search",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795221950075,
+      "tag": "0002_telegram",
+      "breakpoints": true
     }
   ]
 }

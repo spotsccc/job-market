@@ -1,0 +1,32 @@
+{
+  "name": "@job-market/channel-telegram",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "test": "node --test 'src/**/*.test.ts'"
+  },
+  "dependencies": {
+    "@job-market/errors": "workspace:*",
+    "@spotsccc/error-as-value": "0.16.0"
+  },
+  "devDependencies": {
+    "@job-market/oxfmt-config": "workspace:*",
+    "@job-market/oxlint-config": "workspace:*",
+    "@job-market/typescript-config": "workspace:*",
+    "@types/node": "24.19.2",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
+    "oxlint-tsgolint": "7.0.2007",
+    "typescript": "7.0.2"
+  }
+}

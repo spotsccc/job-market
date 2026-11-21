@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   experimental: { optimizePackageImports: ['@mantine/core', '@mantine/hooks'] },
   transpilePackages: [
     '@job-market/channel-linkedin',
+    '@job-market/channel-telegram',
     '@job-market/core',
     '@job-market/db',
     '@job-market/logger',

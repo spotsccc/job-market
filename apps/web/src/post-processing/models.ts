@@ -7,7 +7,8 @@ import type { LanguageModel } from 'ai';
  * https://ai-gateway.vercel.sh/v1/models.
  */
 export const CLASSIFIER_MODEL_ID = 'anthropic/claude-haiku-5.5';
-export const EXTRACTOR_MODEL_ID = 'anthropic/claude-sonnet-5.5';
+/** Haiku и для извлечения: в 20 раз дешевле Sonnet 5.5 при тех же structured outputs. */
+export const EXTRACTOR_MODEL_ID = 'anthropic/claude-haiku-5.5';
 
 export type PostProcessingModels = {
   /** Решает, вакансия ли пост: дешёвая быстрая модель, её зовём на каждый пост. */
