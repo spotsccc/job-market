@@ -9,4 +9,4 @@ export {
   legacyVacancies,
   legacyVacanciesRelations,
 } from './legacy-vacancy.ts';
-export type { LegacyVacancyRow, NewLegacyVacancyRow, VacancyApply } from './legacy-vacancy.ts';
+export type { LegacyVacancyRow, NewLegacyVacancyRow } from './legacy-vacancy.ts';

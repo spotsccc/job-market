@@ -57,6 +57,13 @@
       "when": 1795454243422,
       "tag": "0007_legacy_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795454445120,
+      "tag": "0008_data_model",
+      "breakpoints": true
     }
   ]
 }

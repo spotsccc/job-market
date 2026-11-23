@@ -8,7 +8,6 @@ import {
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
-  customType,
   index,
   integer,
   jsonb,
@@ -20,31 +19,18 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
+import { tsvector } from '../vacancy/vacancy.ts';
+import type { VacancyApply } from '../vacancy/vacancy.ts';
 import { legacyPosts } from './legacy-post.ts';
 
-/** Тип Postgres `tsvector`: в TypeScript — строка, читать его приложению не нужно. */
-const tsvector = customType<{ data: string }>({
-  dataType: () => 'tsvector',
-});
-
 /**
- * Текст для полнотекстового поиска. Конфигурация `russian` стеммит кириллицу
- * русским стеммером, а латиницу — английским, поэтому подходит постам на обоих
- * языках: «разработчик» находит «разработчиков», «developer» — «Developers».
- * Массивы склеиваем функцией `immutable_array_to_string` из миграции: обычный
- * `array_to_string` не immutable, и генерируемый столбец его не принимает.
+ * Текст для полнотекстового поиска: название — вес A, компания и навыки — B, описание,
+ * локации и зарплата — C. Массивы склеивает `immutable_array_to_string` из миграции
+ * `0001_vacancy_search`: обычный `array_to_string` генерируемый столбец не принимает.
  */
 const searchVector = sql`setweight(to_tsvector('russian', "title"), 'A')
   || setweight(to_tsvector('russian', coalesce("company", '') || ' ' || immutable_array_to_string("skills", ' ')), 'B')
   || setweight(to_tsvector('russian', "summary" || ' ' || immutable_array_to_string("locations", ' ') || ' ' || coalesce("salary_raw", '')), 'C')`;
-
-/** Как откликнуться. Все пустые и `directMessage: false` — способ в посте не указан. */
-export type VacancyApply = {
-  readonly urls: readonly string[];
-  readonly emails: readonly string[];
-  /** Просят написать автору поста в личку или в комментарии. */
-  readonly directMessage: boolean;
-};
 
 /**
  * Вакансия старой модели: таблица `legacy_vacancies`, бывшая `vacancies`. Её заменит

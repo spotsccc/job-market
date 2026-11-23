@@ -107,6 +107,8 @@ export const geoCities = pgTable(
   },
   (table) => [
     check('geo_cities_population_check', sql`"population" >= 0`),
+    // Цель составного ключа из vacancy_locations: город лежит в стране места.
+    unique('geo_cities_id_country_code_unique').on(table.id, table.countryCode),
     // Города страны от больших к меньшим.
     index('geo_cities_country_code_population_index')
       .on(table.countryCode, table.population.desc())
