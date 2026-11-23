@@ -1234,6 +1234,18 @@
               прошлые коды стран импортом <code>countries.ts</code>. Тест Э2 считал ручное название
               единственным и упал после миграции manual — поправлен.
             </li>
+            <li>
+              23 ноября 2026: Э4 выполнен. S6 поправлен: «Атлантида» в справочнике есть — это
+              ru-название города Atlantis в ЮАР, поэтому ненайденное место в примере — «Нарния»; США
+              в базе и в Intl — «Соединенные Штаты». Отличия от карточки: порядок предков — от узких
+              регионов к широким (по числу стран, затем по коду), иначе Мюнхен получил бы europe
+              раньше eu; <code>parsePlaceKey</code> возвращает <code>PlaceRef</code> — у города в
+              ключе нет страны; partial бывает и по региону, если более точные поля не распознаны.
+              Для теста «закрытый пул» добавлен <code>src/test-db.ts</code> и devDependencies
+              <code>drizzle-orm</code>, <code>pg</code>: общий пул тестов закрывать нельзя. Ручные
+              названия Петербурга дают несколько строк на один город — кандидаты считаются по id
+              города, иначе порог «в 5 раз» сравнил бы город с самим собой.
+            </li>
           </ul>
         </div>
       </section>
@@ -1381,16 +1393,16 @@
           chat: [
             [
               "me",
-              'pnpm --filter @job-market/geo lookup resolve city:Питер country:UK region:EU city:Paris "city:Alexandria country:US" city:Атлантида',
+              'pnpm --filter @job-market/geo lookup resolve city:Питер country:UK region:EU city:Paris "city:Alexandria country:US" city:Нарния',
             ],
             ["tool", "resolvePlaces: один запрос в geo_aliases на всю пачку"],
             [
               "bot",
-              "Питер → city:498817 · Санкт-Петербург, Россия · предки: country:RU, region:cis, region:europe, anywhere\nUK → country:GB · Великобритания\nEU → region:eu · Евросоюз\nParis → city:2988507 · Париж, Франция\nAlexandria, US → partial: country:US · США; город неоднозначен\nАтлантида → unresolved: not_found",
+              "Питер → city:498817 · Санкт-Петербург, Россия · предки: country:RU, region:cis, region:europe, anywhere\nUK → country:GB · Великобритания · предки: region:europe, anywhere\nEU → region:eu · Евросоюз · предки: region:europe, anywhere\nParis → city:2988507 · Париж, Франция · предки: country:FR, region:eu, region:europe, anywhere\nAlexandria, US → partial: country:US · Соединенные Штаты; city «Alexandria» — ambiguous\nНарния → unresolved: not_found",
             ],
           ],
           eff: [],
-          note: "справочник не меняется. В Вирджинии 159 тыс., в Луизиане 48 тыс. — меньше чем в 5 раз (П11)",
+          note: "справочник не меняется. В Вирджинии 159 тыс., в Луизиане 48 тыс. — меньше чем в 5 раз (П11). Предки — от узких регионов к широким",
         },
         {
           id: "S7",
@@ -3640,17 +3652,22 @@
               "regionsOf, ancestors, covers (П5, П13)",
               ["regions.ts"],
             ],
-            ["packages/geo/src/format.ts", "new", "formatPlace (П15)", ["regions.ts"]],
+            [
+              "packages/geo/src/format.ts",
+              "new",
+              "formatPlace (П15); название страны — Intl.DisplayNames, как у генератора",
+              ["regions.ts"],
+            ],
             [
               "packages/geo/src/errors/geo-query-error.ts",
               "new",
-              "GeoQueryError — сбой базы; InvalidPlaceKeyError — рядом, в invalid-place-key-error.ts",
+              "GeoQueryError — сбой базы; InvalidPlaceKeyError — рядом, в invalid-place-key-error.ts; обе — в errors/index.ts",
               [],
             ],
             [
               "packages/geo/src/index.ts",
               "chg",
-              "экспорт чистой части: place, hierarchy, format, normalize",
+              "экспорт чистой части: place, hierarchy, format, normalize, REGIONS, COUNTRY_CODES",
               ["hierarchy.ts", "format.ts"],
             ],
             [
@@ -3677,7 +3694,12 @@
               "CLI resolve и search: печатает место, предков и название; адрес базы — из apps/web/.env.local",
               ["src/server.ts", "src/index.ts"],
             ],
-            ["packages/geo/package.json", "chg", "скрипт lookup", []],
+            [
+              "packages/geo/package.json",
+              "chg",
+              "exports ./server; скрипт lookup; devDependencies drizzle-orm и pg для test-db.ts",
+              [],
+            ],
           ],
           tests: [
             [
@@ -3701,14 +3723,20 @@
             [
               "packages/geo/src/resolve.test.ts",
               "new",
-              "db: входы S6 дают ответы S6; «Paris» без страны → Франция; «Alexandria» без страны → Египет, с US → partial, ambiguous; «worldwide» в поле city → anywhere; «UK» в поле city → unresolved; архивный город не находится; пустая пачка → [] без запроса; закрытый пул → GeoQueryError",
+              "db: входы S6 дают ответы S6 в том же порядке; «Paris» без страны → Франция, с «United States» → Париж в Техасе; «Alexandria» без страны → Египет, с US → partial, ambiguous; «worldwide» в city и «Весь мир» в country → anywhere; «UK» в city и «Paris» в country → unresolved; «спб» → город с RU и названиями; архивный Петербург в транзакции → partial country:RU; пустая пачка и только «anywhere» → без запроса; закрытый пул → GeoQueryError",
               ["resolve.ts"],
             ],
             [
               "packages/geo/src/search.test.ts",
               "new",
-              "db: «бер» → Бермудские о-ва первыми, затем Берлин; «б» → [] без запроса; limit 3 → три места; «peter» → Санкт-Петербург один раз, хотя совпали «peterburg» и «petersburg»",
+              "db: «бер», limit 3 → Бермудские о-ва, Берлин, Берхампур; «eu» → регион eu первым; «б» → [] без запроса; «peter» → Санкт-Петербург один раз, хотя совпали «peterburg» и «petersburg»; закрытый пул → GeoQueryError",
               ["search.ts"],
+            ],
+            [
+              "packages/geo/src/test-db.ts",
+              "new",
+              "closedDb: drizzle с закрытым пулом — для «без запроса» и GeoQueryError в resolve.test и search.test",
+              [],
             ],
           ],
           api: [
@@ -3722,16 +3750,19 @@
             ],
             [
               "ancestors(place, regions = REGIONS): readonly Place[]",
-              "П13; без базы: Place города несёт его страну",
+              "П13; без базы: Place города несёт его страну; регионы — от узких к широким (по числу стран, затем по коду)",
             ],
-            ["covers(outer, inner, regions = REGIONS): boolean", "П13"],
+            ["covers(outer: PlaceRef, inner: Place, regions = REGIONS): boolean", "П13"],
             ["regionsOf(country, regions = REGIONS): readonly RegionCode[]", ""],
-            ["formatPlace(place, locale, city?): string", "П15"],
+            ["formatPlace(place, locale, city?): string", "П15; город без city — только страна"],
             [
               "placeKey(place) / parsePlaceKey(key)",
-              "'city:2950159', 'country:DE', 'region:eu', 'anywhere' — для будущих office_keys и hiring_keys",
+              "'city:2950159', 'country:DE', 'region:eu', 'anywhere' — для будущих office_keys и hiring_keys; parsePlaceKey даёт PlaceRef (у города только id) или InvalidPlaceKeyError; код региона проверяется только по форме — архивный регион в данных не ошибка",
             ],
           ],
+          status: "готов",
+          progress:
+            "23 ноября 2026: lookup resolve и lookup search на локальной базе дают ответы S6 и S7; pnpm check и pnpm test проходят (geo — 81 тест)",
           note: "Функции hierarchy принимают набор регионов аргументом: тесты не зависят от состава в regions.ts, который может меняться. lookup — для проверки руками; первый настоящий потребитель API — план vacancy-model.",
         },
         {

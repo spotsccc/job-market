@@ -5,7 +5,8 @@
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./server": "./src/server.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -14,7 +15,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "NODE_ENV=test node --env-file=../../apps/web/.env.test --test 'src/**/*.test.ts'",
-    "geo:build": "node scripts/build-migration.ts"
+    "geo:build": "node scripts/build-migration.ts",
+    "lookup": "node --env-file=../../apps/web/.env.local scripts/lookup.ts"
   },
   "dependencies": {
     "@job-market/db": "workspace:*",
@@ -27,9 +29,11 @@
     "@job-market/typescript-config": "workspace:*",
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
+    "drizzle-orm": "0.45.4",
     "oxfmt": "0.79.0",
     "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2007",
+    "pg": "8.23.1",
     "typescript": "7.0.2"
   }
 }
