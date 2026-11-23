@@ -25,6 +25,11 @@ export function buildGeonamesSql(data: GeonamesData): string {
     `DROP TABLE ${COUNTRIES_NEXT}`,
     `DROP TABLE ${CITIES_NEXT}`,
   ];
+  return joinStatements(statements);
+}
+
+/** Текст миграции: операторы через разделитель drizzle. */
+export function joinStatements(statements: readonly string[]): string {
   return `${statements.join(`;${STATEMENT_BREAKPOINT}\n`)};\n`;
 }
 
@@ -120,9 +125,10 @@ function aliasesSql(aliases: GeonamesData['aliases']): string[] {
   ];
 }
 
-type SqlValue = string | number | null;
+export type SqlValue = string | number | null;
 
-function inserts(
+/** INSERT по `ROWS_PER_INSERT` строк. */
+export function inserts(
   table: string,
   columns: readonly string[],
   rows: readonly (readonly SqlValue[])[],

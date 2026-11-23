@@ -7,15 +7,14 @@ import { spawn } from 'node:child_process';
 import { createReadStream } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { createInterface } from 'node:readline';
-import type { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-
-import { tryAsync } from '@spotsccc/error-as-value';
 
 import { GEONAMES_DUMP_URL, GEONAMES_FILES, downloadGeonames } from '../src/build/download.ts';
 import { BUILD_PARTS, runBuild } from '../src/build/run.ts';
 import type { BuildPart } from '../src/build/run.ts';
-import type { GeonamesSources } from '../src/build/types.ts';
+import { COUNTRY_CODES } from '../src/generated/countries.ts';
+import { MANUAL_ALIASES } from '../src/manual-aliases.ts';
+import { REGIONS } from '../src/regions.ts';
 
 const packageDir = fileURLToPath(new URL('..', import.meta.url));
 const repoDir = fileURLToPath(new URL('../../..', import.meta.url));
@@ -48,9 +47,11 @@ const summary = await runBuild(part, {
       countryInfo: lines(createReadStream(countryInfo)),
       cities: zipLines(cities, 'cities15000.txt'),
       alternateNames: zipLines(alternateNames, 'alternateNamesV2.txt'),
-    } satisfies GeonamesSources;
+    };
   },
-  previousCountryCodes: await readPreviousCountryCodes(),
+  // Коды на момент запуска: часть geonames перепишет countries.ts уже после импорта.
+  previousCountryCodes: COUNTRY_CODES,
+  manual: { regions: REGIONS, aliases: MANUAL_ALIASES, countryCodes: COUNTRY_CODES },
   generateMigration,
   writeFile: async (path, content) => {
     const written = await writeFile(path, content).catch(
@@ -66,15 +67,14 @@ if (summary instanceof Error) {
   process.exit(1);
 }
 
-// Сгенерированный модуль приводится к формату репозитория, чтобы прошёл format:check.
-await run('pnpm', ['exec', 'oxfmt', countriesPath], packageDir);
+// Сгенерированные модули приводятся к формату репозитория, чтобы прошёл format:check.
+if (summary.files.length > 0) await run('pnpm', ['exec', 'oxfmt', ...summary.files], packageDir);
 
+const size = `${(summary.migrationBytes / 1024).toFixed(0)} КБ`;
 console.log(
   [
-    `Стран: ${String(summary.countries)}.`,
-    `Городов: ${String(summary.cities)} (отброшено ${String(summary.droppedCities)}).`,
-    `Названий: ${String(summary.aliases)}.`,
-    `Записано: ${summary.migrationPath} (${(summary.migrationBytes / 1024 / 1024).toFixed(1)} МБ), ${summary.countriesPath}`,
+    ...summary.report,
+    `Записано: ${[`${summary.migrationPath} (${size})`, ...summary.files].join(', ')}`,
   ].join(' '),
 );
 
@@ -82,18 +82,8 @@ function isBuildPart(value: string | undefined): value is BuildPart {
   return BUILD_PARTS.some((known) => known === value);
 }
 
-/** Коды из прошлого countries.ts. Файл пишет генератор, поэтому формат строк известен. */
-async function readPreviousCountryCodes(): Promise<string[]> {
-  const text = await readFile(countriesPath, 'utf8').catch(() => '');
-  const codes: string[] = [];
-  for (const [, code] of text.matchAll(/^ {2}'([A-Z]{2})',$/gmu)) {
-    if (code !== undefined) codes.push(code);
-  }
-  return codes;
-}
-
 // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- поток Node по природе изменяем
-async function* lines(input: Readable): AsyncGenerator<string> {
+async function* lines(input: NodeJS.ReadableStream): AsyncGenerator<string> {
   yield* createInterface({ input, crlfDelay: Infinity });
 }
 
@@ -111,34 +101,19 @@ async function* zipLines(zip: string, entry: string): AsyncGenerator<string> {
 
 /** Пустая custom-миграция от drizzle-kit: он ведёт журнал и снимок схемы. */
 async function generateMigration(name: string): Promise<Error | string> {
-  const generated = await tryAsync(
-    async () =>
-      run(
-        'pnpm',
-        [
-          '--filter',
-          '@job-market/db',
-          'exec',
-          'drizzle-kit',
-          'generate',
-          '--custom',
-          '--name',
-          name,
-        ],
-        repoDir,
-      ),
-    (cause: unknown) => new Error('drizzle-kit generate --custom failed', { cause }),
-  );
+  const generated = await run(
+    'pnpm',
+    ['--filter', '@job-market/db', 'exec', 'drizzle-kit', 'generate', '--custom', '--name', name],
+    repoDir,
+  ).catch((cause: unknown) => new Error('drizzle-kit generate --custom failed', { cause }));
   if (generated instanceof Error) return generated;
 
-  const journal = await tryAsync(
-    async () => {
-      const text = await readFile(`${migrationsDir}meta/_journal.json`, 'utf8');
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- журнал пишет drizzle-kit
-      return JSON.parse(text) as { entries: { tag: string }[] };
-    },
-    (cause: unknown) => new Error('Reading the drizzle migrations journal failed', { cause }),
-  );
+  const journal = await readFile(`${migrationsDir}meta/_journal.json`, 'utf8')
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- журнал пишет drizzle-kit
+    .then((text) => JSON.parse(text) as { entries: { tag: string }[] })
+    .catch(
+      (cause: unknown) => new Error('Reading the drizzle migrations journal failed', { cause }),
+    );
   if (journal instanceof Error) return journal;
 
   const tag = journal.entries.at(-1)?.tag;

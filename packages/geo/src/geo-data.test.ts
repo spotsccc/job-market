@@ -112,7 +112,9 @@ describe('geo data', () => {
       await client.query(buildGeonamesSql(await snapshot(client, [BERLIN, MUNICH])));
       assert.equal(await archivedAt(client, MUNICH), null);
 
-      const manual = await client.query("SELECT 1 FROM geo_aliases WHERE source = 'manual'");
+      const manual = await client.query(
+        "SELECT 1 FROM geo_aliases WHERE source = 'manual' AND normalized = 'фрг вручную'",
+      );
       assert.equal(manual.rowCount, 1);
     });
   });

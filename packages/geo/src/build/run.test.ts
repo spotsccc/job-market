@@ -32,6 +32,7 @@ function recordingDeps(source: GeonamesSources) {
   const deps: BuildDeps = {
     openSources: () => Promise.resolve(source),
     previousCountryCodes: [],
+    manual: { regions: [], aliases: [], countryCodes: [] },
     generateMigration: (name) => {
       calls.push(`generate ${name}`);
       return Promise.resolve(`/migrations/0005_${name}.sql`);
@@ -68,8 +69,8 @@ describe('runBuild', () => {
     assert.ok(
       written.get('/migrations/0005_geo_geonames.sql')?.includes('MERGE INTO geo_cities') === true,
     );
-    assert.equal(result.countries, 5);
-    assert.equal(result.cities, 4);
+    assert.deepEqual(result.files, ['/geo/src/generated/countries.ts']);
+    assert.equal(result.report[0], 'Стран: 5.');
   });
 
   test('countries.ts lists the codes of the migration, sorted', () => {

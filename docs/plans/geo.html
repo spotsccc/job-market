@@ -1223,6 +1223,17 @@
               страны (П1). Две миграции geonames подряд в одной транзакции применяются (E5,
               проверено на одноразовой базе).
             </li>
+            <li>
+              23 ноября 2026: Э3 выполнен. Решения владельца при наполнении: регионы по M49 берутся
+              целиком, с зависимыми территориями (в europe — AX, FO, GG, GI, IM, JE, SJ); TW,
+              которого нет в M49, — в apac. Отличия от карточки: «UK», «USA», «NYC» и «СПб» в
+              GeoNames уже есть, поэтому ручные названия — только отсутствующие. Проверки SQL
+              (архивация региона, названия GeoNames не трогаются) — в db-тесте
+              <code>manual-data.test</code>, а не в unit: так же, как в Э2. Ручные db-тесты вынесены
+              из <code>geo-data.test</code> в свой файл (лимит oxlint — 10 импортов). CLI берёт
+              прошлые коды стран импортом <code>countries.ts</code>. Тест Э2 считал ручное название
+              единственным и упал после миграции manual — поправлен.
+            </li>
           </ul>
         </div>
       </section>
@@ -2778,7 +2789,7 @@
             ["CHECK", "code ~ '^[a-z][a-z_]*$'", "строчные латинские буквы и _"],
           ],
           ix: [],
-          seed: "миграция manual: регионы из src/regions.ts — состав в разделе 7, открытый вопрос.",
+          seed: "миграция manual: 8 регионов из src/regions.ts — состав в особенностях Э3.",
         },
         geo_region_countries: {
           x: 20,
@@ -2956,7 +2967,7 @@
               "LIKE 'бер%' в автодополнении (П14); нужен pg_trgm",
             ],
           ],
-          seed: "миграция geonames: 63 914 названий (Э0); миграция manual: названия регионов и ручные названия (UK → GB, SPb → Санкт-Петербург).",
+          seed: "миграция geonames: 63 914 названий (Э0); миграция manual: названия регионов и ручные названия (England → GB, SPb → Санкт-Петербург).",
         },
       };
 
@@ -3533,32 +3544,49 @@
             [
               "packages/geo/src/regions.ts",
               "new",
-              "REGIONS: code, nameRu, nameEn, description, countries, aliases — состав по решению владельца (раздел 7)",
+              "REGIONS: code, nameRu, nameEn, description, countries, aliases — состав по решению владельца, в особенностях",
               ["generated/countries.ts"],
             ],
             [
               "packages/geo/src/manual-aliases.ts",
               "new",
-              "ручные названия: UK → GB, SPb → 498817 и другие",
+              "13 ручных названий, которых нет в GeoNames: England, Scotland, Wales и их ru → GB; РФ → RU; KSA → SA; Штаты → US; SPb, Мск, Екб, Нск → города",
               ["generated/countries.ts"],
             ],
             [
               "packages/geo/src/errors/manual-data-error.ts",
               "new",
-              "ManualDataError: регион, код, причина",
+              "ManualDataError: запись (регион или название) и причина; экспорт — в errors/index.ts",
               [],
             ],
             [
               "packages/geo/src/build/manual.ts",
               "new",
-              "проверки П4; SQL: MERGE регионов с archived_at, замена состава, замена названий source = 'manual'",
+              "buildManualSql: проверки П4 и пустого названия; SQL: MERGE регионов с archived_at, замена состава, замена названий source = 'manual'",
               ["regions.ts", "manual-aliases.ts", "normalize.ts", "manual-data-error.ts"],
             ],
-            ["packages/geo/src/build/run.ts", "chg", "часть manual", ["build/manual.ts"]],
             [
-              "packages/db/migrations/*_geo_manual.sql",
+              "packages/geo/src/build/run.ts",
+              "chg",
+              "часть manual; итоги строками report",
+              ["build/manual.ts"],
+            ],
+            [
+              "packages/geo/src/build/sql.ts",
+              "chg",
+              "inserts и joinStatements экспортируются для manual.ts",
+              [],
+            ],
+            [
+              "packages/geo/scripts/build-migration.ts",
+              "chg",
+              "передаёт REGIONS, MANUAL_ALIASES и COUNTRY_CODES; прошлые коды стран — импортом countries.ts, а не разбором текста",
+              ["regions.ts", "manual-aliases.ts"],
+            ],
+            [
+              "packages/db/migrations/0006_geo_manual.sql",
               "new",
-              "пишет pnpm geo:build manual",
+              "пишет pnpm geo:build manual; 9,5 КБ",
               ["build/run.ts"],
             ],
           ],
@@ -3566,17 +3594,26 @@
             [
               "packages/geo/src/build/manual.test.ts",
               "new",
-              "unit: KZZ в cis → ManualDataError, ничего не записано; регион без стран — ошибка; два региона eu — ошибка; SQL не трогает source = 'geonames'; регион, которого больше нет в regions.ts, получает archived_at",
+              "unit: KZZ в cis → ManualDataError «region cis»; регион без стран — «no countries»; два региона eu — «duplicate code»; название страны EN → ошибка; у dach код, «DACH» и «D-A-CH» дают два названия, а не четыре",
               ["build/manual.ts"],
             ],
             [
               "packages/geo/src/geo-data.test.ts",
               "chg",
-              "db: состав регионов в базе = regions.ts; «uk» ведёт на GB, «spb» — на 498817",
-              ["regions.ts"],
+              "db: ручное название Германии ищется по normalized, а не единственным ручным",
+              [],
+            ],
+            [
+              "packages/geo/src/manual-data.test.ts",
+              "new",
+              "db: состав регионов в базе = regions.ts; «spb» → city:498817, «england» → country:GB, «ес» → region:eu; без dach в regions.ts dach получает archived_at и теряет названия, названия GeoNames не меняются; с dach — archived_at снова NULL",
+              ["regions.ts", "build/manual.ts"],
             ],
           ],
-          note: "Состав регионов — решение владельца 23 ноября 2026: eu — 27 стран ЕС; europe — Европа по UN M49 (44 страны и XK) и CY, иначе europe не покрывает eu (П5); cis — AM, AZ, BY, KZ, KG, MD, RU, TJ, TM, UZ, без GE и UA; latam — Латинская Америка и Карибы по M49 и MX; north_america — только US и CA; apac — Восточная, Юго-Восточная и Южная Азия по M49 и Океания, поэтому IR — в apac; mena — Западная Азия по M49 без AM, AZ, GE и CY, и Северная Африка: TR и IL входят; dach — DE, AT, CH. Составы по M49 сверить с таблицей UN при наполнении regions.ts.",
+          status: "готов",
+          progress:
+            "23 ноября 2026: 0006_geo_manual.sql — 8 регионов, 225 стран в составах, 43 ручных названия; применена к локальной и тестовой базе и к свежей базе через drizzle; pnpm check и pnpm test проходят (geo — 39 тестов)",
+          note: "Состав регионов — решение владельца 23 ноября 2026: eu — 27 стран ЕС; europe — Европа по UN M49 (44 страны, 7 зависимых территорий и XK) и CY, иначе europe не покрывает eu (П5); cis — AM, AZ, BY, KZ, KG, MD, RU, TJ, TM, UZ, без GE и UA; latam — Латинская Америка и Карибы по M49 и MX; north_america — только US и CA; apac — Восточная, Юго-Восточная и Южная Азия по M49 и Океания, поэтому IR — в apac; mena — Западная Азия по M49 без AM, AZ, GE и CY, и Северная Африка: TR и IL входят; dach — DE, AT, CH. Составы по M49 сверены с таблицей UN 23 ноября 2026 и включают зависимые территории; TW, которого в M49 нет, — в apac (решение владельца). Размеры: eu 27, europe 53, cis 10, latam 52, north_america 2, apac 57, mena 21, dach 3.",
         },
         {
           id: "Э4",
