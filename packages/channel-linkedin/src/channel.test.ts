@@ -4,12 +4,9 @@ import { createServer } from 'node:http';
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
-import { ApifyApiError } from 'apify-client';
+import { ActorOutputError } from '@job-market/apify';
 
 import { createLinkedinChannel } from './channel.ts';
-import { ActorOutputError } from './errors/actor-output-error.ts';
-import { ActorRunError } from './errors/actor-run-error.ts';
-import { ApifyRequestError } from './errors/apify-request-error.ts';
 
 /** Пример элемента из документации актора, длинные строки укорочены. */
 function postItem(overrides: Record<string, unknown> = {}): Record<string, unknown> {
@@ -49,12 +46,9 @@ function postItem(overrides: Record<string, unknown> = {}): Record<string, unkno
 
 type Recorded = { method: string; pathname: string; authorization: string; body: string };
 
-/** Что отвечает поддельный Apify в текущем тесте. */
+/** Что отвечает поддельный Apify в текущем тесте: элементы датасета. */
 type Scenario = {
-  runStatus: string;
   items: unknown[];
-  /** Статус ответа на запуск актора; не 2xx — ошибка API. */
-  startStatus: number;
 };
 
 const ACTOR_ID = 'harvestapi~linkedin-post-search';
@@ -96,17 +90,11 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   });
 
   if (req.method === 'POST' && pathname === `/v2/actors/${ACTOR_ID}/runs`) {
-    if (scenario.startStatus >= 300) {
-      sendJson(res, scenario.startStatus, {
-        error: { type: 'not-enough-usage-to-run-paid-actor', message: 'Not enough credits' },
-      });
-      return;
-    }
     sendJson(res, 201, { data: run('RUNNING') });
     return;
   }
   if (req.method === 'GET' && pathname === '/v2/actor-runs/run-1') {
-    sendJson(res, 200, { data: run(scenario.runStatus) });
+    sendJson(res, 200, { data: run('SUCCEEDED') });
     return;
   }
   if (req.method === 'GET' && pathname === '/v2/datasets/dataset-1/items') {
@@ -142,7 +130,7 @@ after(() => {
 });
 
 beforeEach(() => {
-  scenario = { runStatus: 'SUCCEEDED', items: [], startStatus: 201 };
+  scenario = { items: [] };
   recorded.length = 0;
 });
 
@@ -248,16 +236,6 @@ describe('createLinkedinChannel', () => {
     assert.deepEqual(posts, []);
   });
 
-  test('returns ActorRunError when the run did not succeed', async () => {
-    scenario.runStatus = 'FAILED';
-
-    const result = await channel().searchPosts(QUERY);
-
-    assert.ok(result instanceof ActorRunError);
-    assert.match(result.message, /run-1 finished with status FAILED/u);
-    assert.ok(!recorded.some((r) => r.pathname.startsWith('/v2/datasets/')));
-  });
-
   test('returns ActorOutputError with the parse failure as cause', async () => {
     scenario.items = [postItem(), postItem({ id: 42 })];
 
@@ -267,16 +245,5 @@ describe('createLinkedinChannel', () => {
     assert.match(result.message, /Item 1 of run run-1/u);
     assert.ok(result.cause instanceof Error);
     assert.equal(result.cause.message, 'Expected id to be a string');
-  });
-
-  test('returns ApifyRequestError with ApifyApiError as cause on API failure', async () => {
-    scenario.startStatus = 402;
-
-    const result = await channel().searchPosts(QUERY);
-
-    assert.ok(result instanceof ApifyRequestError);
-    assert.ok(result.cause instanceof ApifyApiError);
-    assert.equal(result.cause.statusCode, 402);
-    assert.equal(result.cause.type, 'not-enough-usage-to-run-paid-actor');
   });
 });

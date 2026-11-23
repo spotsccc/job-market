@@ -16,9 +16,7 @@
     "test": "node --test 'src/**/*.test.ts'"
   },
   "dependencies": {
-    "@job-market/errors": "workspace:*",
-    "@spotsccc/error-as-value": "0.16.0",
-    "apify-client": "2.26.0"
+    "@job-market/apify": "workspace:*"
   },
   "devDependencies": {
     "@job-market/oxfmt-config": "workspace:*",

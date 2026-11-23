@@ -1,9 +1,6 @@
-import { tryAsync } from '@spotsccc/error-as-value';
-import { ApifyClient } from 'apify-client';
+import { ActorOutputError, createApify } from '@job-market/apify';
+import type { ActorRunError, ApifyRequestError } from '@job-market/apify';
 
-import { ActorOutputError } from './errors/actor-output-error.ts';
-import { ActorRunError } from './errors/actor-run-error.ts';
-import { ApifyRequestError } from './errors/apify-request-error.ts';
 import { parsePost } from './parse-post.ts';
 import type { LinkedinPost } from './parse-post.ts';
 
@@ -83,7 +80,7 @@ function parsePosts(items: readonly unknown[], runId: string): ActorOutputError 
 
 export function createLinkedinChannel(options: LinkedinChannelOptions): LinkedinChannel {
   const actorId = options.actorId ?? LINKEDIN_POST_SEARCH_ACTOR_ID;
-  const client = new ApifyClient({
+  const apify = createApify({
     token: options.token,
     ...(options.baseUrl === undefined ? {} : { baseUrl: options.baseUrl }),
     ...(options.maxRetries === undefined ? {} : { maxRetries: options.maxRetries }),
@@ -94,33 +91,14 @@ export function createLinkedinChannel(options: LinkedinChannelOptions): Linkedin
   ): Promise<LinkedinChannelError | readonly LinkedinPost[]> {
     const input = buildInput(searchOptions);
 
-    const run = await client
-      .actor(actorId)
-      .call(input, {
-        log: null,
-        ...(searchOptions.waitSecs === undefined ? {} : { waitSecs: searchOptions.waitSecs }),
-      })
-      .catch((cause: unknown) => new ApifyRequestError({ actorId, cause }));
+    const run = await apify.runActor(
+      actorId,
+      input,
+      searchOptions.waitSecs === undefined ? {} : { waitSecs: searchOptions.waitSecs },
+    );
     if (run instanceof Error) return run;
 
-    if (run.status !== 'SUCCEEDED') {
-      return new ActorRunError({ runId: run.id, status: run.status });
-    }
-
-    // Итератор сам листает страницы датасета и бросает при ошибке запроса.
-    const items = await tryAsync(
-      async (): Promise<unknown[]> => {
-        const collected: unknown[] = [];
-        for await (const item of client.dataset(run.defaultDatasetId).listItems()) {
-          collected.push(item);
-        }
-        return collected;
-      },
-      (cause: unknown) => new ApifyRequestError({ actorId, cause }),
-    );
-    if (items instanceof Error) return items;
-
-    return parsePosts(items, run.id);
+    return parsePosts(run.items, run.runId);
   }
 
   return { searchPosts };
