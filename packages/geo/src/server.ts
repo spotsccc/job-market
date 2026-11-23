@@ -3,6 +3,8 @@
  * `@job-market/db` и `pg`: чистая часть пакета годится и для клиентского кода.
  */
 export { GeoQueryError } from './errors/index.ts';
+export { locateVacancies } from './locate.ts';
+export type { LocatedPlaces, PlaceWords } from './locate.ts';
 export { resolvePlaces } from './resolve.ts';
 export type { GeoDb, PlaceField, PlaceInput, ResolvedPlace, UnresolvedReason } from './resolve.ts';
 export { searchPlaces } from './search.ts';

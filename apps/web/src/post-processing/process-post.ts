@@ -1,7 +1,8 @@
 import type { NewLegacyPostRow, NewLegacyVacancyRow, PostSource } from '@job-market/db';
 import type { Connector, NotVacancyReason } from '@job-market/db/values';
 import { extract } from '@job-market/extractor';
-import type { ExtractedVacancy } from '@job-market/extractor';
+import type { ExtractedRole, OccupationNode } from '@job-market/extractor';
+import { isAnywhere } from '@job-market/geo';
 import type { PublicationForModel } from '@job-market/publication-text';
 import { generateText, Output } from 'ai';
 
@@ -53,17 +54,39 @@ export type ProcessedPost =
       readonly note: string;
     };
 
-// oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- тип выведен из zod-схемы, массивы в нём изменяемые
-function toVacancy(vacancy: ExtractedVacancy, position: number): Vacancy {
-  const { salary, ...fields } = vacancy;
+/**
+ * Дерево из одного корня: старой модели профессия не нужна, а экстрактор без дерева не
+ * работает. Этот разбор и `legacy_vacancies` удаляются после сверки S6 плана vacancy-extraction.
+ */
+const LEGACY_TREE: readonly OccupationNode[] = [
+  { id: 'root', parentId: null, name: 'Без профессии', description: 'Профессия не нужна.' },
+];
+
+/** Роль экстрактора в строку `legacy_vacancies`: места — словами, навыки — одним списком. */
+function toVacancy(role: ExtractedRole, position: number): Vacancy {
   return {
-    ...fields,
     position,
-    salaryMin: salary?.min ?? null,
-    salaryMax: salary?.max ?? null,
-    salaryCurrency: salary?.currency ?? null,
-    salaryPeriod: salary?.period ?? null,
-    salaryRaw: salary?.raw ?? null,
+    title: role.title,
+    company: role.company,
+    companyUrl: role.companyUrl,
+    hiringParty: role.hiringParty,
+    seniority: role.seniority,
+    workplace: role.workplace,
+    isRemoteFromAnywhere: role.places.some(
+      (place) => place.role === 'hiring' && isAnywhere(place.region ?? ''),
+    ),
+    locations: role.places.map((place) => place.raw),
+    employmentTypes: role.employmentTypes,
+    salaryMin: role.salaryMin,
+    salaryMax: role.salaryMax,
+    salaryCurrency: role.salaryCurrency,
+    salaryPeriod: role.salaryPeriod,
+    salaryRaw: role.salaryRaw,
+    skills: [...role.skills, ...role.niceSkills],
+    relocation: role.relocation,
+    visaSponsorship: role.visaSponsorship,
+    apply: role.apply,
+    summary: role.summary,
   };
 }
 
@@ -125,7 +148,10 @@ export async function processPost(
     return { kind: 'not_vacancy', reason: classification.verdict, note: classification.note };
   }
 
-  const extracted = await extract(toPublication(post), models.extractor);
+  const extracted = await extract(toPublication(post), {
+    occupations: LEGACY_TREE,
+    model: models.extractor,
+  });
   if (extracted instanceof Error) {
     return new Error(`Post ${post.externalId} vacancy extraction failed`, { cause: extracted });
   }
@@ -134,7 +160,6 @@ export async function processPost(
   return {
     kind: 'vacancy',
     post,
-    // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- тип выведен из zod-схемы, массивы в нём изменяемые
-    vacancies: extracted.map((vacancy, position) => toVacancy(vacancy, position)),
+    vacancies: extracted.map((role, position) => toVacancy(role, position)),
   };
 }

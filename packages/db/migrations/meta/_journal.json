@@ -64,6 +64,20 @@
       "when": 1795454445120,
       "tag": "0008_data_model",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795475284330,
+      "tag": "0009_connector_keys",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795475410227,
+      "tag": "0010_occupations_sources",
+      "breakpoints": true
     }
   ]
 }

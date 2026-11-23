@@ -5,19 +5,25 @@
  * `… eval --case geekjobs-10533 --case synthetic-paris` — только эти;
  * `… eval --compare eval/reports/<отчёт>.json` — рядом с долей совпадений печатает разницу с тем отчётом.
  *
- * Ключ — `AI_GATEWAY_API_KEY` из окружения или `apps/web/.env.local`. Отчёт пишется в `eval/reports/`.
+ * Ключ — `AI_GATEWAY_API_KEY` из окружения или `apps/web/.env.local`. Места ответа сводятся к
+ * справочнику локальной базы (`DATABASE_URL` оттуда же) тем же `locateVacancies`, что при переносе.
+ * Отчёт пишется в `eval/reports/`.
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 
+import { getDb } from '@job-market/db';
+import { locateVacancies } from '@job-market/geo/server';
+import type { LocatedPlaces } from '@job-market/geo/server';
 import { z } from 'zod';
 
 import { extract, EXTRACTOR_MODEL_ID } from '../src/index.ts';
-import type { ExtractedVacancy } from '../src/index.ts';
+import type { ExtractedRole, OccupationNode } from '../src/index.ts';
 import { loadCases, loadOccupations } from './cases.ts';
 import type { EvalCase } from './cases.ts';
 import { compareCase } from './compare.ts';
 import type { ActualRole, CaseComparison } from './compare.ts';
+import { coverage, locatedKey } from './located.ts';
 import { summarize } from './summary.ts';
 import type { Summary } from './summary.ts';
 
@@ -27,7 +33,8 @@ const CONCURRENCY = 5;
 type CaseResult = {
   readonly id: string;
   readonly error: string | null;
-  readonly actual: readonly ExtractedVacancy[] | null;
+  readonly actual: readonly ExtractedRole[] | null;
+  readonly located: readonly LocatedPlaces[] | null;
   readonly comparison: CaseComparison | null;
 };
 
@@ -43,22 +50,36 @@ const baseSchema = z.object({
 type Base = z.infer<typeof baseSchema>['summary'];
 
 /** Ответ текущей схемы в полях сравнения. Полей, которых схема не возвращает, здесь нет. */
-function toActualRole(vacancy: ExtractedVacancy): ActualRole {
+function toActualRole(role: ExtractedRole, located: LocatedPlaces): ActualRole {
   return {
-    title: vacancy.title,
-    company: vacancy.company,
-    hiringParty: vacancy.hiringParty,
-    seniority: vacancy.seniority,
-    workplace: vacancy.workplace,
-    isRemoteFromAnywhere: vacancy.isRemoteFromAnywhere,
-    employmentTypes: vacancy.employmentTypes,
-    salaryMin: vacancy.salary?.min ?? null,
-    salaryMax: vacancy.salary?.max ?? null,
-    salaryCurrency: vacancy.salary?.currency ?? null,
-    salaryPeriod: vacancy.salary?.period ?? null,
-    skills: vacancy.skills,
-    relocation: vacancy.relocation,
-    visaSponsorship: vacancy.visaSponsorship,
+    title: role.title,
+    company: role.company,
+    hiringParty: role.hiringParty,
+    occupationId: role.occupationId,
+    suggestedOccupation: role.suggestedOccupation,
+    seniority: role.seniority,
+    experienceYearsMin: role.experienceYearsMin,
+    workplace: role.workplace,
+    isRemoteFromAnywhere: located.isRemoteFromAnywhere,
+    places: located.places.flatMap((place) => {
+      const key = locatedKey(place);
+      return key === null ? [] : [{ role: place.role, key }];
+    }),
+    employmentTypes: role.employmentTypes,
+    salaryMin: role.salaryMin,
+    salaryMax: role.salaryMax,
+    salaryCurrency: role.salaryCurrency,
+    salaryPeriod: role.salaryPeriod,
+    salaryGross: role.salaryGross,
+    equity: role.equity,
+    skills: role.skills,
+    niceSkills: role.niceSkills,
+    languages: role.languages,
+    relocation: role.relocation,
+    visaSponsorship: role.visaSponsorship,
+    responsibilities: role.responsibilities,
+    requirements: role.requirements,
+    benefits: role.benefits,
   };
 }
 
@@ -70,19 +91,40 @@ function errorMessage(error: Readonly<Error>): string {
   return (message.split('\n')[0] ?? '').replaceAll(/\u001B\[\d+m/gu, '');
 }
 
+/** Снимок дерева в виде узлов экстрактора. */
+function toNodes(tree: ReturnType<typeof loadOccupations>): readonly OccupationNode[] {
+  return tree.map((node) => ({
+    id: node.id,
+    parentId: node.parent_id,
+    name: node.name,
+    description: node.description,
+  }));
+}
+
 async function runCase(
   evalCase: EvalCase,
   tree: ReturnType<typeof loadOccupations>,
 ): Promise<CaseResult> {
-  const actual = await extract(evalCase.publication);
-  if (actual instanceof Error) {
-    return { id: evalCase.id, error: errorMessage(actual), actual: null, comparison: null };
-  }
-  const roles = actual.map((vacancy) => toActualRole(vacancy));
+  const failed = (error: Readonly<Error>): CaseResult => ({
+    id: evalCase.id,
+    error: errorMessage(error),
+    actual: null,
+    located: null,
+    comparison: null,
+  });
+  const actual = await extract(evalCase.publication, { occupations: toNodes(tree) });
+  if (actual instanceof Error) return failed(actual);
+  const located = await locateVacancies(getDb(), actual);
+  if (located instanceof Error) return failed(located);
+  const roles = actual.flatMap((role, index) => {
+    const places = located[index];
+    return places === undefined ? [] : [toActualRole(role, places)];
+  });
   return {
     id: evalCase.id,
     error: null,
     actual,
+    located,
     comparison: compareCase(tree, evalCase.expected, roles),
   };
 }
@@ -197,9 +239,18 @@ console.log(
   `Модель ${EXTRACTOR_MODEL_ID} · случаев ${String(cases.length)} · по ${String(CONCURRENCY)} одновременно`,
 );
 const results = await runAll(cases, occupations);
+await getDb().$client.end();
 const summary = summarize(results.map((result) => result.comparison));
+const { innerNodes, unresolvedPlaces } = coverage(
+  results.flatMap((result) => result.actual ?? []),
+  results.flatMap((result) => result.located ?? []),
+  toNodes(occupations),
+);
 printMismatches(results);
 printSummary(summary, base);
+console.log(
+  `\nВакансий на внутренних узлах ${percent(innerNodes)} · мест не распознано ${percent(unresolvedPlaces)}`,
+);
 
 const createdAt = new Date().toISOString();
 const reportsDir = new URL('reports/', import.meta.url);
@@ -207,6 +258,12 @@ mkdirSync(reportsDir, { recursive: true });
 // Время в имени: два прогона подряд в один день — точка отсчёта шума (E1), они не затирают друг друга.
 const name = createdAt.replaceAll(':', '-').replace(/\.\d+Z$/u, '');
 const reportUrl = new URL(`${name}.json`, reportsDir);
-const report = { createdAt, model: EXTRACTOR_MODEL_ID, summary, cases: results };
+const report = {
+  createdAt,
+  model: EXTRACTOR_MODEL_ID,
+  summary,
+  coverage: { innerNodes, unresolvedPlaces },
+  cases: results,
+};
 writeFileSync(reportUrl, `${JSON.stringify(report, null, 2)}\n`);
 console.log(`\nОтчёт ${reportUrl.pathname}`);

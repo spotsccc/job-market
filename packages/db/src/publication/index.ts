@@ -14,3 +14,12 @@ export {
 export type { NewPublicationRow, PublicationRow } from './publication.ts';
 export { sources } from './source.ts';
 export type { NewSourceRow, SourceRow } from './source.ts';
+export { contentHash } from './content-hash.ts';
+export {
+  authorKey,
+  findOriginals,
+  insertPublication,
+  markFailed,
+  upsertAuthors,
+} from './write-publication.ts';
+export type { AuthorToSave, PublicationToSave } from './write-publication.ts';

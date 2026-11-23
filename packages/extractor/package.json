@@ -19,12 +19,12 @@
   "dependencies": {
     "@ai-sdk/gateway": "4.0.151",
     "@job-market/db": "workspace:*",
+    "@job-market/geo": "workspace:*",
     "@job-market/publication-text": "workspace:*",
     "ai": "7.0.178",
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@job-market/geo": "workspace:*",
     "@job-market/oxfmt-config": "workspace:*",
     "@job-market/oxlint-config": "workspace:*",
     "@job-market/typescript-config": "workspace:*",

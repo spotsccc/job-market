@@ -2,18 +2,17 @@ import { sql } from 'drizzle-orm';
 import { check, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 /**
- * Площадка, на которой публикуют вакансии: `telegram`, `linkedin`. Справочник: строки
- * заводит миграция, потом — админка. Площадку с источниками или авторами удалить нельзя.
+ * Платформа — бренд источника, под которым его знают люди: `geekjobs` у 14 каналов GeekJobs,
+ * `linkedin`. Это не сервис: каналы GeekJobs живут в Telegram, но их платформа — geekjobs, а
+ * как их читать, говорит коннектор. Справочник: строки заводит миграция, потом — админка.
+ * Платформу с источниками удалить нельзя.
  */
 export const platforms = pgTable(
   'platforms',
   {
-    /**
-     * Короткое имя латиницей: `telegram`, `linkedin`. Читаемый id не требует JOIN, чтобы
-     * понять площадку публикации, и сразу годится в ключ публикации. Не меняется.
-     */
+    /** Короткое имя латиницей: `geekjobs`, `linkedin`. Читаемый id не требует JOIN. Не меняется. */
     id: text().primaryKey(),
-    /** Название для людей: «Telegram», «LinkedIn». */
+    /** Название для людей: «GeekJobs», «LinkedIn». */
     name: text().notNull(),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },

@@ -7,6 +7,15 @@ import * as schema from './schema.ts';
 export type Database = NodePgDatabase<typeof schema> & { $client: Pool };
 
 /**
+ * Клиент или транзакция: функции записи принимают то, что им дали, а границу транзакции
+ * держит вызывающий.
+ */
+export type DbExecutor = Pick<
+  Database,
+  'select' | 'selectDistinct' | 'insert' | 'update' | 'delete' | 'query'
+>;
+
+/**
  * Один пул на процесс. Лежит в `globalThis`, чтобы горячая перезагрузка `next dev`
  * не плодила пулы при каждом пересборе модуля.
  */

@@ -15,12 +15,12 @@ import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 
 import { authors } from './author.ts';
 import { sources } from './source.ts';
-import { NOT_VACANCY_REASONS, PUBLICATION_STATUSES } from './values.ts';
+import { CONNECTORS, NOT_VACANCY_REASONS, PUBLICATION_STATUSES } from './values.ts';
 
 /**
  * Одна публикация на площадке: сообщение Telegram-канала, пост LinkedIn. Вакансия или
  * пост LinkedIn по ссылке — не отдельная публикация, а раздел в конце `content` той, где
- * ссылка. Публикация определяется `(platform, externalId)` и записывается один раз, какой
+ * ссылка. Публикация определяется `(connector, externalId)` и записывается один раз, какой
  * бы источник её ни нашёл. Пишут сюда и публикации, которые не вакансии.
  */
 export const publications = pgTable(
@@ -30,12 +30,13 @@ export const publications = pgTable(
     /** Источник, который нашёл публикацию первым; другие источники её уже не записывают. */
     sourceId: uuid().notNull(),
     /**
-     * Площадка публикации — копия площадки источника: UNIQUE и ON CONFLICT видят только
-     * столбцы своей таблицы, а ключ публикации — по площадке. Составной ключ на
-     * `sources (id, platform)` не даёт копии разойтись с источником.
+     * Коннектор публикации — копия коннектора источника: UNIQUE и ON CONFLICT видят только
+     * столбцы своей таблицы, а id публикации уникален внутри коннектора. Составной ключ на
+     * `sources (id, connector)` не даёт копии разойтись с источником. Платформы здесь нет —
+     * она у источника.
      */
-    platform: text().notNull(),
-    /** Id публикации на площадке: `forhr/9120` у Telegram, id поста у LinkedIn. */
+    connector: text({ enum: CONNECTORS }).notNull(),
+    /** Id публикации внутри коннектора: `forhr/9120` у open-telegram, id поста у linkedin. */
     externalId: text().notNull(),
     url: text().notNull(),
     /**
@@ -76,15 +77,15 @@ export const publications = pgTable(
   (table) => [
     // Источник с публикациями не удаляется, только выключается.
     foreignKey({
-      columns: [table.sourceId, table.platform],
-      foreignColumns: [sources.id, sources.platform],
+      columns: [table.sourceId, table.connector],
+      foreignColumns: [sources.id, sources.connector],
     }).onDelete('restrict'),
-    // Автор — с площадки публикации; при `author_id` NULL ключ не проверяется (MATCH SIMPLE).
+    // Автор — из коннектора публикации; при `author_id` NULL ключ не проверяется (MATCH SIMPLE).
     foreignKey({
-      columns: [table.authorId, table.platform],
-      foreignColumns: [authors.id, authors.platform],
+      columns: [table.authorId, table.connector],
+      foreignColumns: [authors.id, authors.connector],
     }).onDelete('restrict'),
-    unique('publications_platform_external_id_unique').on(table.platform, table.externalId),
+    unique('publications_connector_external_id_unique').on(table.connector, table.externalId),
     check(
       'publications_status_check',
       sql`"status" IN ('pending', 'processing', 'vacancy', 'not_vacancy', 'duplicate', 'empty', 'failed')`,

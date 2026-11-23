@@ -1,4 +1,12 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "extends": ["./node_modules/@job-market/oxlint-config/next.json"]
+  "extends": ["./node_modules/@job-market/oxlint-config/next.json"],
+  "overrides": [
+    {
+      "files": ["src/transfer/**/*.ts", "scripts/**/*.ts"],
+      "rules": {
+        "typescript/prefer-readonly-parameter-types": "off"
+      }
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 import { ActorOutputError } from '@job-market/apify';
 import type { ActorRunError, Apify, ApifyRequestError } from '@job-market/apify';
-import { and, authors, db, eq, inArray, publications, sources } from '@job-market/db';
+import { and, authors, db, eq, inArray, publications } from '@job-market/db';
 import { log } from '@job-market/logger';
 import { z } from 'zod';
 
@@ -73,15 +73,8 @@ async function postsFromDb(ids: readonly string[]): Promise<Map<string, string |
       authorUrl: authors.url,
     })
     .from(publications)
-    .innerJoin(sources, eq(sources.id, publications.sourceId))
     .leftJoin(authors, eq(authors.id, publications.authorId))
-    .where(
-      and(
-        eq(sources.connector, 'linkedin'),
-        eq(publications.platform, 'linkedin'),
-        inArray(publications.externalId, [...ids]),
-      ),
-    );
+    .where(and(eq(publications.connector, 'linkedin'), inArray(publications.externalId, [...ids])));
 
   return new Map(
     rows.map((row) => [

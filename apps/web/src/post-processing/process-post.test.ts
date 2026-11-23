@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
-import type { ExtractedVacancy } from '@job-market/extractor';
+import type { ModelVacancy } from '@job-market/extractor';
 import { MockLanguageModelV4 } from 'ai/test';
 
 import type { PostProcessingModels } from './models.ts';
@@ -39,23 +39,38 @@ function post(overrides: Partial<Post> = {}): Post {
   };
 }
 
-function extractedVacancy(overrides: Partial<ExtractedVacancy> = {}): ExtractedVacancy {
+function extractedVacancy(overrides: Partial<ModelVacancy> = {}): ModelVacancy {
   return {
     title: 'Senior Frontend Engineer',
     company: 'Acme',
     companyUrl: null,
     hiringParty: 'employer',
+    occupation: 'root',
+    suggestedOccupation: null,
     seniority: 'senior',
+    experienceYearsMin: null,
     workplace: 'onsite',
-    isRemoteFromAnywhere: false,
-    locations: ['Berlin'],
+    places: [{ role: 'office', city: 'Berlin', country: null, region: null, raw: 'Berlin' }],
     employmentTypes: ['full_time'],
-    salary: { min: 80_000, max: 95_000, currency: 'EUR', period: 'year', raw: '€80–95k' },
+    salary: {
+      min: 80_000,
+      max: 95_000,
+      currency: 'EUR',
+      period: 'year',
+      raw: '€80–95k',
+      gross: null,
+    },
+    equity: null,
     skills: ['React', 'TypeScript'],
+    niceSkills: [],
+    languages: [],
     relocation: null,
     visaSponsorship: null,
     apply: { urls: ['https://acme.dev/jobs'], emails: [], directMessage: false },
     summary: 'Фронтенд продукта Acme.',
+    responsibilities: [],
+    requirements: [],
+    benefits: [],
     ...overrides,
   };
 }

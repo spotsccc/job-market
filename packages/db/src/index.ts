@@ -1,10 +1,11 @@
 export { db, getDb } from './client.ts';
-export type { Database } from './client.ts';
+export type { Database, DbExecutor } from './client.ts';
 export * from './schema.ts';
 // Операторы запросов, чтобы приложению не нужна была своя зависимость от drizzle-orm.
 export {
   and,
   asc,
+  count,
   desc,
   eq,
   gte,
@@ -12,6 +13,7 @@ export {
   inArray,
   isNotNull,
   isNull,
+  like,
   ne,
   not,
   or,

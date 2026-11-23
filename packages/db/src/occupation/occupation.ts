@@ -2,6 +2,8 @@ import { sql } from 'drizzle-orm';
 import { check, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 
+import type { Database } from '../client.ts';
+
 /**
  * Профессия — узел дерева профессий: домен («IT»), направление («Разработка») или
  * конкретная профессия («Frontend»). Дерево — список смежности: у узла ссылка на
@@ -45,3 +47,22 @@ export const occupations = pgTable(
 
 export type OccupationRow = typeof occupations.$inferSelect;
 export type NewOccupationRow = typeof occupations.$inferInsert;
+
+/** Узел дерева профессий, как его видят экстрактор и перенос. */
+export type Occupation = Pick<
+  OccupationRow,
+  'id' | 'parentId' | 'name' | 'description' | 'archivedAt'
+>;
+
+/** Всё дерево профессий одним запросом, вместе с архивными узлами: узлов десятки. */
+export async function listOccupations(db: Pick<Database, 'select'>): Promise<Occupation[]> {
+  return db
+    .select({
+      id: occupations.id,
+      parentId: occupations.parentId,
+      name: occupations.name,
+      description: occupations.description,
+      archivedAt: occupations.archivedAt,
+    })
+    .from(occupations);
+}

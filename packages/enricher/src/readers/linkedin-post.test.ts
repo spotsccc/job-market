@@ -36,7 +36,7 @@ before(async () => {
   const [author] = await db
     .insert(authors)
     .values({
-      platform: 'linkedin',
+      connector: 'linkedin',
       externalId: `in/${KEY}`,
       name: 'Jane Doe',
       url: 'https://www.linkedin.com/in/jane-doe',
@@ -45,7 +45,7 @@ before(async () => {
   assert.ok(source !== undefined && author !== undefined);
   await db.insert(publications).values({
     sourceId: source.id,
-    platform: 'linkedin',
+    connector: 'linkedin',
     externalId: KNOWN_ID,
     url: `https://www.linkedin.com/feed/update/urn:li:activity:${KNOWN_ID}`,
     content:

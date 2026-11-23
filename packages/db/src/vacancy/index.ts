@@ -8,6 +8,8 @@ export {
   vacanciesRelations,
   vacancyLocationsRelations,
 } from './relations.ts';
+export { saveVacancies } from './save-vacancies.ts';
+export type { PlaceToSave, VacancyToSave } from './save-vacancies.ts';
 export { vacancyLocations } from './vacancy-location.ts';
 export type { NewVacancyLocationRow, VacancyLocationRow } from './vacancy-location.ts';
 export { vacancies } from './vacancy.ts';

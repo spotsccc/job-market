@@ -16,11 +16,13 @@
     "test": "NODE_ENV=test node --env-file=.env.test --test 'src/**/*.test.ts'",
     "db:up": "docker compose -f ../../compose.yaml up -d --wait postgres",
     "db:migrate": "node scripts/migrate.ts",
-    "db:migrate:test": "NODE_ENV=test node scripts/migrate.ts"
+    "db:migrate:test": "NODE_ENV=test node scripts/migrate.ts",
+    "vacancies:transfer": "node scripts/transfer-posts.ts"
   },
   "dependencies": {
     "@ai-sdk/gateway": "4.0.151",
     "@job-market/db": "workspace:*",
+    "@job-market/enricher": "workspace:*",
     "@job-market/extractor": "workspace:*",
     "@job-market/geo": "workspace:*",
     "@job-market/logger": "workspace:*",

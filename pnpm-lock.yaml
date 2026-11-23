@@ -29,6 +29,9 @@ importers:
       '@job-market/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@job-market/enricher':
+        specifier: workspace:*
+        version: link:../../packages/enricher
       '@job-market/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
@@ -339,6 +342,9 @@ importers:
       '@job-market/db':
         specifier: workspace:*
         version: link:../db
+      '@job-market/geo':
+        specifier: workspace:*
+        version: link:../geo
       '@job-market/publication-text':
         specifier: workspace:*
         version: link:../publication-text
@@ -349,9 +355,6 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
     devDependencies:
-      '@job-market/geo':
-        specifier: workspace:*
-        version: link:../geo
       '@job-market/oxfmt-config':
         specifier: workspace:*
         version: link:../oxfmt-config

@@ -30,8 +30,8 @@ export const sources = pgTable(
     /** Id источника внутри коннектора: юзернейм канала, имя поискового запроса LinkedIn. */
     key: text().notNull(),
     /**
-     * Площадка, на которой публикует источник. Пара `(id, platform)` уникальна, чтобы
-     * публикация ссылалась на неё и не могла получить чужую площадку.
+     * Бренд источника: `geekjobs` у каналов GeekJobs, `linkedin`. Площадка публикации — здесь,
+     * у источника: в публикации её нет.
      */
     platform: text()
       .notNull()
@@ -65,8 +65,8 @@ export const sources = pgTable(
   },
   (table) => [
     unique('sources_connector_key_unique').on(table.connector, table.key),
-    // Цель составного ключа из publications.
-    unique('sources_id_platform_unique').on(table.id, table.platform),
+    // Цель составного ключа из publications: публикация — из коннектора своего источника.
+    unique('sources_id_connector_unique').on(table.id, table.connector),
     // Чаще тика расписания опросить нельзя.
     check('sources_interval_minutes_check', sql`"interval_minutes" >= 15`),
     check('sources_consecutive_failures_check', sql`"consecutive_failures" >= 0`),

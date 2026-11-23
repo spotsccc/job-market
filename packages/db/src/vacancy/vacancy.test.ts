@@ -55,18 +55,23 @@ describe('new data model', () => {
     await removeTestRows();
     const [source] = await db
       .insert(sources)
-      .values({ connector: 'open-telegram', key: KEY, platform: 'telegram', name: 'forhr' })
+      .values({ connector: 'open-telegram', key: KEY, platform: 'geekjobs', name: 'forhr' })
       .returning({ id: sources.id });
     const [author] = await db
       .insert(authors)
-      .values({ platform: 'telegram', externalId: KEY, name: 'forhr', url: 'https://t.me/forhr' })
+      .values({
+        connector: 'open-telegram',
+        externalId: KEY,
+        name: 'forhr',
+        url: 'https://t.me/forhr',
+      })
       .returning({ id: authors.id });
     assert.ok(source !== undefined && author !== undefined);
     const [publication] = await db
       .insert(publications)
       .values({
         sourceId: source.id,
-        platform: 'telegram',
+        connector: 'open-telegram',
         externalId: EXTERNAL_ID,
         url: 'https://t.me/forhr/9120',
         content: 'Ищем Senior Frontend',
