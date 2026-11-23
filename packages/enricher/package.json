@@ -1,0 +1,36 @@
+{
+  "name": "@job-market/enricher",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./test-utils": "./src/test-utils.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "NODE_ENV=test node --env-file=../../apps/web/.env.test --test 'src/**/*.test.ts'",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "dependencies": {
+    "@job-market/apify": "workspace:*",
+    "@job-market/db": "workspace:*",
+    "@job-market/logger": "workspace:*",
+    "@spotsccc/error-as-value": "0.16.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@job-market/oxfmt-config": "workspace:*",
+    "@job-market/oxlint-config": "workspace:*",
+    "@job-market/typescript-config": "workspace:*",
+    "@types/node": "24.19.2",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
+    "oxlint-tsgolint": "7.0.2007",
+    "typescript": "7.0.2"
+  }
+}
