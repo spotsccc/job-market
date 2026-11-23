@@ -281,6 +281,43 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
+  packages/geo:
+    dependencies:
+      '@job-market/db':
+        specifier: workspace:*
+        version: link:../db
+      '@job-market/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@spotsccc/error-as-value':
+        specifier: 0.16.0
+        version: 0.16.0
+    devDependencies:
+      '@job-market/oxfmt-config':
+        specifier: workspace:*
+        version: link:../oxfmt-config
+      '@job-market/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      '@job-market/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.19.2
+        version: 24.19.2
+      oxfmt:
+        specifier: 0.79.0
+        version: 0.79.0
+      oxlint:
+        specifier: 1.94.0
+        version: 1.94.0(oxlint-tsgolint@7.0.2007)
+      oxlint-tsgolint:
+        specifier: 7.0.2007
+        version: 7.0.2007
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
   packages/http-client:
     dependencies:
       '@job-market/errors':

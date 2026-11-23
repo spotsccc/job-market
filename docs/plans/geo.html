@@ -1188,6 +1188,16 @@
               переносе: CY добавлен в europe, чтобы europe покрывал eu (по M49 Кипр — Западная
               Азия); IR по тому же правилу попадает в apac, а не в mena.
             </li>
+            <li>
+              23 ноября 2026: Э1 выполнен. Отличия от карточки: экспорт <code>./server</code>
+              перенесён в Э4 — до него файла нет; имена ограничений и индексов заданы явно, потому
+              что drizzle назвал бы уникальность <code>geo_countries_geonameId_unique</code>, а два
+              индекса по <code>normalized</code> получили бы одно имя. Тест
+              <code>tables.test</code> удалён по решению владельца: он проверял, что Postgres
+              соблюдает CHECK, UNIQUE и FK, то есть библиотеку, а не наш код. Схема и миграция
+              сверяются шагом CI «Migrations match the schema», наличие pg_trgm — применением
+              миграции в CI (E1). Правило — в AGENTS.md, раздел «Тесты».
+            </li>
           </ul>
         </div>
       </section>
@@ -1467,7 +1477,7 @@
           id: "E1",
           sit: "В базе нет расширения pg_trgm",
           beh: "миграция таблиц начинается с CREATE EXTENSION IF NOT EXISTS pg_trgm: drizzle-kit расширения не создаёт, строка дописывается в сгенерированный SQL до коммита",
-          test: "tables.test (db) в CI",
+          test: "применение миграций в CI",
           st: "Э1",
         },
         {
@@ -3319,7 +3329,7 @@
             [
               "packages/geo/package.json",
               "new",
-              "@job-market/geo: exports . и ./server; скрипты check-types, lint, format, test; зависимости @job-market/db, @job-market/errors, @spotsccc/error-as-value",
+              "@job-market/geo: exports . (./server добавит Э4 вместе с src/server.ts); скрипты check-types, lint, format, test; зависимости @job-market/db, @job-market/errors, @spotsccc/error-as-value",
               [],
             ],
             [
@@ -3339,13 +3349,9 @@
               "unit: «Санкт-Петербург» → «санкт петербург»; «München» → «munchen»; «Straße» → «strasse»; «Ёлки» → «елки»; «Буэнос-Айрес» и «Буэнос Аирес» совпадают; «  St. Petersburg » → «st petersburg»; «---» → пустая строка",
               ["normalize.ts"],
             ],
-            [
-              "packages/geo/src/tables.test.ts",
-              "new",
-              "db: название сразу у страны и города и название без места — отказ CHECK; регион с source geonames — отказ; дубль (source, normalized, место) — отказ, тот же с другим source — проходит; город с неизвестной страной — отказ FK; EXPLAIN для LIKE 'бер%' идёт по gin-индексу",
-              ["geo/geo.ts"],
-            ],
           ],
+          status: "готов",
+          progress: "23 ноября 2026: миграция 0004_geo.sql применена к локальной и тестовой базе; pnpm check и pnpm test проходят (geo — 8 unit-тестов); не закоммичен",
           note: "Миграция только добавляет таблицы. drizzle-kit не создаёт расширения, поэтому CREATE EXTENSION дописывается в сгенерированный SQL до коммита. Индекс — index().using('gin', t.normalized.op('gin_trgm_ops')), уникальность — unique().on(…).nullsNotDistinct(). Скрипт test пакета — NODE_ENV=test node --env-file=../../apps/web/.env.test --test 'src/**/*.test.ts', как в apps/web.",
         },
         {

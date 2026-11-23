@@ -4,3 +4,4 @@
  * строк и связями рядом; новый домен — строка экспорта ниже.
  */
 export * from './vacancy/index.ts';
+export * from './geo/index.ts';
