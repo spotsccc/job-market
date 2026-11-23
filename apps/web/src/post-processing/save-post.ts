@@ -1,4 +1,4 @@
-import { and, db, gte, eq, posts, sql, vacancies } from '@job-market/db';
+import { and, db, gte, eq, legacyPosts, sql, legacyVacancies } from '@job-market/db';
 
 import type { Post, Vacancy } from './process-post.ts';
 
@@ -28,24 +28,23 @@ export async function savePostWithVacancies(
     return db.transaction(async (tx) => {
       const { source: _source, externalId: _externalId, ...postFields } = post;
       const [row] = await tx
-        .insert(posts)
+        .insert(legacyPosts)
         .values(post)
         .onConflictDoUpdate({
-          target: [posts.source, posts.externalId],
+          target: [legacyPosts.source, legacyPosts.externalId],
           set: excludedColumns(Object.keys(postFields)),
         })
-        .returning({ id: posts.id });
+        .returning({ id: legacyPosts.id });
       if (row === undefined) throw new Error('Upsert returned no post row');
 
-      await tx
-        .delete(vacancies)
-        .where(and(eq(vacancies.postId, row.id), gte(vacancies.position, postVacancies.length)));
+      const removedRole = gte(legacyVacancies.position, postVacancies.length);
+      await tx.delete(legacyVacancies).where(and(eq(legacyVacancies.postId, row.id), removedRole));
 
       const [first] = postVacancies;
       if (first !== undefined) {
         const { position: _position, ...vacancyFields } = first;
         await tx
-          .insert(vacancies)
+          .insert(legacyVacancies)
           .values(
             postVacancies.map((vacancy) => ({
               ...vacancy,
@@ -56,7 +55,7 @@ export async function savePostWithVacancies(
             })),
           )
           .onConflictDoUpdate({
-            target: [vacancies.postId, vacancies.position],
+            target: [legacyVacancies.postId, legacyVacancies.position],
             set: { ...excludedColumns(Object.keys(vacancyFields)), updatedAt: sql`now()` },
           });
       }

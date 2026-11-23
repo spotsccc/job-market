@@ -1,5 +1,5 @@
 import type { EmploymentType, Seniority, Workplace } from '@job-market/core';
-import { db, desc, eq, posts, sql, vacancies } from '@job-market/db';
+import { db, desc, eq, legacyPosts, sql, legacyVacancies } from '@job-market/db';
 import type { VacancyApply } from '@job-market/db';
 
 /** Сколько вакансий показываем за раз. */
@@ -36,25 +36,25 @@ export type VacancySearchResult = {
 
 /** Столбцы выдачи: поля вакансии, пост и сколько всего строк подошло под запрос. */
 const RESULT_COLUMNS = {
-  id: vacancies.id,
-  title: vacancies.title,
-  company: vacancies.company,
-  seniority: vacancies.seniority,
-  workplace: vacancies.workplace,
-  isRemoteFromAnywhere: vacancies.isRemoteFromAnywhere,
-  locations: vacancies.locations,
-  employmentTypes: vacancies.employmentTypes,
-  salaryRaw: vacancies.salaryRaw,
-  skills: vacancies.skills,
-  relocation: vacancies.relocation,
-  visaSponsorship: vacancies.visaSponsorship,
-  apply: vacancies.apply,
-  summary: vacancies.summary,
-  postUrl: posts.url,
+  id: legacyVacancies.id,
+  title: legacyVacancies.title,
+  company: legacyVacancies.company,
+  seniority: legacyVacancies.seniority,
+  workplace: legacyVacancies.workplace,
+  isRemoteFromAnywhere: legacyVacancies.isRemoteFromAnywhere,
+  locations: legacyVacancies.locations,
+  employmentTypes: legacyVacancies.employmentTypes,
+  salaryRaw: legacyVacancies.salaryRaw,
+  skills: legacyVacancies.skills,
+  relocation: legacyVacancies.relocation,
+  visaSponsorship: legacyVacancies.visaSponsorship,
+  apply: legacyVacancies.apply,
+  summary: legacyVacancies.summary,
+  postUrl: legacyPosts.url,
   // Строкой ISO прямо из базы: на страницу дата уходит строкой.
-  postedAt: sql<string>`to_json(${posts.postedAt}) #>> '{}'`,
-  authorName: posts.authorName,
-  authorUrl: posts.authorUrl,
+  postedAt: sql<string>`to_json(${legacyPosts.postedAt}) #>> '{}'`,
+  authorName: legacyPosts.authorName,
+  authorUrl: legacyPosts.authorUrl,
   total: sql<number>`count(*) over ()`.mapWith(Number),
 };
 
@@ -75,13 +75,13 @@ export async function searchVacancies(
   async function query(): Promise<VacancySearchResult> {
     const rows = await db
       .select(RESULT_COLUMNS)
-      .from(vacancies)
-      .innerJoin(posts, eq(vacancies.postId, posts.id))
-      .where(text === '' ? undefined : sql`${vacancies.searchVector} @@ ${tsQuery}`)
+      .from(legacyVacancies)
+      .innerJoin(legacyPosts, eq(legacyVacancies.postId, legacyPosts.id))
+      .where(text === '' ? undefined : sql`${legacyVacancies.searchVector} @@ ${tsQuery}`)
       .orderBy(
-        ...(text === '' ? [] : [desc(sql`ts_rank(${vacancies.searchVector}, ${tsQuery})`)]),
-        desc(posts.postedAt),
-        vacancies.position,
+        ...(text === '' ? [] : [desc(sql`ts_rank(${legacyVacancies.searchVector}, ${tsQuery})`)]),
+        desc(legacyPosts.postedAt),
+        legacyVacancies.position,
       )
       .limit(limit);
     return {

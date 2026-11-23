@@ -50,6 +50,13 @@
       "when": 1795452857342,
       "tag": "0006_geo_manual",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795454243422,
+      "tag": "0007_legacy_tables",
+      "breakpoints": true
     }
   ]
 }

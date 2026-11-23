@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, describe, test } from 'node:test';
 
-import { db, getDb, inArray, posts } from '@job-market/db';
+import { db, getDb, inArray, legacyPosts } from '@job-market/db';
 
 import { savePostWithVacancies } from '../../post-processing/index.ts';
 import type { Post, Vacancy } from '../../post-processing/index.ts';
@@ -61,7 +61,7 @@ async function search(query: string): Promise<string[]> {
 }
 
 async function cleanup(): Promise<void> {
-  await db.delete(posts).where(inArray(posts.externalId, [...EXTERNAL_IDS]));
+  await db.delete(legacyPosts).where(inArray(legacyPosts.externalId, [...EXTERNAL_IDS]));
 }
 
 describe('searchVacancies', () => {

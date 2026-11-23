@@ -1,10 +1,10 @@
 import type { PostSource } from '@job-market/core';
-import type { NewPostRow } from '@job-market/db';
+import type { NewLegacyPostRow } from '@job-market/db';
 
 /** Поля поста, которые видит модель. */
 type PromptPost = Readonly<
   Pick<
-    NewPostRow,
+    NewLegacyPostRow,
     'source' | 'authorName' | 'authorHeadline' | 'authorUrl' | 'postedAt' | 'content'
   >
 >;

@@ -1,5 +1,5 @@
 import type { NotVacancyReason } from '@job-market/core';
-import type { NewPostRow, NewVacancyRow } from '@job-market/db';
+import type { NewLegacyPostRow, NewLegacyVacancyRow } from '@job-market/db';
 import { generateText, Output } from 'ai';
 
 import type { ExtractedVacancy } from '../vacancy/vacancy.ts';
@@ -21,14 +21,16 @@ const MODEL_CALL_TIMEOUT_MS = 60_000;
 const REASONING = 'none';
 import type { PostClassification } from './schemas.ts';
 
-/** Пост в виде строки таблицы `posts`, без полей, которые заполняет база. */
-export type Post = Readonly<Omit<NewPostRow, 'id' | 'createdAt'>>;
+/** Пост в виде строки таблицы `legacy_posts`, без полей, которые заполняет база. */
+export type Post = Readonly<Omit<NewLegacyPostRow, 'id' | 'createdAt'>>;
 
 type ReadonlyArray_<T> = T extends (infer E)[] ? readonly E[] : T;
-type VacancyFields = Required<Omit<NewVacancyRow, 'id' | 'postId' | 'createdAt' | 'updatedAt'>>;
+type VacancyFields = Required<
+  Omit<NewLegacyVacancyRow, 'id' | 'postId' | 'createdAt' | 'updatedAt'>
+>;
 
 /**
- * Вакансия в виде строки таблицы `vacancies`, все поля заданы: `postId` проставляет
+ * Вакансия в виде строки таблицы `legacy_vacancies`, все поля заданы: `postId` проставляет
  * тот, кто сохраняет пост. Массивы только для чтения — при вставке их копируют.
  */
 export type Vacancy = {

@@ -20,7 +20,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { posts } from './post.ts';
+import { legacyPosts } from './legacy-post.ts';
 
 /** Тип Postgres `tsvector`: в TypeScript — строка, читать его приложению не нужно. */
 const tsvector = customType<{ data: string }>({
@@ -47,18 +47,21 @@ export type VacancyApply = {
 };
 
 /**
+ * Вакансия старой модели: таблица `legacy_vacancies`, бывшая `vacancies`. Её заменит
+ * новая `vacancies` из `../vacancy`: строки перенесёт план 1 после нового экстрактора.
+ *
  * Вакансия, извлечённая моделью из поста. В одном посте бывает несколько ролей:
  * `position` — номер роли в ответе модели, повторный разбор поста перезаписывает
  * строки по `(postId, position)`. Перечисления — `text` со списком значений из
  * `@job-market/core`, а не `pgEnum`: новое значение не требует миграции.
  */
-export const vacancies = pgTable(
-  'vacancies',
+export const legacyVacancies = pgTable(
+  'legacy_vacancies',
   {
     id: uuid().primaryKey().defaultRandom(),
     postId: uuid()
       .notNull()
-      .references(() => posts.id, { onDelete: 'cascade' }),
+      .references(() => legacyPosts.id, { onDelete: 'cascade' }),
     position: integer().notNull(),
     title: text().notNull(),
     company: text(),
@@ -104,26 +107,26 @@ export const vacancies = pgTable(
     searchVector: tsvector().notNull().generatedAlwaysAs(searchVector),
   },
   (table) => [
-    unique('vacancies_post_id_position_unique').on(table.postId, table.position),
+    unique('legacy_vacancies_post_id_position_unique').on(table.postId, table.position),
     index().on(table.createdAt),
     index().using('gin', table.searchVector),
   ],
 );
 
-export type VacancyRow = typeof vacancies.$inferSelect;
-export type NewVacancyRow = typeof vacancies.$inferInsert;
+export type LegacyVacancyRow = typeof legacyVacancies.$inferSelect;
+export type NewLegacyVacancyRow = typeof legacyVacancies.$inferInsert;
 
-/** `db.query.vacancies.findMany({ with: { post: true } })`. */
-export const vacanciesRelations = relations(vacancies, ({ one }) => ({
-  post: one(posts, { fields: [vacancies.postId], references: [posts.id] }),
+/** `db.query.legacyVacancies.findMany({ with: { post: true } })`. */
+export const legacyVacanciesRelations = relations(legacyVacancies, ({ one }) => ({
+  post: one(legacyPosts, { fields: [legacyVacancies.postId], references: [legacyPosts.id] }),
 }));
 
 /**
- * Обратная сторона: `db.query.posts.findMany({ with: { vacancies: true } })`. Лежит
- * здесь, а не в `post.ts`: пост не знает о вакансиях, связь объявляет тот, кто на
+ * Обратная сторона: `db.query.legacyPosts.findMany({ with: { vacancies: true } })`. Лежит
+ * здесь, а не в `legacy-post.ts`: пост не знает о вакансиях, связь объявляет тот, кто на
  * него ссылается. Drizzle сливает все `relations()` одной таблицы, так что другие
  * домены добавляют свои связи поста так же.
  */
-export const postVacanciesRelations = relations(posts, ({ many }) => ({
-  vacancies: many(vacancies),
+export const legacyPostVacanciesRelations = relations(legacyPosts, ({ many }) => ({
+  vacancies: many(legacyVacancies),
 }));

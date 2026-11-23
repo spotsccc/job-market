@@ -2,13 +2,17 @@ import { POST_SOURCES } from '@job-market/core';
 import { pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 
 /**
- * Пост из источника (LinkedIn и другие), из которого извлекаем вакансии. Таблица
- * общая для всех источников: `source` говорит, откуда пост, `externalId` — его id
- * в источнике. Повторный сбор того же поста — upsert по `(source, externalId)`.
- * Связи поста с вакансиями — в `vacancy.ts`, рядом с таблицей, которая на него ссылается.
+ * Пост старой модели: таблица `legacy_posts`, бывшая `posts`. Строки, id и связь с
+ * вакансиями остались прежними — сменились только имена таблицы, индексов и
+ * ограничений. Её заменит `publications`: строки перенесёт план 1 после нового
+ * экстрактора вакансий, тогда же таблица будет удалена.
+ *
+ * Таблица общая для всех источников: `source` говорит, откуда пост, `externalId` —
+ * его id в источнике. Повторный сбор того же поста — upsert по `(source, externalId)`.
+ * Связи поста с вакансиями — в `legacy-vacancy.ts`, рядом с таблицей, которая на него ссылается.
  */
-export const posts = pgTable(
-  'posts',
+export const legacyPosts = pgTable(
+  'legacy_posts',
   {
     id: uuid().primaryKey().defaultRandom(),
     source: text({ enum: POST_SOURCES }).notNull(),
@@ -27,8 +31,8 @@ export const posts = pgTable(
     authorHandle: text(),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [unique('posts_source_external_id_unique').on(table.source, table.externalId)],
+  (table) => [unique('legacy_posts_source_external_id_unique').on(table.source, table.externalId)],
 );
 
-export type PostRow = typeof posts.$inferSelect;
-export type NewPostRow = typeof posts.$inferInsert;
+export type LegacyPostRow = typeof legacyPosts.$inferSelect;
+export type NewLegacyPostRow = typeof legacyPosts.$inferInsert;

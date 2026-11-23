@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, beforeEach, describe, test } from 'node:test';
 
-import { asc, db, eq, getDb, posts, vacancies } from '@job-market/db';
+import { asc, db, eq, getDb, legacyPosts, legacyVacancies } from '@job-market/db';
 
 import type { Post, Vacancy } from './process-post.ts';
 import { savePostWithVacancies } from './save-post.ts';
@@ -52,26 +52,29 @@ function vacancy(position: number, overrides: Partial<Vacancy> = {}): Vacancy {
 }
 
 async function savedRows(): Promise<{
-  readonly postRows: readonly (typeof posts.$inferSelect)[];
-  readonly vacancyRows: readonly (typeof vacancies.$inferSelect)[];
+  readonly postRows: readonly (typeof legacyPosts.$inferSelect)[];
+  readonly vacancyRows: readonly (typeof legacyVacancies.$inferSelect)[];
 }> {
-  const postRows = await db.select().from(posts).where(eq(posts.externalId, EXTERNAL_ID));
+  const postRows = await db
+    .select()
+    .from(legacyPosts)
+    .where(eq(legacyPosts.externalId, EXTERNAL_ID));
   const postId = postRows[0]?.id ?? '00000000-0000-0000-0000-000000000000';
   const vacancyRows = await db
     .select()
-    .from(vacancies)
-    .where(eq(vacancies.postId, postId))
-    .orderBy(asc(vacancies.position));
+    .from(legacyVacancies)
+    .where(eq(legacyVacancies.postId, postId))
+    .orderBy(asc(legacyVacancies.position));
   return { postRows, vacancyRows };
 }
 
 describe('savePostWithVacancies', () => {
   beforeEach(async () => {
-    await db.delete(posts).where(eq(posts.externalId, EXTERNAL_ID));
+    await db.delete(legacyPosts).where(eq(legacyPosts.externalId, EXTERNAL_ID));
   });
 
   after(async () => {
-    await db.delete(posts).where(eq(posts.externalId, EXTERNAL_ID));
+    await db.delete(legacyPosts).where(eq(legacyPosts.externalId, EXTERNAL_ID));
     await getDb().$client.end();
   });
 
