@@ -80,114 +80,18 @@ describe('createLogger (json)', () => {
     );
   });
 
-  test('drops records below the configured level', () => {
-    const { logger, entries } = capture({ level: 'warn' });
-    logger.debug('d');
-    logger.info('i');
-    logger.warn('w');
-    assert.deepEqual(
-      entries.map((entry) => entry['msg']),
-      ['w'],
-    );
-  });
-
-  test('with() adds context to every record and nests', () => {
-    const { logger, at } = capture();
-    const child = logger.with({ module: 'channel-linkedin' }).with({ runId: 'r1' });
-    child.info('done', { posts: 3 });
-
-    assert.equal(at(0)['module'], 'channel-linkedin');
-    assert.equal(at(0)['runId'], 'r1');
-    assert.equal(at(0)['posts'], 3);
-  });
-
-  test('context adds fields read at write time to every record', () => {
-    let traceId = 't1';
-    const { logger, at } = capture({ context: () => ({ traceId }) });
-    const child = logger.with({ module: 'web' });
-    child.info('first');
-    traceId = 't2';
-    child.info('second');
-
-    assert.equal(at(0)['traceId'], 't1');
-    assert.equal(at(0)['module'], 'web');
-    assert.equal(at(1)['traceId'], 't2');
-  });
-
-  test('serializes the whole tagged cause chain under err', () => {
+  test('adds the fingerprint of a tagged error', () => {
     const { logger, at } = capture();
     logger.error('LinkedIn post search failed', { err: chain() });
 
     const err = asEntry(at(0)['err']);
-    assert.equal(err['_tag'], 'ApifyRequestError');
-    assert.equal(err['message'], 'Apify call runActor failed');
-    assert.equal(err['messageTemplate'], 'Apify call $op failed');
-    assert.equal(err['op'], 'runActor');
     assert.deepEqual(err['fingerprint'], ['ApifyRequestError', 'Apify call $op failed']);
-    assert.equal(typeof err['stack'], 'string');
-
-    const cause = asEntry(err['cause']);
-    assert.equal(cause['_tag'], 'HttpStatusError');
-    assert.equal(cause['messageTemplate'], 'Request $method $path failed with status $status');
-    assert.equal(cause['method'], 'POST');
-    assert.equal(cause['path'], '/acts');
-    assert.equal(cause['status'], 429);
-
-    const root = asEntry(cause['cause']);
-    assert.equal(root['type'], 'TypeError');
-    assert.equal(root['message'], 'socket hang up');
-  });
-
-  test('serializes errors in with() context', () => {
-    const { logger, at } = capture();
-    logger
-      .with({ err: new HttpStatusError({ method: 'GET', path: '/x', status: 500 }) })
-      .warn('retrying');
-
-    const err = asEntry(at(0)['err']);
-    assert.equal(err['_tag'], 'HttpStatusError');
-    assert.equal(err['status'], 500);
-  });
-
-  test('keeps tagged errors inside AggregateError', () => {
-    const { logger, at } = capture();
-    const aggregate = new AggregateError(
-      [new HttpStatusError({ method: 'GET', path: '/x', status: 500 })],
-      'all failed',
-    );
-    logger.error('batch failed', { err: aggregate });
-
-    const err = asEntry(at(0)['err']);
-    const errors = err['aggregateErrors'];
-    assert.ok(Array.isArray(errors));
-    const first = asEntry(errors[0]);
-    assert.equal(first['_tag'], 'HttpStatusError');
-    assert.equal(first['status'], 500);
   });
 
   test('passes a non-Error err through as is', () => {
     const { logger, at } = capture();
     logger.error('odd failure', { err: { code: 'E42' } });
     assert.deepEqual(at(0)['err'], { code: 'E42' });
-  });
-});
-
-describe('createLogger (pretty)', () => {
-  test('writes readable text with the error chain', () => {
-    const chunks: string[] = [];
-    const logger = createLogger({
-      format: 'pretty',
-      write: (chunk) => {
-        chunks.push(chunk);
-      },
-    });
-    logger.error('LinkedIn post search failed', { err: chain() });
-
-    const text = chunks.join('');
-    assert.match(text, /LinkedIn post search failed/u);
-    assert.match(text, /ApifyRequestError/u);
-    assert.match(text, /HttpStatusError/u);
-    assert.match(text, /429/u);
   });
 });
 

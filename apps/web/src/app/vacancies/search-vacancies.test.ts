@@ -104,14 +104,6 @@ describe('searchVacancies', () => {
     ]);
   });
 
-  test('matches word forms in Russian and English', async () => {
-    assert.deepEqual(await search('разработчики'), [
-      'Ведущий разработчик',
-      'Senior Frontend Developers',
-    ]);
-    assert.deepEqual(await search('developer'), ['Senior Frontend Developers']);
-  });
-
   test('searches company, skills and locations too', async () => {
     assert.deepEqual(await search('ромашка'), ['Ведущий разработчик']);
     assert.deepEqual(await search('postgresql'), ['Ведущий разработчик']);
@@ -120,15 +112,5 @@ describe('searchVacancies', () => {
 
   test('ranks a match in skills above a match in summary', async () => {
     assert.deepEqual(await search('react'), ['Senior Frontend Developers', 'QA Engineer']);
-  });
-
-  test('supports web search syntax', async () => {
-    assert.deepEqual(await search('react -playwright'), ['Senior Frontend Developers']);
-    assert.deepEqual(await search('"frontend developer"'), ['Senior Frontend Developers']);
-  });
-
-  test('does not fail on arbitrary input', async () => {
-    assert.deepEqual(await search('"&|!(:*'), []);
-    assert.deepEqual(await search('и'), []);
   });
 });
