@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
   // Входящие запросы пишет наш логгер (src/request-logging.ts), встроенный лог Next дублировал бы их.
   logging: { incomingRequests: false },
   experimental: { optimizePackageImports: ['@mantine/core', '@mantine/hooks'] },
-  transpilePackages: ['@job-market/core', '@job-market/db', '@job-market/logger'],
+  transpilePackages: [
+    '@job-market/core',
+    '@job-market/db',
+    '@job-market/errors',
+    '@job-market/geo',
+    '@job-market/logger',
+  ],
 };
 
 export default nextConfig;

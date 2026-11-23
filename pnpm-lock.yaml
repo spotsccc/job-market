@@ -32,6 +32,9 @@ importers:
       '@job-market/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@job-market/geo':
+        specifier: workspace:*
+        version: link:../../packages/geo
       '@job-market/logger':
         specifier: workspace:*
         version: link:../../packages/logger
