@@ -1,11 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "if [ \"$VERCEL_ENV\" = production ]; then NODE_ENV=production pnpm db:migrate; fi && pnpm build",
-  "schedules": {
-    "telegram-crawl": {
-      "schedule": "0 5 * * *",
-      "path": "/api/cron/telegram",
-      "requestMethod": "GET"
-    }
-  }
+  "buildCommand": "if [ \"$VERCEL_ENV\" = production ]; then NODE_ENV=production pnpm db:migrate; fi && pnpm build"
 }

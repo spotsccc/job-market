@@ -9,7 +9,6 @@ export default function HomePage(): ReactNode {
       </Title>
       <Stack gap="xs">
         <Anchor href="/vacancies">Вакансии</Anchor>
-        <Anchor href="/linkedin">Поиск постов LinkedIn</Anchor>
       </Stack>
     </Container>
   );
