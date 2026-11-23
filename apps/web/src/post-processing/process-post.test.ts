@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
+import type { ExtractedVacancy } from '@job-market/extractor';
 import { MockLanguageModelV4 } from 'ai/test';
 
-import type { ExtractedVacancy } from '../vacancy/vacancy.ts';
 import type { PostProcessingModels } from './models.ts';
 import { processPost } from './process-post.ts';
 import type { Post } from './process-post.ts';
@@ -107,9 +107,8 @@ describe('processPost', () => {
     // Пост доходит до обеих моделей.
     assert.match(JSON.stringify(mocks.classifier.doGenerateCalls[0]?.prompt), /Senior Frontend/u);
     assert.match(JSON.stringify(mocks.extractor.doGenerateCalls[0]?.prompt), /Senior Frontend/u);
-    // Рассуждения выключены у обеих моделей: их токены оплачиваются как выход.
+    // Рассуждения выключены: их токены оплачиваются как выход. У экстрактора — в его тесте.
     assert.equal(mocks.classifier.doGenerateCalls[0]?.reasoning, 'none');
-    assert.equal(mocks.extractor.doGenerateCalls[0]?.reasoning, 'none');
   });
 
   test('tells the models which source the post came from', async () => {
@@ -175,7 +174,7 @@ describe('processPost', () => {
     const result = await processPost(post(), mocks.models);
 
     assert.ok(result instanceof Error);
-    assert.match(result.message, /vacancy extraction failed/u);
+    assert.match(result.message, /Post 7330988768578920448 vacancy extraction failed/u);
   });
 
   test('returns an error when the model provider fails', async () => {

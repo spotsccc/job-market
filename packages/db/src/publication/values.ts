@@ -9,6 +9,7 @@
  * коннектор говорит, как читать, а площадка — где опубликовано.
  */
 export const CONNECTORS = ['open-telegram', 'linkedin'] as const;
+export type Connector = (typeof CONNECTORS)[number];
 
 /**
  * Где публикация в разборе:

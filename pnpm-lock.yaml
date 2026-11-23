@@ -29,12 +29,18 @@ importers:
       '@job-market/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@job-market/extractor':
+        specifier: workspace:*
+        version: link:../../packages/extractor
       '@job-market/geo':
         specifier: workspace:*
         version: link:../../packages/geo
       '@job-market/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@job-market/publication-text':
+        specifier: workspace:*
+        version: link:../../packages/publication-text
       '@mantine/core':
         specifier: 9.8.2
         version: 9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -325,6 +331,49 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
+  packages/extractor:
+    dependencies:
+      '@ai-sdk/gateway':
+        specifier: 4.0.151
+        version: 4.0.151(zod@4.6.7)
+      '@job-market/db':
+        specifier: workspace:*
+        version: link:../db
+      '@job-market/publication-text':
+        specifier: workspace:*
+        version: link:../publication-text
+      ai:
+        specifier: 7.0.178
+        version: 7.0.178(zod@4.6.7)
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@job-market/oxfmt-config':
+        specifier: workspace:*
+        version: link:../oxfmt-config
+      '@job-market/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      '@job-market/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.19.2
+        version: 24.19.2
+      oxfmt:
+        specifier: 0.79.0
+        version: 0.79.0
+      oxlint:
+        specifier: 1.94.0
+        version: 1.94.0(oxlint-tsgolint@7.0.2007)
+      oxlint-tsgolint:
+        specifier: 7.0.2007
+        version: 7.0.2007
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
   packages/geo:
     dependencies:
       '@job-market/db':
@@ -462,6 +511,37 @@ importers:
 
   packages/oxlint-config:
     devDependencies:
+      '@types/node':
+        specifier: 24.19.2
+        version: 24.19.2
+      oxfmt:
+        specifier: 0.79.0
+        version: 0.79.0
+      oxlint:
+        specifier: 1.94.0
+        version: 1.94.0(oxlint-tsgolint@7.0.2007)
+      oxlint-tsgolint:
+        specifier: 7.0.2007
+        version: 7.0.2007
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
+  packages/publication-text:
+    dependencies:
+      '@job-market/db':
+        specifier: workspace:*
+        version: link:../db
+    devDependencies:
+      '@job-market/oxfmt-config':
+        specifier: workspace:*
+        version: link:../oxfmt-config
+      '@job-market/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      '@job-market/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/node':
         specifier: 24.19.2
         version: 24.19.2

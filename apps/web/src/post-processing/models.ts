@@ -1,4 +1,5 @@
 import { gateway } from '@ai-sdk/gateway';
+import { defaultExtractorModel } from '@job-market/extractor';
 import type { LanguageModel } from 'ai';
 
 /**
@@ -7,8 +8,6 @@ import type { LanguageModel } from 'ai';
  * https://ai-gateway.vercel.sh/v1/models.
  */
 export const CLASSIFIER_MODEL_ID = 'anthropic/claude-haiku-5.5';
-/** Haiku и для извлечения: в 20 раз дешевле Sonnet 5.5 при тех же structured outputs. */
-export const EXTRACTOR_MODEL_ID = 'anthropic/claude-haiku-5.5';
 
 export type PostProcessingModels = {
   /** Решает, вакансия ли пост: дешёвая быстрая модель, её зовём на каждый пост. */
@@ -19,5 +18,5 @@ export type PostProcessingModels = {
 
 export const defaultPostProcessingModels: PostProcessingModels = {
   classifier: gateway(CLASSIFIER_MODEL_ID),
-  extractor: gateway(EXTRACTOR_MODEL_ID),
+  extractor: defaultExtractorModel,
 };

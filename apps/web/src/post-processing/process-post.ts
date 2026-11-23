@@ -1,12 +1,14 @@
-import type { NewLegacyPostRow, NewLegacyVacancyRow } from '@job-market/db';
-import type { NotVacancyReason } from '@job-market/db/values';
+import type { NewLegacyPostRow, NewLegacyVacancyRow, PostSource } from '@job-market/db';
+import type { Connector, NotVacancyReason } from '@job-market/db/values';
+import { extract } from '@job-market/extractor';
+import type { ExtractedVacancy } from '@job-market/extractor';
+import type { PublicationForModel } from '@job-market/publication-text';
 import { generateText, Output } from 'ai';
 
-import type { ExtractedVacancy } from '../vacancy/vacancy.ts';
 import { defaultPostProcessingModels } from './models.ts';
 import type { PostProcessingModels } from './models.ts';
-import { CLASSIFIER_INSTRUCTIONS, EXTRACTOR_INSTRUCTIONS, formatPost } from './prompts.ts';
-import { postClassificationSchema, vacancyExtractionSchema } from './schemas.ts';
+import { CLASSIFIER_INSTRUCTIONS, formatPost } from './prompts.ts';
+import { postClassificationSchema } from './schemas.ts';
 
 /**
  * Предел одного вызова модели вместе с повторами AI SDK. Без него зависший вызов
@@ -15,8 +17,8 @@ import { postClassificationSchema, vacancyExtractionSchema } from './schemas.ts'
 const MODEL_CALL_TIMEOUT_MS = 60_000;
 
 /**
- * Без рассуждений: классификация и извлечение полей — простые задачи, а токены
- * рассуждений оплачиваются как выход и в разы удорожают вызов.
+ * Без рассуждений: классификация — простая задача, а токены рассуждений оплачиваются
+ * как выход и в разы удорожают вызов.
  */
 const REASONING = 'none';
 import type { PostClassification } from './schemas.ts';
@@ -83,23 +85,24 @@ async function classify(
   return result.output;
 }
 
-async function extract(
-  post: Post,
-  models: PostProcessingModels,
-): Promise<Error | readonly Vacancy[]> {
-  const result = await generateText({
-    model: models.extractor,
-    abortSignal: AbortSignal.timeout(MODEL_CALL_TIMEOUT_MS),
-    reasoning: REASONING,
-    instructions: EXTRACTOR_INSTRUCTIONS,
-    prompt: formatPost(post),
-    output: Output.object({ schema: vacancyExtractionSchema }),
-  }).catch(
-    (cause: unknown) => new Error(`Post ${post.externalId} vacancy extraction failed`, { cause }),
-  );
-  if (result instanceof Error) return result;
-  // Позиция роли — её индекс в ответе модели: по `(postId, position)` повторный разбор перезаписывает строки.
-  return result.output.vacancies.map(toVacancy);
+/** Коннектор публикации по источнику поста `legacy_posts`. */
+const CONNECTOR_BY_SOURCE: Readonly<Record<PostSource, Connector>> = {
+  telegram: 'open-telegram',
+  linkedin: 'linkedin',
+};
+
+/** Пост `legacy_posts` в виде публикации, которую видит экстрактор. */
+function toPublication(post: Post): PublicationForModel {
+  return {
+    connector: CONNECTOR_BY_SOURCE[post.source],
+    content: post.content,
+    postedAt: post.postedAt,
+    author: {
+      name: post.authorName,
+      url: post.authorUrl,
+      headline: post.authorHeadline ?? null,
+    },
+  };
 }
 
 /**
@@ -122,8 +125,16 @@ export async function processPost(
     return { kind: 'not_vacancy', reason: classification.verdict, note: classification.note };
   }
 
-  const vacancies = await extract(post, models);
-  if (vacancies instanceof Error) return vacancies;
+  const extracted = await extract(toPublication(post), models.extractor);
+  if (extracted instanceof Error) {
+    return new Error(`Post ${post.externalId} vacancy extraction failed`, { cause: extracted });
+  }
 
-  return { kind: 'vacancy', post, vacancies };
+  // Позиция роли — её индекс в ответе модели: по `(postId, position)` повторный разбор перезаписывает строки.
+  return {
+    kind: 'vacancy',
+    post,
+    // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- тип выведен из zod-схемы, массивы в нём изменяемые
+    vacancies: extracted.map((vacancy, position) => toVacancy(vacancy, position)),
+  };
 }

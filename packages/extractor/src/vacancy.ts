@@ -93,6 +93,14 @@ export const extractedVacancySchema = z
     },
   );
 
+/** Ответ экстрактора: роли публикации в порядке текста. */
+export const vacancyExtractionSchema = z.strictObject({
+  vacancies: z
+    .array(extractedVacancySchema)
+    .refine((vacancies: readonly unknown[]) => vacancies.length > 0, 'Вакансия без единой роли')
+    .describe('Каждая отдельная роль из поста — отдельный элемент'),
+});
+
 export type Salary = z.infer<typeof salarySchema>;
 export type ApplyChannels = z.infer<typeof applySchema>;
 export type ExtractedVacancy = z.infer<typeof extractedVacancySchema>;
