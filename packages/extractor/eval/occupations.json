@@ -1,0 +1,320 @@
+[
+  {
+    "id": "root",
+    "parent_id": null,
+    "name": "Без профессии",
+    "description": "Корень дерева профессий. Выбирай его, только если текст не позволяет отнести роль ни к одной ветке дерева."
+  },
+  {
+    "id": "it",
+    "parent_id": "root",
+    "name": "IT",
+    "description": "Создание и эксплуатация софта и IT-инфраструктуры: разработка, данные, тестирование, безопасность, администрирование. Продакт-менеджер IT-продукта — не сюда, а в product; разработчик игр — в gamedev."
+  },
+  {
+    "id": "engineering",
+    "parent_id": "it",
+    "name": "Разработка",
+    "description": "Разработчики, которые пишут код продукта. Выбирай этот узел, если роль — разработчик, но направление (frontend, backend, мобильная и т. д.) из текста не понять."
+  },
+  {
+    "id": "frontend",
+    "parent_id": "engineering",
+    "name": "Frontend",
+    "description": "Интерфейсы в браузере: React, Vue, Angular, Next.js, вёрстка, UI Engineer, Design Engineer. Fullstack с React и Node — не сюда, а в fullstack; мобильные приложения на React Native — в mobile."
+  },
+  {
+    "id": "backend",
+    "parent_id": "engineering",
+    "name": "Backend",
+    "description": "Серверная часть: API, сервисы, базы данных на Go, Java, Python, Node.js, PHP, C#, Rust и т. п. Если роль требует и серверную часть, и интерфейс — fullstack; если инфраструктуру и деплой — devops."
+  },
+  {
+    "id": "fullstack",
+    "parent_id": "engineering",
+    "name": "Fullstack и Product Engineer",
+    "description": "Роль ведёт фичи целиком — и интерфейс, и серверную часть: Fullstack, Product Engineer, Founding Engineer, «React + Node». Если интерфейс упомянут только как плюс — backend."
+  },
+  {
+    "id": "mobile",
+    "parent_id": "engineering",
+    "name": "Мобильная разработка",
+    "description": "Приложения для iOS и Android: Swift, Kotlin, Flutter, React Native. Мобильная игра на Unity — не сюда, а в game_developer."
+  },
+  {
+    "id": "ai_engineer",
+    "parent_id": "engineering",
+    "name": "AI Engineer",
+    "description": "Продукты поверх готовых моделей: LLM-приложения, агенты, RAG, промпты, интеграции с API моделей, Applied AI Engineer. Обучение и исследование моделей — не сюда, а в ml_engineer."
+  },
+  {
+    "id": "devops",
+    "parent_id": "engineering",
+    "name": "DevOps и SRE",
+    "description": "Инфраструктура, CI/CD, облака, Kubernetes, надёжность и мониторинг: DevOps, SRE, Platform Engineer. Администрирование офисной IT-инфраструктуры и поддержка пользователей — в it_operations."
+  },
+  {
+    "id": "embedded",
+    "parent_id": "engineering",
+    "name": "Embedded и системная разработка",
+    "description": "Код для железа и низкоуровневые системы: микроконтроллеры, прошивки, драйверы, C/C++ под устройства. Backend на C++ — в backend."
+  },
+  {
+    "id": "solutions_engineer",
+    "parent_id": "engineering",
+    "name": "Solutions и Forward Deployed Engineer",
+    "description": "Инженер, который пишет код рядом с клиентом: внедрения, интеграции под заказчика, пресейл с технической частью, Forward Deployed Engineer, Solutions Engineer. Продажи без кода — в sales."
+  },
+  {
+    "id": "devrel",
+    "parent_id": "engineering",
+    "name": "DevRel",
+    "description": "Работа с сообществом разработчиков: Developer Advocate, DevRel, Developer Experience, техническое писательство о продукте для разработчиков."
+  },
+  {
+    "id": "qa",
+    "parent_id": "it",
+    "name": "Тестирование",
+    "description": "Проверка качества софта: ручное тестирование, автотесты, QA Engineer, SDET, QA Lead."
+  },
+  {
+    "id": "data",
+    "parent_id": "it",
+    "name": "Данные и ML",
+    "description": "Работа с данными и моделями машинного обучения. Выбирай этот узел, если роль про данные, но направление из текста не понять."
+  },
+  {
+    "id": "data_analyst",
+    "parent_id": "data",
+    "name": "Аналитика данных",
+    "description": "Анализ данных для решений: Data Analyst, продуктовый аналитик, BI-аналитик, маркетинговый аналитик, SQL и дашборды. Системный и бизнес-аналитик требований — не сюда, а в systems_analyst."
+  },
+  {
+    "id": "data_engineer",
+    "parent_id": "data",
+    "name": "Data Engineer",
+    "description": "Пайплайны и хранилища данных: ETL, DWH, Spark, Airflow, dbt, Analytics Engineer."
+  },
+  {
+    "id": "ml_engineer",
+    "parent_id": "data",
+    "name": "ML и Data Science",
+    "description": "Обучение и исследование моделей: Data Scientist, ML Engineer, MLOps, Computer Vision, NLP, Research Scientist. Продукт поверх готовых LLM без обучения моделей — в ai_engineer."
+  },
+  {
+    "id": "systems_analyst",
+    "parent_id": "it",
+    "name": "Системный и бизнес-анализ",
+    "description": "Требования к IT-системам: системный аналитик, бизнес-аналитик, постановка задач разработке, BPMN, UML. Анализ данных и метрик — в data_analyst."
+  },
+  {
+    "id": "security",
+    "parent_id": "it",
+    "name": "Информационная безопасность",
+    "description": "Защита систем и данных: AppSec, пентест, SOC, специалист по ИБ, DevSecOps."
+  },
+  {
+    "id": "it_operations",
+    "parent_id": "it",
+    "name": "Администрирование и поддержка",
+    "description": "Эксплуатация IT в компании: системный администратор, сетевой инженер, техническая поддержка пользователей и второй линии, 1С-администратор. Поддержка клиентов продукта без технической работы — в customer_success."
+  },
+  {
+    "id": "engineering_manager",
+    "parent_id": "it",
+    "name": "Руководство разработкой",
+    "description": "Руководит инженерами, а не пишет код как основную работу: Engineering Manager, Head of Engineering, CTO, руководитель отдела разработки. Tech Lead, который пишет код, — по направлению кода, например backend."
+  },
+  {
+    "id": "product",
+    "parent_id": "root",
+    "name": "Продукт и проекты",
+    "description": "Управление продуктами и проектами. Выбирай этот узел, если роль управленческая про продукт или проект, но какая именно — не понять."
+  },
+  {
+    "id": "product_manager",
+    "parent_id": "product",
+    "name": "Продакт-менеджер",
+    "description": "Отвечает за то, что и зачем делает продукт: Product Manager, Product Owner, CPO, Growth PM."
+  },
+  {
+    "id": "project_manager",
+    "parent_id": "product",
+    "name": "Проджект-менеджер",
+    "description": "Отвечает за сроки и процесс: Project Manager, Delivery Manager, Scrum Master, Agile Coach, руководитель проектов. Продюсер игры — в game_producer; продюсер онлайн-курсов и медиа — в media_producer."
+  },
+  {
+    "id": "design",
+    "parent_id": "root",
+    "name": "Дизайн",
+    "description": "Визуальный и продуктовый дизайн. Выбирай этот узел, если роль — дизайнер, но направление не понять. Художник игр — в game_artist; Design Engineer, который пишет код, — в frontend."
+  },
+  {
+    "id": "product_designer",
+    "parent_id": "design",
+    "name": "Продуктовый и UX/UI-дизайн",
+    "description": "Интерфейсы сайтов и приложений: Product Designer, UX/UI, UX-исследователь, веб-дизайнер интерфейсов."
+  },
+  {
+    "id": "graphic_designer",
+    "parent_id": "design",
+    "name": "Графический дизайн",
+    "description": "Айдентика, брендинг, иллюстрации, баннеры, креативы, презентации, полиграфия. Креативы с анимацией и видео — в motion_designer."
+  },
+  {
+    "id": "motion_designer",
+    "parent_id": "design",
+    "name": "Моушн и 3D",
+    "description": "Анимация, моушн-дизайн, 3D-визуализация вне игр. 3D-артист для игры — в game_artist; монтаж видео — в video."
+  },
+  {
+    "id": "gamedev",
+    "parent_id": "root",
+    "name": "Геймдев",
+    "description": "Создание игр. Выбирай этот узел, если роль в игровой компании, но направление не понять. Маркетинг игр — в marketing; аналитика игр — в data_analyst."
+  },
+  {
+    "id": "game_developer",
+    "parent_id": "gamedev",
+    "name": "Разработчик игр",
+    "description": "Программирование игр и игровых движков: Unity, Unreal, Godot, игровой клиент и сервер. Backend для неигрового продукта — в backend."
+  },
+  {
+    "id": "game_designer",
+    "parent_id": "gamedev",
+    "name": "Геймдизайнер",
+    "description": "Механики, баланс, уровни, нарратив и экономика игры: Game Designer, Level Designer, Narrative Designer."
+  },
+  {
+    "id": "game_artist",
+    "parent_id": "gamedev",
+    "name": "Художник игр",
+    "description": "Арт для игр: 2D и 3D-художники, концепт-арт, аниматоры персонажей, VFX, UI-художник игры."
+  },
+  {
+    "id": "game_producer",
+    "parent_id": "gamedev",
+    "name": "Продюсер игр",
+    "description": "Ведёт игру или игровую фичу как продукт и проект: Game Producer, продюсер, менеджер игрового проекта, LiveOps."
+  },
+  {
+    "id": "marketing",
+    "parent_id": "root",
+    "name": "Маркетинг и PR",
+    "description": "Продвижение и коммуникации. Выбирай этот узел для маркетолога без ясного направления, руководителя маркетинга, CMO, бренд- и продуктового маркетинга."
+  },
+  {
+    "id": "performance_marketing",
+    "parent_id": "marketing",
+    "name": "Performance-маркетинг",
+    "description": "Платный трафик и привлечение: таргетолог, специалист по контекстной рекламе, медиабайер, арбитраж трафика, User Acquisition, CPA-маркетинг."
+  },
+  {
+    "id": "seo",
+    "parent_id": "marketing",
+    "name": "SEO",
+    "description": "Поисковая оптимизация и органический трафик: SEO-специалист, линкбилдинг, ASO."
+  },
+  {
+    "id": "content_marketing",
+    "parent_id": "marketing",
+    "name": "Контент и SMM",
+    "description": "Контент для каналов компании: SMM-менеджер, контент-маркетолог, копирайтер, email-маркетинг, комьюнити-менеджер. Редактор и журналист медиа — в editor."
+  },
+  {
+    "id": "pr",
+    "parent_id": "marketing",
+    "name": "PR и коммуникации",
+    "description": "Связи со СМИ и репутация: PR-менеджер, внутренние и внешние коммуникации, GR, пресс-секретарь."
+  },
+  {
+    "id": "media",
+    "parent_id": "root",
+    "name": "Медиа и продакшн",
+    "description": "Создание контента как продукта: редакции, видео, онлайн-курсы, блогеры. Выбирай этот узел, если роль в медиа, но направление не понять."
+  },
+  {
+    "id": "editor",
+    "parent_id": "media",
+    "name": "Редактор и автор",
+    "description": "Тексты как продукт: журналист, редактор, шеф-редактор, автор, сценарист, методист онлайн-курсов. Тексты для продвижения компании — в content_marketing."
+  },
+  {
+    "id": "video",
+    "parent_id": "media",
+    "name": "Видео",
+    "description": "Съёмка и монтаж: видеомонтажёр, видеограф, режиссёр монтажа, оператор."
+  },
+  {
+    "id": "media_producer",
+    "parent_id": "media",
+    "name": "Продюсер",
+    "description": "Запускает и ведёт медиапроекты: продюсер онлайн-курсов и инфопродуктов, продюсер блогеров, YouTube, подкастов, мероприятий. Продюсер игр — в game_producer."
+  },
+  {
+    "id": "sales",
+    "parent_id": "root",
+    "name": "Продажи и работа с клиентами",
+    "description": "Продажи и удержание клиентов. Выбирай этот узел, если роль про клиентов, но направление не понять, и для руководителя продаж."
+  },
+  {
+    "id": "sales_manager",
+    "parent_id": "sales",
+    "name": "Менеджер по продажам",
+    "description": "Закрывает сделки: Account Executive, менеджер по продажам B2B и B2C, SDR, BDR, лидогенерация звонками и письмами, менеджер по работе с ключевыми клиентами на продажу."
+  },
+  {
+    "id": "business_development",
+    "parent_id": "sales",
+    "name": "Развитие бизнеса и партнёрства",
+    "description": "Новые рынки, партнёры и крупные сделки: Business Development Manager, партнёрский менеджер, менеджер по партнёрствам."
+  },
+  {
+    "id": "customer_success",
+    "parent_id": "sales",
+    "name": "Customer Success и поддержка",
+    "description": "Работа с текущими клиентами: Customer Success, Account Manager на удержание, поддержка клиентов, оператор чата, Customer Support. Техническая поддержка IT-инфраструктуры — в it_operations."
+  },
+  {
+    "id": "hr",
+    "parent_id": "root",
+    "name": "HR",
+    "description": "Работа с людьми компании. Выбирай этот узел для HR-специалиста без ясного направления и для HRD."
+  },
+  {
+    "id": "recruiter",
+    "parent_id": "hr",
+    "name": "Рекрутер",
+    "description": "Подбор сотрудников: рекрутер, IT-рекрутер, сорсер, Talent Acquisition."
+  },
+  {
+    "id": "hr_generalist",
+    "parent_id": "hr",
+    "name": "HR-бизнес-партнёр и HR-generalist",
+    "description": "Всё остальное в HR: HRBP, HR-generalist, обучение и развитие, HR-бренд, C&B, кадровое делопроизводство."
+  },
+  {
+    "id": "business",
+    "parent_id": "root",
+    "name": "Управление и бизнес-функции",
+    "description": "Руководство компанией и поддерживающие функции. Выбирай этот узел для роли, которая не подходит ни к одной ветке выше."
+  },
+  {
+    "id": "executive",
+    "parent_id": "business",
+    "name": "Топ-менеджмент",
+    "description": "Руководит компанией или её направлением целиком: CEO, COO, генеральный директор, управляющий партнёр, руководитель бизнес-юнита. CTO — в engineering_manager, CMO — в marketing, CPO — в product_manager."
+  },
+  {
+    "id": "operations",
+    "parent_id": "business",
+    "name": "Операции и администрирование",
+    "description": "Процессы и офис: операционный менеджер, офис-менеджер, ассистент руководителя, закупки, логистика."
+  },
+  {
+    "id": "finance",
+    "parent_id": "business",
+    "name": "Финансы и юристы",
+    "description": "Деньги и право: финансовый аналитик, бухгалтер, финансовый директор, юрист, комплаенс."
+  }
+]
