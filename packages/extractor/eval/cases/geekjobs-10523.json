@@ -1,0 +1,58 @@
+{
+  "id": "geekjobs-10523",
+  "source": "https://t.me/geekjobs/10523",
+  "why": "Языки: «fluency» → C1; «ещё один европейский язык» — не код языка",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**University Recruiter**\n**NVIDIA** is an American technology company that pioneered accelerated computing and builds AI infrastructure.\n**Languages:** fluency English and German. Nice to have: another European language.\n**Munich, Germany.**\n[Job description](https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/Germany-Munich/University-Recruiter_JR2029371).\nMore details in Mate H.'s [post on LinkedIn](https://lnkd.in/p/dAwGYwtw).\n\n**Больше вакансий в HR:** https://t.me/forhr",
+    "postedAt": "2026-11-12T09:57:57.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "University Recruiter",
+      "company": "NVIDIA",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:2867714"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "en",
+          "level": "C1"
+        },
+        {
+          "code": "de",
+          "level": "C1"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "recruiter"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "forallmedia-4335",
+  "source": "https://t.me/forallmedia/4335",
+  "why": "Переводчик: листа нет — внутренний узел media; частичная занятость и фриланс",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Миддл Переводчик-редактор EN-RU**\nв **Allcorrect** — компания, которая локализует и тестирует игры и ПО, переводит сайты и документы.\n**Удалённая работа. Частичная занятость. Фриланс.**\n[Описание вакансии на GeekJob.ru](https://geekjob.ru/vacancy/6af3400fed0282151f0393c4)",
+    "postedAt": "2026-11-12T10:37:58.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Миддл Переводчик-редактор EN-RU",
+      "company": "Allcorrect",
+      "hiringParty": "employer",
+      "suggestedOccupation": true,
+      "seniority": "middle",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": ["part_time", "freelance"],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "en",
+          "level": null
+        },
+        {
+          "code": "ru",
+          "level": null
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "media"
+    }
+  ]
+}

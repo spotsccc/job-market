@@ -1,0 +1,44 @@
+{
+  "id": "synthetic-go-net-salary",
+  "source": "synthetic",
+  "why": "Зарплата на руки; удалёнка из любой страны; опыт «от 2 лет»",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Middle Go-разработчик**\nв **Финлайн** — сервис онлайн-кредитования для малого бизнеса.\n**250–300 тыс. ₽ на руки. Удалённо из любой страны.**\nОпыт коммерческой разработки от 2 лет. Стек: Go, PostgreSQL, Kafka. Будет плюсом: Kubernetes.\nЗадачи: развивать сервис скоринга, проектировать API, писать тесты.\nОтклик: @finline_hr",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for Backend",
+      "url": "https://t.me/forbackend",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Middle Go-разработчик",
+      "company": "Финлайн",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "middle",
+      "experienceYearsMin": 2,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": true,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": 250000,
+      "salaryMax": 300000,
+      "salaryCurrency": "RUB",
+      "salaryPeriod": "month",
+      "salaryGross": false,
+      "equity": null,
+      "skills": ["Go", "PostgreSQL", "Kafka"],
+      "niceSkills": ["Kubernetes"],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": true,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "backend"
+    }
+  ]
+}

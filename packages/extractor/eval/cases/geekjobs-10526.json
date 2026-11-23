@@ -1,0 +1,49 @@
+{
+  "id": "geekjobs-10526",
+  "source": "https://t.me/geekjobs/10526",
+  "why": "Lead в названии роли QA",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**QA Engineering Lead (AI)**\n**Meta*** is a technology company that builds technologies that help people connect, find communities, and grow businesses.\n**Menlo Park, USA.**\n[Job description on LinkedIn](https://www.linkedin.com/jobs/view/qa-engineering-lead-ai-at-meta-4486617493).\nMore details in Rachel Compeau's [post on LinkedIn](https://lnkd.in/p/egtkujCb).\n\n**Больше вакансий для технических менеджеров:** https://t.me/jobfortm\n\n_* Компания Meta признана экстремистской организацией и запрещена на территории Российской Федерации._",
+    "postedAt": "2026-11-13T14:57:56.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "QA Engineering Lead (AI)",
+      "company": "Meta",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5372223"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "qa"
+    }
+  ]
+}

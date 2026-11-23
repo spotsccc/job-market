@@ -1,0 +1,58 @@
+{
+  "id": "synthetic-frontend-eu",
+  "source": "synthetic",
+  "why": "Сценарий S1: регион найма и офис, навыки двумя списками, язык, зарплата gross",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Senior Frontend Engineer (React, TypeScript)**\nв **Acme** — B2B-платформа для логистики.\n5+ years of commercial experience. English B2.\nNice to have: Next.js.\n**€70–90k gross per year. Remote from EU or office in Berlin.**\n[Job description](https://acme.dev/jobs/frontend)",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for Frontend",
+      "url": "https://t.me/forfrontend",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Senior Frontend Engineer (React, TypeScript)",
+      "company": "Acme",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "senior",
+      "experienceYearsMin": 5,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "hiring",
+          "key": "region:eu"
+        },
+        {
+          "role": "office",
+          "key": "city:2950159"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": 70000,
+      "salaryMax": 90000,
+      "salaryCurrency": "EUR",
+      "salaryPeriod": "year",
+      "salaryGross": true,
+      "equity": null,
+      "skills": ["React", "TypeScript"],
+      "niceSkills": ["Next.js"],
+      "languages": [
+        {
+          "code": "en",
+          "level": "B2"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "frontend"
+    }
+  ]
+}

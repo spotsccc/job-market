@@ -13,7 +13,8 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "test": "node --test 'src/**/*.test.ts'"
+    "test": "node --test 'src/**/*.test.ts' 'eval/**/*.test.ts'",
+    "eval": "node --env-file-if-exists=../../apps/web/.env.local eval/run.ts"
   },
   "dependencies": {
     "@ai-sdk/gateway": "4.0.151",
@@ -23,6 +24,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@job-market/geo": "workspace:*",
     "@job-market/oxfmt-config": "workspace:*",
     "@job-market/oxlint-config": "workspace:*",
     "@job-market/typescript-config": "workspace:*",

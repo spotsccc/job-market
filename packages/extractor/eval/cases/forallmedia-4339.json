@@ -1,0 +1,44 @@
+{
+  "id": "forallmedia-4339",
+  "source": "https://t.me/forallmedia/4339",
+  "why": "«60К» без валюты в русском посте",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Миддл Видеомонтажёр / Editor**\nв **Next Genium** — независимая студия, создающая сюжетные игры для ПК и консолей.\n**60К. Удалённая работа. Гибкий график.**\n[Описание вакансии на GeekJob.ru](https://geekjob.ru/vacancy/6af5de2a0b411376380d2dca)",
+    "postedAt": "2026-11-13T18:04:58.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Миддл Видеомонтажёр / Editor",
+      "company": "Next Genium",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "middle",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": 60000,
+      "salaryMax": 60000,
+      "salaryCurrency": "RUB",
+      "salaryPeriod": "month",
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "video"
+    }
+  ]
+}

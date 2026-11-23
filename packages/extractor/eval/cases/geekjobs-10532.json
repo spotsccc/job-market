@@ -1,0 +1,81 @@
+{
+  "id": "geekjobs-10532",
+  "source": "https://t.me/geekjobs/10532",
+  "why": "Две роли в одном посте агентства; компания не названа; виза и переезд",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Software Engineers, Robotics Controls**\n\n**_Location: London, UK ONLY. Office-based five days a week._** **_Skilled Worker visa sponsorship and relocation support._**\n\n**Company:** A global **robotics company** with hubs across North America and Europe, building robots for manufacturing, warehousing, and logistics.\n\nThere are two open roles in the **Control team.**\n\n— Teleoperation: build the stack that lets operators control robots remotely in real time. That covers turning human input into smooth robot motion, connecting VR, haptics and motion capture, adding safety limits and recovery flows, and capturing demonstrations for robot learning.\n\n— Control Quality & Evaluation: replace gut feeling with hard numbers. You’ll define control metrics, build test harnesses and CI gates on simulation and hardware-in-the-loop, and track how control holds up on every robot and across the fleet over time.\n\n**Stack:** C++, Python, ROS/ROS2, real-time data streaming, CI/CD.\n\n[More info](https://geekjob.ru/hiqq)https://newhr.notion.site/senior-infrastructure-engineer-singapore\nApply to margarita@new.hr\n\n**More NEWHR vacancies**: https://t.me/newhrvacancies",
+    "postedAt": "2026-11-18T10:31:19.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Software Engineer, Teleoperation",
+      "company": null,
+      "hiringParty": "agency",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "onsite",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:2643743"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": ["C++", "Python", "ROS", "CI/CD"],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": true,
+      "visaSponsorship": true,
+      "responsibilities": true,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "embedded"
+    },
+    {
+      "title": "Software Engineer, Control Quality & Evaluation",
+      "company": null,
+      "hiringParty": "agency",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "onsite",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:2643743"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": ["C++", "Python", "ROS", "CI/CD"],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": true,
+      "visaSponsorship": true,
+      "responsibilities": true,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "embedded"
+    }
+  ]
+}

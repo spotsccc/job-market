@@ -1,0 +1,44 @@
+{
+  "id": "geekjobs-10529",
+  "source": "https://t.me/geekjobs/10529",
+  "why": "Часовой пояс — не место: мест нет",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Senior Product Analyst**\n**Sniffspot** is the world's largest marketplace for private dog parks, allowing anyone to rent land for a few hours as a safe and secluded place to walk dogs.\n**Remote work (significant overlap with US Eastern Time).**\n[Job description on LinkedIn](https://www.linkedin.com/jobs/view/4488218184/).\nMore details in Nick Valiotti's [post on LinkedIn](https://lnkd.in/p/ebB8bPJF).\n\n**Больше вакансий для аналитиков:** https://t.me/foranalysts",
+    "postedAt": "2026-11-16T08:03:56.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Senior Product Analyst",
+      "company": "Sniffspot",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "senior",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "data_analyst"
+    }
+  ]
+}

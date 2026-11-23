@@ -1,0 +1,65 @@
+{
+  "id": "forproducts-10888",
+  "source": "https://t.me/forproducts/10888",
+  "why": "Пять стран найма",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Delivery Manager (SAP BTP Re-Platforming)**\n**Andersen Lab** is an international software development company specializing in complex digital products for FinTech, Healthcare, eCommerce, and other industries.\n**Remote work (Kazakhstan, Kyrgyzstan, Tajikistan, Turkmenistan, Uzbekistan).**\nMore details in Julia Avchinikova's [post on LinkedIn](https://lnkd.in/p/eF-8KPK2).",
+    "postedAt": "2026-11-18T17:53:57.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Delivery Manager (SAP BTP Re-Platforming)",
+      "company": "Andersen Lab",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "hiring",
+          "key": "country:KZ"
+        },
+        {
+          "role": "hiring",
+          "key": "country:KG"
+        },
+        {
+          "role": "hiring",
+          "key": "country:TJ"
+        },
+        {
+          "role": "hiring",
+          "key": "country:TM"
+        },
+        {
+          "role": "hiring",
+          "key": "country:UZ"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "project_manager"
+    }
+  ]
+}

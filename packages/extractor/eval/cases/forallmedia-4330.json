@@ -1,0 +1,58 @@
+{
+  "id": "forallmedia-4330",
+  "source": "https://t.me/forallmedia/4330",
+  "why": "Регионы найма: Северная и Латинская Америка; native English",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Native English Copywriter**\n**Meaningful** is a full-stack growth agency and product studio that helps companies and startups scale through search engine optimization, content marketing, web development, and AI implementation.\n**Location: North, Central or South America.**\n[Job description](https://www.orlandosorio.com/join-us#en-native-english-copywriters).\nMore details in Orlando Osorio's [post on LinkedIn](https://lnkd.in/p/ehWmHsRx).",
+    "postedAt": "2026-11-11T15:19:56.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Native English Copywriter",
+      "company": "Meaningful",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "hiring",
+          "key": "region:north_america"
+        },
+        {
+          "role": "hiring",
+          "key": "region:latam"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "en",
+          "level": "native"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "content_marketing"
+    }
+  ]
+}

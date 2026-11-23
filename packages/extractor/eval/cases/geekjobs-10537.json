@@ -1,0 +1,57 @@
+{
+  "id": "geekjobs-10537",
+  "source": "https://t.me/geekjobs/10537",
+  "why": "Офис в двух городах или удалёнка по стране: офисы и место найма",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Creative Director, Brand Experience**\n**Figma** is a design platform that helps teams brainstorm, prototype, translate designs into code, and iterate with AI.\n**On-site (San Francisco or New York) or remote work (USA).**\n[Job description.](https://job-boards.greenhouse.io/figma/jobs/6232528004?gh_jid=6232528004)\nMore details in Julia Oller's [post on LinkedIn](https://lnkd.in/p/enSBQBKk).\n\n**Больше вакансий в дизайне:** https://t.me/fordesigner",
+    "postedAt": "2026-11-20T09:57:54.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Creative Director, Brand Experience",
+      "company": "Figma",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5391959"
+        },
+        {
+          "role": "office",
+          "key": "city:5128581"
+        },
+        {
+          "role": "hiring",
+          "key": "country:US"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "graphic_designer"
+    }
+  ]
+}

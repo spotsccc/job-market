@@ -1,0 +1,49 @@
+{
+  "id": "forallmedia-4338",
+  "source": "https://t.me/forallmedia/4338",
+  "why": "Пост со ссылкой на вакансию LinkedIn: зарплата, опыт и разделы — из раздела вакансии",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Writer, Content Marketing**\n**Stripe** is a financial infrastructure platform for businesses that provides payment processing and banking services for businesses and individuals.\n**Hybrid (New York, NY, USA).**\n[Job description on LinkedIn](https://www.linkedin.com/jobs/view/writer-content-marketing-at-stripe-4478302617).\nMore details in Noah Greenberg's [post on LinkedIn](https://lnkd.in/p/eMgfesMY).\n\n--- Вакансия LinkedIn по ссылке https://www.linkedin.com/jobs/view/writer-content-marketing-at-stripe-4478302617\nWriter, Content Marketing · Stripe · New York, NY\nWho we are\n\nAbout Stripe\n\nStripe is a financial infrastructure platform for businesses. Millions of companies - from the world’s largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprecedented opportunity to put the global economy within everyone's reach while doing the most important work of your career.\n\nAbout The Team\n\nOur Product Marketing team’s mission is to generate customer insights that inform Stripe’s product strategy, and lead go-to-market for our suite of products. Product Marketing is a highly cross-functional role at Stripe, partnering closely with Product and Engineering, Sales, Partnerships, Demand Generation and Campaigns to name a few. Different from many other Product Marketing teams, our team works across the entire product lifecycle, from helping shape the product, to driving launch and commercialization, to growing product adoption post-launch.\n\nWhat you’ll do\n\nWe’re looking for an experienced writer to develop data-backed theses and original content pieces about how startups and AI-native businesses launch, monetize, and grow. In this role, you’ll collaborate closely with contributors across the product marketing, product, engineering, and demand generation teams to produce compelling content that engages and informs our audience. This is a unique opportunity for a collaborative writer and content producer who excels at translating complex concepts in AI, billing infrastructure, and revenue growth into accessible insights.\n\nResponsibilities\n\nOwn content covering revenue strategies and pricing models, startups, and new developments in AI, working closely with product marketing to ensure our content reflects the latest industry advances and product newsCoordinate with the demand generation team to identify opportunities for new editorial series and research agendasPioneer new content formats for Stripe, including short-form content and multimedia projects that grow our audiencePartner with the data science team and third-party agencies to surface relevant insights for existing and potential customersEnsure consistency and tone in messaging across Stripe channels, including blogs, guides, reports, and social-native contentManage a pipeline of content, ensuring clear communication and visibility across the organization\n\n\nWho you are\n\nWe're looking for someone who meets the minimum requirements to be considered for the role. If you meet these requirements, you are encouraged to apply. The preferred qualifications are a bonus, not a requirement.\n\nMinimum Requirements\n\nA strong writer with 7+ years of experience in journalism, content marketing, or related fields, ideally with a focus on fintech or emerging technologiesAn analytical thinker who can derive original insights from data and market signalsSkilled at combining various requests and feedback into a unified messageA high quality bar for differentiated content\n\n\nPreferred Qualifications\n\nPassionate about technology and eager to understand exactly how it worksDiscerning and constructive when giving editsEnthusiastic about developing new ways to engage and inform audiencesData-driven when making decisions and assessing impactDetail-oriented and consistent in your workExcited to work in a fast-paced environment where your efforts contribute to a greater goal and align with the company’s mission\n\n\nIn-office expectations\n\nOffice-assigned Stripes in most of our locations are currently expected to spend at least 50% of the time in a given month in their local office or with users. This expectation may vary depending on role, team and location. For example, Stripes in Stripe Delivery Center roles in Mexico City, Mexico, Bengaluru, India, and Dublin, Ireland work 100% from the office. Stripes on the Works in Progress team based in the London, UK office also work 100% from the office. Also, some teams have greater in-office attendance requirements, to appropriately support our users and workflows, which the hiring manager will discuss. This approach helps strike a balance between bringing people together for in-person collaboration and learning from each other, while supporting flexibility when possible.\n\nPay and benefits\n\nThe annual US base salary range for this role is $159,500 - $239,300. For sales roles, the range provided is the role’s On Target Earnings (\"OTE\") range, meaning that the range includes both the sales commissions/sales bonuses target and annual base salary for the role. This salary range may be inclusive of several career levels at Stripe and will be narrowed during the interview process based on a number of factors, including the candidate’s experience, qualifications, and location. Applicants interested in this role and who are not located in the US may request the annual salary range for their location during the interview process.\n\nAdditional benefits for this role may include: equity, company bonus or sales commissions/bonuses; 401(k) plan; medical, dental, and vision benefits; and wellness stipends.\n\nWe look forward to hearing from you.\n\nAt Stripe, we're looking for people with passion, grit, and integrity. You're encouraged to apply even if your experience doesn't precisely match the job description. Your skills and passion will stand out—and set you apart—especially if your career has taken some extraordinary twists and turns. At Stripe, we welcome diverse perspectives and people who think rigorously and aren't afraid to challenge assumptions. Join us.\n\nApply now",
+    "postedAt": "2026-11-13T14:36:58.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Writer, Content Marketing",
+      "company": "Stripe",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": 7,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5128581"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": 159500,
+      "salaryMax": 239300,
+      "salaryCurrency": "USD",
+      "salaryPeriod": "year",
+      "salaryGross": null,
+      "equity": true,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": true,
+      "requirements": true,
+      "benefits": true,
+      "occupationId": "content_marketing"
+    }
+  ]
+}

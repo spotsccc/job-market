@@ -1,0 +1,145 @@
+{
+  "id": "geekjobs-10534",
+  "source": "https://t.me/geekjobs/10534",
+  "why": "Четыре руководящие роли списком ссылок в разных ветках дерева",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "🔹 [Head of Measurement & Advertising Effectiveness](https://jobs.lever.co/spotify/01b41b49-7d43-4933-9ba7-06ebe0a2a749?lever-via=idOkPxhVNj&lever-social=job_site)\n🔹 [Senior Director, Global Advertising Product Marketing](https://jobs.lever.co/spotify/b9533f31-7bff-43f6-aaf0-60003f017d88?lever-via=idOkPxhVNj&lever-social=job_site)\n🔹 [VP, Head of Product - Advertising](https://jobs.lever.co/spotify/1a1c0754-29b1-4651-a399-3c078866b9d0?lever-via=idOkPxhVNj&lever-social=job_site)\n🔹 [VP, Head of Engineering - Advertising](https://jobs.lever.co/spotify/2c51f265-b95b-4b47-b467-e0fdc7744b5c?lever-via=idOkPxhVNj&lever-social=job_site)\n**Spotify** is a global music streaming platform where users discover, play, and create personalized playlists from millions of songs and podcasts.\n**New York. Hybrid work format.**\nMore details in Tim Paff's [post on LinkedIn](https://lnkd.in/p/edWFfwGk).\n\n**Больше вакансий для ТОПов:** https://t.me/forchiefs",
+    "postedAt": "2026-11-19T16:27:54.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Head of Measurement & Advertising Effectiveness",
+      "company": "Spotify",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5128581"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "data_analyst"
+    },
+    {
+      "title": "Senior Director, Global Advertising Product Marketing",
+      "company": "Spotify",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5128581"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "marketing"
+    },
+    {
+      "title": "VP, Head of Product - Advertising",
+      "company": "Spotify",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5128581"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product_manager"
+    },
+    {
+      "title": "VP, Head of Engineering - Advertising",
+      "company": "Spotify",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:5128581"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "engineering_manager"
+    }
+  ]
+}

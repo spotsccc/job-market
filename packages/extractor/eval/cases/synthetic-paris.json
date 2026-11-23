@@ -1,0 +1,49 @@
+{
+  "id": "synthetic-paris",
+  "source": "synthetic",
+  "why": "Город-тёзка «Paris» без страны: справочник сводит к Парижу во Франции",
+  "publication": {
+    "connector": "linkedin",
+    "content": "We're hiring a Product Designer to join our team in Paris! Hybrid, 3 days a week in the office. DM me if interested.",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Claire Martin",
+      "url": "https://www.linkedin.com/in/claire-martin",
+      "headline": "Head of Design at Lumen"
+    }
+  },
+  "expected": [
+    {
+      "title": "Product Designer",
+      "company": "Lumen",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:2988507"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product_designer"
+    }
+  ]
+}

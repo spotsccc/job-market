@@ -1,0 +1,49 @@
+{
+  "id": "forproducts-10891",
+  "source": "https://t.me/forproducts/10891",
+  "why": "Middle+; офис или гибрид; помощь с переездом",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Middle+ Product Manager [Origination]**\n**Banco Plata** is a major fintech platform in Latin America operating under the Open Finance principle.\n**On-site or hybrid (Mexico City). Support in relocation.**\n[Job description.](https://plata.careers/vacancy/details?id=5485627008)\nMore details in Arina Denisova's [post on LinkedIn](https://lnkd.in/p/euS64C34).",
+    "postedAt": "2026-11-19T15:09:58.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Middle+ Product Manager [Origination]",
+      "company": "Banco Plata",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "middle",
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:3530597"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": true,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product_manager"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "geekjobs-10522",
+  "source": "https://t.me/geekjobs/10522",
+  "why": "UX-райтер: листа нет, ближе всего ветка дизайна — внутренний узел с suggestedOccupation",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**UX Writer – Loyalty and Commercial Incentives**\n[Booking.com](https://booking.com/) is a global online travel platform that connects travelers with accommodations, flights, and other travel services.\n**Hybrid (Amsterdam, Netherlands).**\n[Job description](https://jobs.booking.com/booking/jobs/30513).\nMore details in Serena Giust's [post on LinkedIn](https://lnkd.in/p/eScapAig).\n\n**Больше вакансий про контент:** https://t.me/forallmedia",
+    "postedAt": "2026-11-12T07:57:57.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "UX Writer – Loyalty and Commercial Incentives",
+      "company": "Booking.com",
+      "hiringParty": "employer",
+      "suggestedOccupation": true,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "hybrid",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:2759794"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "design"
+    }
+  ]
+}

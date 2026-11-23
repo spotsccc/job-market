@@ -1,0 +1,155 @@
+{
+  "id": "forproducts-10897",
+  "source": "https://t.me/forproducts/10897",
+  "why": "Две роли; восемь стран найма; «fluent» → C1",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "🔹 [Lead Product Manager, Online Donations](https://www.linkedin.com/jobs/view/4480703617/)\n🔹 [Lead Product Manager, Platform & Surfaces](https://www.linkedin.com/jobs/view/4490292945/)\n**Fundraise Up** is a global fundraising platform created to make donations to non-profits fast, simple, and affordable.\n**Languages:** Russian — fluent, English — C1.\n**€6,2K – €7,3K. Remote work (Spain, Poland, Portugal, Georgia, Armenia, Serbia, Turkey, Cyprus).**\nMore details in Volha Sazonava's [post on LinkedIn](https://lnkd.in/p/g3Xdwd7g).",
+    "postedAt": "2026-11-19T16:18:58.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Lead Product Manager, Online Donations",
+      "company": "Fundraise Up",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "hiring",
+          "key": "country:ES"
+        },
+        {
+          "role": "hiring",
+          "key": "country:PL"
+        },
+        {
+          "role": "hiring",
+          "key": "country:PT"
+        },
+        {
+          "role": "hiring",
+          "key": "country:GE"
+        },
+        {
+          "role": "hiring",
+          "key": "country:AM"
+        },
+        {
+          "role": "hiring",
+          "key": "country:RS"
+        },
+        {
+          "role": "hiring",
+          "key": "country:TR"
+        },
+        {
+          "role": "hiring",
+          "key": "country:CY"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": 6200,
+      "salaryMax": 7300,
+      "salaryCurrency": "EUR",
+      "salaryPeriod": "month",
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "ru",
+          "level": "C1"
+        },
+        {
+          "code": "en",
+          "level": "C1"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product_manager"
+    },
+    {
+      "title": "Lead Product Manager, Platform & Surfaces",
+      "company": "Fundraise Up",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "lead",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "hiring",
+          "key": "country:ES"
+        },
+        {
+          "role": "hiring",
+          "key": "country:PL"
+        },
+        {
+          "role": "hiring",
+          "key": "country:PT"
+        },
+        {
+          "role": "hiring",
+          "key": "country:GE"
+        },
+        {
+          "role": "hiring",
+          "key": "country:AM"
+        },
+        {
+          "role": "hiring",
+          "key": "country:RS"
+        },
+        {
+          "role": "hiring",
+          "key": "country:TR"
+        },
+        {
+          "role": "hiring",
+          "key": "country:CY"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": 6200,
+      "salaryMax": 7300,
+      "salaryCurrency": "EUR",
+      "salaryPeriod": "month",
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "ru",
+          "level": "C1"
+        },
+        {
+          "code": "en",
+          "level": "C1"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product_manager"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "geekjobs-10535",
+  "source": "https://t.me/geekjobs/10535",
+  "why": "Fullstack; зарплата в месяц без указания gross",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Senior Full-Stack Engineer**\n**Lomi Labs** is the product engineering arm of the team behind Lomi.\n**$3K – $4,5K. Remote work.**\n[Job description](https://www.lomilabs.ai/careers/senior-full-stack-engineer).\nMore details in Nafis Reza's [post on LinkedIn](https://lnkd.in/p/dmTAkDdh).\n\n**Больше вакансий в Frontend & Node.js:** https://t.me/forfrontend",
+    "postedAt": "2026-11-20T07:57:54.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Senior Full-Stack Engineer",
+      "company": "Lomi Labs",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": "senior",
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": 3000,
+      "salaryMax": 4500,
+      "salaryCurrency": "USD",
+      "salaryPeriod": "month",
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "fullstack"
+    }
+  ]
+}

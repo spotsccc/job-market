@@ -349,6 +349,9 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
     devDependencies:
+      '@job-market/geo':
+        specifier: workspace:*
+        version: link:../geo
       '@job-market/oxfmt-config':
         specifier: workspace:*
         version: link:../oxfmt-config

@@ -1,0 +1,44 @@
+{
+  "id": "synthetic-platform-developer",
+  "source": "synthetic",
+  "why": "Роль без стека и направления — внутренний узел engineering; компания из подписи",
+  "publication": {
+    "connector": "linkedin",
+    "content": "Ищем разработчика в команду платформы! Пишите в личку.",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Анна Смирнова",
+      "url": "https://www.linkedin.com/in/anna-smirnova",
+      "headline": "Recruiter at Acme"
+    }
+  },
+  "expected": [
+    {
+      "title": "Разработчик",
+      "company": "Acme",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "engineering"
+    }
+  ]
+}

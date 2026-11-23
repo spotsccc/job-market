@@ -1,0 +1,44 @@
+{
+  "id": "forproducts-10898",
+  "source": "https://t.me/forproducts/10898",
+  "why": "Product Builder: листа нет — внутренний узел product",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Product Builder**\nв **TownLive Games** — студия разработки и продвижения мобильных игр.\n**Удалённая работа. Гибкий график.**\nИщет Татьяна Самусева, её [пост на LinkedIn](https://lnkd.in/p/dQYEMWh2).",
+    "postedAt": "2026-11-20T15:31:49.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Product Builder",
+      "company": "TownLive Games",
+      "hiringParty": "employer",
+      "suggestedOccupation": true,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": "remote",
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "product"
+    }
+  ]
+}

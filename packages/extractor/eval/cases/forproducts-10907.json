@@ -1,0 +1,53 @@
+{
+  "id": "forproducts-10907",
+  "source": "https://t.me/forproducts/10907",
+  "why": "Project Manager в игровой студии — game_producer; языки с уровнями",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Project Manager**\n**OWLCAT GAMES** is a computer game development studio specializing in large-scale isometric RPGs (cRPG).\n**Languages:** Russian — B2, English — C1.\n**On-site or remote work. Flexible hours.**\n[Job description.](https://owlcat.games/careers/296)",
+    "postedAt": "2026-11-20T18:52:58.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Project Manager",
+      "company": "OWLCAT GAMES",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [
+        {
+          "code": "ru",
+          "level": "B2"
+        },
+        {
+          "code": "en",
+          "level": "C1"
+        }
+      ],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "game_producer"
+    }
+  ]
+}

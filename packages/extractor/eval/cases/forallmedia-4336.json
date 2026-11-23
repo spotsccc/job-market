@@ -1,0 +1,49 @@
+{
+  "id": "forallmedia-4336",
+  "source": "https://t.me/forallmedia/4336",
+  "why": "Офис или гибрид — формат не один",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Video Editor**\n**Republic Affairs** is a boutique crisis communications firm.\n**On-site (Washington, DC, USA) or hybrid.**\n[Job description on LinkedIn](https://www.linkedin.com/jobs/view/video-editor-at-republic-affairs-4476845711).\nMore details in Addison Lee's [post on LinkedIn](https://lnkd.in/p/etG6DY53).",
+    "postedAt": "2026-11-12T14:39:58.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Video Editor",
+      "company": "Republic Affairs",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "city:4140963"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "video"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "geekjobs-10521",
+  "source": "https://t.me/geekjobs/10521",
+  "why": "Рекрутинг под названием Researcher; места — три страны без городов",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Executive Researcher, DoorDash International**\n**Deliveroo** is a British online company and food and grocery delivery service.\n**Location: UK, Germany or Finland.**\n[Job description on LinkedIn](https://uk.linkedin.com/jobs/view/executive-researcher-doordash-international-at-deliveroo-4486793014).\nMore details in Rachel Quirk's [post on LinkedIn](https://lnkd.in/p/ezcPanpQ).\n\n**Больше вакансий в HR:** https://t.me/forhr",
+    "postedAt": "2026-11-11T16:27:57.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": [
+    {
+      "title": "Executive Researcher, DoorDash International",
+      "company": "Deliveroo",
+      "hiringParty": "employer",
+      "suggestedOccupation": false,
+      "seniority": null,
+      "experienceYearsMin": null,
+      "workplace": null,
+      "isRemoteFromAnywhere": false,
+      "places": [
+        {
+          "role": "office",
+          "key": "country:GB"
+        },
+        {
+          "role": "office",
+          "key": "country:DE"
+        },
+        {
+          "role": "office",
+          "key": "country:FI"
+        }
+      ],
+      "employmentTypes": [],
+      "salaryMin": null,
+      "salaryMax": null,
+      "salaryCurrency": null,
+      "salaryPeriod": null,
+      "salaryGross": null,
+      "equity": null,
+      "skills": [],
+      "niceSkills": [],
+      "languages": [],
+      "relocation": null,
+      "visaSponsorship": null,
+      "responsibilities": false,
+      "requirements": false,
+      "benefits": false,
+      "occupationId": "recruiter"
+    }
+  ]
+}
