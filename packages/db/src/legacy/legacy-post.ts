@@ -1,5 +1,8 @@
-import { POST_SOURCES } from '@job-market/core';
 import { pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+
+/** Откуда пост старой модели. */
+export const POST_SOURCES = ['linkedin', 'telegram'] as const;
+export type PostSource = (typeof POST_SOURCES)[number];
 
 /**
  * Пост старой модели: таблица `legacy_posts`, бывшая `posts`. Строки, id и связь с

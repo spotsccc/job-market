@@ -840,8 +840,8 @@
         </div>
         <div class="tldr">
           Как владелец, я хочу пакет движка с функцией tick, которая находит источники, которые пора
-          опросить, и кладёт в очередь задание опроса на каждый, а задание опроса читает источник
-          парсером из пакета коннекторов и записывает публикации и курсор, чтобы следующие планы
+          опросить, и кладёт в очередь задание опроса на каждый, а задание опроса зовёт drain
+          коннектора источника и записывает только расписание источника, чтобы следующие планы
           подключили расписание и очередь Vercel и разбор публикаций.
         </div>
       </header>
@@ -853,17 +853,20 @@
           <a href="sources-queues.html">большой план сбора источников</a>.
           <a href="vacancy-model.html">План 1</a> создаёт таблицы <code>sources</code> и
           <code>publications</code>. <a href="connectors.html">План 2</a> создаёт пакет коннекторов:
-          парсер каждого коннектора читает площадку и возвращает публикации и курсор, но в базу не
-          пишет и никем не вызывается.
+          у каждого коннектора есть <code>drain</code> — выкачать новые публикации источника и
+          записать их вместе с курсором, и <code>mine</code> — добыть вакансии из публикации. Их
+          пока никто не зовёт.
         </p>
         <p class="lead">
           Этот план начинает пакет <code>packages/engine</code>. Движок работает через очередь
           заданий, и имена это показывают. <b>tick</b> — производитель: находит включённые
           источники, которые пора опросить, сдвигает их следующий опрос и кладёт в очередь задание
-          <code>ParseSourceJob</code> на каждый (<code>enqueue</code>).
-          <b>handleParseSourceJob</b> — обработчик одного задания: его вызывает потребитель очереди,
-          и вызов может прийти повторно. Он зовёт парсер коннектора источника и одной транзакцией
-          пишет публикации, курсор и итог опроса.
+          <code>DrainSourceJob</code> на каждый (<code>enqueue</code>).
+          <b>handleDrainSourceJob</b> — обработчик одного задания: его вызывает потребитель очереди,
+          и вызов может прийти повторно. Он зовёт <code>drain</code> коннектора источника, а после
+          него пишет состояние расписания источника: ошибки подряд, паузу, время опроса — и при
+          необходимости кладёт продолжение в очередь. Публикации и курсор пишет drain, движок о
+          таблице <code>publications</code> не знает.
         </p>
         <p class="lead">
           Задание — команда одному исполнителю «опроси источник X», а не событие для подписчиков.
@@ -926,9 +929,11 @@
           <figure class="scroll">
             <div id="mapA"></div>
             <figcaption>
-              Вызывающего у движка пока нет: tick и handleParseSourceJob зовут тесты, а расписание и
+              Вызывающего у движка пока нет: tick и handleDrainSourceJob зовут тесты, а расписание и
               потребителя очереди подключит следующий план. Пакет коннекторов движок получает
               реестром от вызывающего, поэтому в тестах его коннекторы ходят в фейковый t.me.
+              Публикации и курсор пишет drain коннектора; движок пишет в <code>sources</code> только
+              расписание.
             </figcaption>
           </figure>
         </div>
@@ -1006,10 +1011,10 @@
           </p>
         </div>
         <div class="card">
-          <h3>Какие столбцы пишет движок</h3>
+          <h3>Кто пишет столбцы при опросе</h3>
           <p class="small muted">
-            Строка — столбец таблицы плана 1, который движок читает или пишет. Как вычисляется
-            значение — в правилах раздела 5.
+            Строка — столбец таблицы плана 1, который пишется при опросе источника. Как вычисляется
+            значение — в правилах раздела 5 и в правилах плана 2.
           </p>
           <table id="matrix"></table>
         </div>
@@ -1063,7 +1068,7 @@
             <div id="stagesGraph"></div>
             <figcaption>
               Клик по этапу — его карточка. План идёт после планов 1 и 2. Э1 создаёт пакет и задание
-              опроса, Э2 добавляет к ней tick. Пунктир — мягкая зависимость: README пишется, когда
+              опроса, Э2 добавляет к нему tick. Пунктир — мягкая зависимость: README пишется, когда
               готов Э2. Каждый этап — отдельный коммит, который проходит
               <code>pnpm check</code> и <code>pnpm test</code>.
             </figcaption>
@@ -1126,6 +1131,38 @@
               <code>job-queue.ts</code>, <code>parse-source-job.ts</code>,
               <code>memory-job-queue.test-utils.ts</code>. В тексте «задача опроса» стала
               «заданием»: это команда одному исполнителю, а не событие.
+            </li>
+            <li>
+              23 ноября 2026, по решению владельца: публикации и курсор пишет не движок, а
+              <code>drain</code> коннектора (план 2, П9–П11). Задание переименовано:
+              <code>ParseSourceJob</code> → <code>DrainSourceJob</code>,
+              <code>handleParseSourceJob</code> → <code>handleDrainSourceJob</code>, модуль
+              <code>parse-source-job.ts</code> → <code>drain-source-job.ts</code>;
+              <code>pollSource</code> убран — его работу делает drain. Движок после drain пишет
+              только расписание источника функцией <code>finishDrain</code> — отдельной транзакцией,
+              а не одной с публикациями (выбор владельца, цена — в рисках). П5–П12 переписаны под
+              drain; новый эджкейс E8. Параметр tx у <code>insertPublications</code>, модуль
+              <code>sources/write.ts</code> и экспорт <code>./test-utils</code> пакета коннекторов
+              переехали в план 2; риск о правке модулей плана 2 убран.
+            </li>
+            <li>
+              23 ноября 2026: ссылки LinkedIn дочитывает drain плана 2 (его П13). Движок от этого не
+              меняется: строки о контракте drain и П5 называют чтение ссылок частью drain; тест
+              задания собирает коннектор с fakeLinkedin; строка про maxDuration в «Не делаем»
+              учитывает, что drain может выйти за deadline на 60 с.
+            </li>
+            <li>
+              23 ноября 2026, по решению владельца: platform — бренд источника (geekjobs, linkedin),
+              а не сервис, который читает коннектор (план 1, П1, П2). Контракт коннектора — { id,
+              drain, mine }, без platform. Блок C4 «Площадки» назван «Сервисы», и слово «площадка» в
+              смысле Telegram и LinkedIn заменено на «сервис» в S, П и схеме опроса. Движок от этого
+              не меняется: platform он не читает.
+            </li>
+            <li>
+              23 ноября 2026: енричер переписан под читателей (<a href="enricher.html"
+                >план енричера</a
+              >). Тесты движка берут фейковых читателей <code>fakeReader</code> из
+              <code>@job-market/enricher/test-utils</code> вместо <code>fakeLinkedin</code> плана 2.
             </li>
           </ul>
         </div>
@@ -1211,9 +1248,9 @@
           chat: [
             [
               "me",
-              "handleParseSourceJob по заданию источника open-telegram/forhr; коннектор из createConnectors с фейковым t.me",
+              "handleDrainSourceJob по заданию источника open-telegram/forhr; коннектор из createConnectors с фейковым t.me",
             ],
-            ["tool", "parse → 10 публикаций за 30 дней, курсор { cursorId: 10 }, more: false"],
+            ["tool", "drain → { status: 'done', inserted: 10, cursor: { cursorId: 10 } }"],
             [
               "bot",
               "✔ { status: 'done', inserted: 10 }; 9 публикаций pending и 1 empty; ошибок подряд 0",
@@ -1224,14 +1261,14 @@
             ["sources.cursor · forhr", "NULL → { cursorId: 10 }", "+1"],
             ["last_success_at · forhr", "NULL → 05:21", "+1"],
           ],
-          note: "публикации ждут разбора следующего плана; повтор того же задания ничего не добавляет (П1 плана 1)",
+          note: "публикации и курсор пишет drain (П9 плана 2), last_success_at и счётчик — движок (П11); повтор задания ничего не добавляет",
         },
         {
           id: "S3",
           t: "Опрос не закончен",
           chat: [
             ["me", "первый опрос канала: 40 страниц, deadline наступил после 25-й"],
-            ["tool", "parse → 250 публикаций, курсор прохода, more: true"],
+            ["tool", "drain → { status: 'more', inserted: 250, cursor: курсор прохода }"],
             [
               "bot",
               "✔ { status: 'requeued', inserted: 250 }; в JobQueue — задание forhr с delaySeconds 60",
@@ -1247,8 +1284,8 @@
           id: "S4",
           t: "Источник сломался",
           chat: [
-            ["me", "третий опрос подряд: парсер возвращает Error «HTTP 503», интервал 60 минут"],
-            ["tool", "handleParseSourceJob → неудачный опрос"],
+            ["me", "третий опрос подряд: сервис отвечает «HTTP 503», интервал 60 минут"],
+            ["tool", "drain → { status: 'failed', inserted: 0, error: «HTTP 503» }"],
             [
               "bot",
               "✔ { status: 'failed', inserted: 0 }; ошибок подряд 3; last_error «HTTP 503»; следующий опрос через 8 ч",
@@ -1264,8 +1301,11 @@
           id: "S5",
           t: "Сбой посреди прохода",
           chat: [
-            ["me", "парсер прочитал первую страницу, на второй t.me ответил 429"],
-            ["tool", "parse → 5 публикаций, курсор первой страницы, error"],
+            ["me", "коннектор прочитал первую страницу, на второй t.me ответил 429"],
+            [
+              "tool",
+              "drain записал 5 публикаций и курсор → { status: 'failed', inserted: 5, error }",
+            ],
             [
               "bot",
               "✔ { status: 'failed', inserted: 5 }; курсор сохранён; ошибок подряд 1; продолжения нет",
@@ -1297,12 +1337,12 @@
           "позже; до неё состояние видно в таблице sources и в логах",
         ],
         [
-          "Правка контракта коннекторов",
-          "движок подстраивается под план 2: паузу продолжения и запись частичного результата решает он (П9, П10)",
+          "Запись публикаций и курсора",
+          "решение владельца: это делает drain коннектора (П9–П11 плана 2). Движок решает только паузу, продолжение и счётчик ошибок (П8–П11)",
         ],
         [
           "Обрыв парсера, который не уважает deadline",
-          "дедлайн соблюдает коннектор (П5 плана 2); общий предел вызова задаст maxDuration функции в следующем плане",
+          "дедлайн соблюдает коннектор (П5 плана 2); после deadline drain ещё может ждать чтения ссылок LinkedIn до 60 с (E8 плана 2) — maxDuration функции в следующем плане берётся с этим запасом",
         ],
       ];
 
@@ -1335,7 +1375,7 @@
         [
           "Ошибки",
           "channel-*, http-client и logger зависят от @spotsccc/error-as-value: ошибки — значения, а не исключения",
-          "tick и handleParseSourceJob возвращают Error значением",
+          "tick и handleDrainSourceJob возвращают Error значением; drain плана 2 — тоже",
         ],
         [
           "Логи",
@@ -1352,8 +1392,8 @@
         ],
         [
           "publications",
-          "план 1, Э1 (packages/db/src/publications/write.ts): insertPublications(rows) → [{ id, isNew }] — content_hash, upsert авторов, вставка ON CONFLICT (platform, external_id) DO NOTHING (П1 и П2 плана 1); статусы pending и empty",
-          "движку нужен вызов внутри своей транзакции: Э1 добавляет insertPublications необязательный параметр tx",
+          "план 1, Э1: таблица publications; пишет её drain плана 2 через insertPublications (П9–П10 плана 2)",
+          "движок publications не читает и не пишет",
         ],
         [
           "Источники в базе",
@@ -1362,13 +1402,18 @@
         ],
         [
           "Коннекторы",
-          "план 2, Э1–Э2 (packages/connectors): createConnectors(deps) → реестр по id; Connector { id, platform, configSchema, cursorSchema, parse, process }; parse({ config, cursor, since, deadline }) → { publications, cursor, more, error? } или Error; DEPTH_DAYS = 30",
-          "движок зовёт только parse; since = now − DEPTH_DAYS",
+          "план 2, Э1–Э3 (packages/connectors): createConnectors(deps) → реестр по id; коннектор снаружи — { id, drain, mine }, platform он не знает (план 1: platform — бренд источника, только в sources); drain(source, { now, deadline }) → { status: 'done' | 'more' | 'failed', inserted, cursor, error? } или Error — сбой базы; drain сам дочитывает ссылки LinkedIn и пишет публикации и курсор одной транзакцией",
+          "движок зовёт только drain; mine позовёт план разбора",
+        ],
+        [
+          "sources/write.ts",
+          "план 2, Э2 (packages/db/src/sources/write.ts): saveCursor(tx, sourceId, cursor) для drain",
+          "Э1 добавляет в этот модуль getSource и finishDrain — запись расписания",
         ],
         [
           "Фейковый t.me",
           "план 2, Э1: fakeTelegram в packages/connectors/src/open-telegram/fake-telegram.test-utils.ts, пакет его не экспортирует",
-          "тестам движка он нужен как канал deps: Э1 добавляет пакету коннекторов экспорт ./test-utils",
+          "план 2, Э2 экспортирует его и testConnector через ./test-utils, фейковых читателей для enrich — fakeReader из @job-market/enricher/test-utils (план енричера, Э2): тестам движка нужны фейковые t.me и читатели и коннектор с заданными ответами",
         ],
       ];
 
@@ -1384,21 +1429,21 @@
           id: "E2",
           sit: "Очередь доставила задание опроса второй раз, в том числе пока первая ещё идёт",
           beh: "второй опрос стартует с записанного курсора; уже записанные публикации не дублируются (П1 плана 1); курсор пишет тот, кто закончил последним, и оба курсора указывают на прочитанное",
-          test: "parse-source-job.test",
+          test: "drain-source-job.test",
           st: "Э1",
         },
         {
           id: "E3",
           sit: "Postgres отклонил запись публикаций: в тексте символ \\u0000, обрыв соединения",
-          beh: "транзакция откатывается целиком: ни публикаций, ни курсора, ни счётчиков; handleParseSourceJob → Error, задание повторит очередь следующего плана (П7)",
-          test: "parse-source-job.test",
+          beh: "drain откатывает свою транзакцию и возвращает Error (П9 плана 2); движок счётчики не пишет, handleDrainSourceJob → Error, задание повторит очередь следующего плана (П7)",
+          test: "drain-source-job.test",
           st: "Э1",
         },
         {
           id: "E4",
           sit: "Продолжение не отправилось, хотя транзакция уже записана",
-          beh: "handleParseSourceJob → Error; курсор уже в базе, повтор задания продолжает с него без дыр и без повторов (П10, П12)",
-          test: "parse-source-job.test",
+          beh: "handleDrainSourceJob → Error; курсор уже в базе, повтор задания продолжает с него без дыр и без повторов (П10, П12)",
+          test: "drain-source-job.test",
           st: "Э1",
         },
         {
@@ -1418,8 +1463,15 @@
         {
           id: "E7",
           sit: "Тесты пакетов db, connectors и engine и файлы одного пакета идут параллельно на одной тестовой базе",
-          beh: "tick берёт только коннекторы из переданного реестра (П1): tick.test — test-tick и open-telegram, parse-source-job.test — test-parse и open-telegram с next_run_at = 'infinity'. Ключи тестовых источников начинаются с test_engine_, тест удаляет только свои строки",
+          beh: "tick берёт только коннекторы из переданного реестра (П1): tick.test — test-tick и open-telegram, drain-source-job.test — test-drain и open-telegram с next_run_at = 'infinity'. Ключи тестовых источников начинаются с test_engine_, тест удаляет только свои строки",
           test: "pnpm test дважды подряд — зелёный",
+          st: "Э1",
+        },
+        {
+          id: "E8",
+          sit: "drain записал публикации и курсор, а запись расписания упала: обрыв соединения между двумя транзакциями",
+          beh: "handleDrainSourceJob → Error, задание повторит очередь; повтор зовёт drain с нового курсора, уже записанные публикации не дублируются (П1 плана 1); расписание пишет повтор (П6)",
+          test: "drain-source-job.test",
           st: "Э1",
         },
       ];
@@ -1441,14 +1493,14 @@
           "поправить этот план до начала Э1; функции движка от этого не меняются",
         ],
         [
-          "План вносит правки в модули планов 1 и 2: параметр tx у insertPublications и экспорт fakeTelegram",
-          "планы 1 и 2 ещё не реализованы, когда начинается этот",
-          "внести обе правки прямо в планы 1 и 2, а из Э1 убрать",
+          "Публикации и курсор записаны, а расписание — нет: drain и finishDrain — две транзакции",
+          "задание опроса вернуло Error после удачного drain; у источника курсор новый, а last_fetched_at старый",
+          "принятая цена: решение владельца — данные пишет коннектор, расписание — движок. Повтор задания продолжает с нового курсора без дыр и повторов (E8)",
         ],
         [
           "JobQueue не подойдёт к Vercel Queues: другая форма пачки, ключа или задержки",
           "spike Queues следующего плана",
-          "JobQueue — один тип в engine/src/job-queue.ts; меняется он и его вызовы в tick и handleParseSourceJob",
+          "JobQueue — один тип в engine/src/job-queue.ts; меняется он и его вызовы в tick и handleDrainSourceJob",
         ],
       ];
 
@@ -1509,15 +1561,15 @@
             "берёт источники, которые пора опросить, и кладёт на них в очередь задания опроса → { due, enqueued } или Error при сбое базы или отправки (П1–П3)",
           ],
           [
-            "handleParseSourceJob({ sourceId, connectors, queue, now, deadline })",
-            "обработчик одного задания из очереди; вызов может прийти повторно → { status: 'done' | 'requeued' | 'failed' | 'skipped', inserted } или Error (П4–П12)",
+            "handleDrainSourceJob({ sourceId, connectors, queue, now, deadline })",
+            "обработчик одного задания из очереди: зовёт drain коннектора и пишет расписание; вызов может прийти повторно → { status: 'done' | 'requeued' | 'failed' | 'skipped', inserted } или Error (П4–П12)",
           ],
           [
             "JobQueue",
             "интерфейс очереди заданий: enqueue(jobs) → Error | void; одна пачка — не больше 100 заданий. Реализацию на Vercel Queues даст следующий план",
           ],
           [
-            "ParseSourceJob",
+            "DrainSourceJob",
             "{ sourceId, delaySeconds, idempotencyKey } — задание опроса; idempotencyKey — ключ, по которому очередь отбрасывает повтор (П2, П10)",
           ],
           [
@@ -1538,31 +1590,23 @@
         [
           [
             "sources.next_run_at",
-            "tick при взятии; handleParseSourceJob при неудаче; tick при сбое отправки",
+            "tick при взятии; handleDrainSourceJob при неудаче; tick при сбое отправки",
             "П1, П3, П8",
           ],
-          [
-            "sources.cursor",
-            "handleParseSourceJob: курсор из результата parse, кроме Error",
-            "П7, П9, П10",
-          ],
+          ["sources.cursor", "drain плана 2, в своей транзакции", "П9, П11 плана 2"],
           [
             "sources.last_fetched_at",
-            "handleParseSourceJob после любого опроса, кроме skipped",
-            "П7",
+            "handleDrainSourceJob: finishDrain после любого опроса, кроме skipped",
+            "П6",
           ],
-          ["sources.last_success_at", "handleParseSourceJob после удачного опроса", "П11"],
+          ["sources.last_success_at", "handleDrainSourceJob после удачного опроса", "П11"],
           [
             "sources.consecutive_failures, last_error",
-            "handleParseSourceJob: +1 и текст при неудаче, 0 и NULL при удаче",
+            "handleDrainSourceJob: +1 и текст при неудаче, 0 и NULL при удаче",
             "П8, П11",
           ],
           ["sources.enabled, interval_minutes, config", "движок только читает", "П1, П5"],
-          [
-            "publications.*",
-            "insertPublications плана 1 по строкам handleParseSourceJob",
-            "П6; П1 и П2 плана 1",
-          ],
+          ["publications.*", "drain плана 2: insertPublications плана 1", "П9, П10 плана 2"],
         ],
       );
 
@@ -1659,7 +1703,7 @@
             k: "new",
             t: "@job-market/engine",
             type: "[Компонент: пакет]",
-            d: ["tick, handleParseSourceJob"],
+            d: ["tick, handleDrainSourceJob"],
           },
           {
             id: "pub",
@@ -1676,10 +1720,10 @@
             x: 640,
             y: 90,
             w: 230,
-            k: "chg",
+            k: "old",
             t: "@job-market/connectors",
             type: "[Компонент: пакет плана 2]",
-            d: ["parse коннектора;", "экспорт ./test-utils"],
+            d: ["drain коннектора;", "./test-utils"],
           },
           {
             id: "db",
@@ -1689,7 +1733,7 @@
             k: "chg",
             t: "@job-market/db",
             type: "[Компонент: Drizzle]",
-            d: ["sources/write.ts — новый;", "insertPublications — tx"],
+            d: ["sources/write.ts:", "getSource, finishDrain"],
           },
           {
             id: "ch",
@@ -1697,7 +1741,7 @@
             y: 90,
             w: 190,
             k: "ext",
-            t: "Площадки",
+            t: "Сервисы",
             type: "[Внешняя система]",
             d: ["t.me/s, Apify;", "в тестах — фейк"],
           },
@@ -1722,10 +1766,18 @@
           },
         ],
         [
-          { a: "call", b: "eng", l: ["зовёт tick", "и handleParseSourceJob"] },
+          { a: "call", b: "eng", l: ["зовёт tick", "и handleDrainSourceJob"], ly: 188 },
           { a: "eng", b: "pub", l: ["кладёт задания", "[enqueue]"], side: "r" },
-          { a: "eng", b: "con", l: ["зовёт parse", "[из реестра]"] },
-          { a: "eng", b: "db", l: ["берёт источники,", "пишет итог [SQL]"] },
+          { a: "eng", b: "con", l: ["зовёт drain", "[из реестра]"] },
+          {
+            a: "eng",
+            b: "db",
+            l: ["берёт источники,", "пишет расписание [SQL]"],
+            lx: 540,
+            ly: 262,
+            side: "r",
+          },
+          { a: "con", b: "db", l: ["пишет публикации", "и курсор [SQL]"], side: "r" },
           { a: "con", b: "ch", l: ["[HTTPS]"] },
           { a: "db", b: "pg", l: ["[TCP]"] },
         ],
@@ -1901,7 +1953,7 @@
       }
       tabs("seqTabs", [
         ["S1 · tick", "seqA"],
-        ["S2–S5 · handleParseSourceJob", "seqB"],
+        ["S2–S5 · handleDrainSourceJob", "seqB"],
       ]);
       sequence(
         "seqA",
@@ -2022,9 +2074,9 @@
         "seqB",
         [
           ["вызывающий", "тест или следующий план"],
-          ["обработчик", "parse-source-job.ts"],
+          ["обработчик", "drain-source-job.ts"],
           ["@job-market/db", "пакет"],
-          ["коннектор", "parse, план 2"],
+          ["коннектор", "drain, план 2"],
           ["JobQueue", "интерфейс"],
         ],
         [
@@ -2032,7 +2084,7 @@
             m: "sync",
             a: 0,
             b: 1,
-            label: "handleParseSourceJob({ sourceId, … })",
+            label: "handleDrainSourceJob({ sourceId, … })",
             mono: true,
             note: "Одно задание из тех, что отдал tick, или продолжение.",
           },
@@ -2074,82 +2126,117 @@
                     m: "sync",
                     a: 1,
                     b: 3,
-                    label: "parse({ config, cursor, … })",
+                    label: "drain(source, { now, deadline })",
                     mono: true,
-                    note: "since = now − DEPTH_DAYS; cursor — как есть, его проверяет коннектор (П5).",
+                    note: "Коннектор сам проверяет config, читает сервис и пишет публикации с курсором своей транзакцией (П5; П9 плана 2).",
                   },
                   {
                     m: "ret",
                     a: 3,
                     b: 1,
-                    label: "ParseResult или Error",
+                    label: "{ status, inserted, cursor, error? } или Error",
                     mono: true,
-                    note: "Коннектор в базу не пишет (П2 плана 2).",
-                  },
-                  {
-                    m: "sync",
-                    a: 1,
-                    b: 2,
-                    label: "insertPublications + finishParse",
-                    mono: true,
-                    note: "Публикации, курсор и счётчики — одной транзакцией (П6, П7). При Error от parse — только счётчики.",
-                  },
-                  {
-                    m: "ret",
-                    a: 2,
-                    b: 1,
-                    label: "[{ id, isNew }]",
-                    mono: true,
-                    note: "inserted — число isNew.",
+                    note: "Error — сбой базы в drain: drain ничего не записал.",
                   },
                   {
                     frag: "alt",
                     ops: [
                       {
-                        guard: "more и нет error",
+                        guard: "drain вернул Error",
+                        body: [
+                          {
+                            m: "ret",
+                            a: 1,
+                            b: 0,
+                            label: "Error",
+                            err: true,
+                            note: "Расписание не пишется, задание повторит очередь (П7).",
+                          },
+                        ],
+                      },
+                      {
+                        guard: "итог drain",
                         body: [
                           {
                             m: "sync",
                             a: 1,
-                            b: 4,
-                            label: "enqueue([продолжение])",
+                            b: 2,
+                            label: "finishDrain(sourceId, …)",
                             mono: true,
-                            note: "Продолжение после коммита; idempotencyKey — по курсору (П10).",
+                            note: "Отдельная транзакция после drain: last_fetched_at и счётчики (П6, П8, П11).",
                           },
                           {
                             m: "ret",
-                            a: 1,
-                            b: 0,
-                            label: "{ status: 'requeued', inserted }",
-                            mono: true,
-                            note: "next_run_at не меняется.",
+                            a: 2,
+                            b: 1,
+                            label: "ok или Error",
+                            note: "Записанное drain остаётся в любом случае.",
                           },
-                        ],
-                      },
-                      {
-                        guard: "Error или error",
-                        body: [
                           {
-                            m: "ret",
-                            a: 1,
-                            b: 0,
-                            label: "{ status: 'failed', inserted }",
-                            mono: true,
-                            err: true,
-                            note: "Счётчик +1, пауза по П8. Ошибка площадки — не Error: очередь её не повторяет.",
-                          },
-                        ],
-                      },
-                      {
-                        guard: "проход закончен",
-                        body: [
-                          {
-                            m: "ret",
-                            a: 1,
-                            b: 0,
-                            label: "{ status: 'done', inserted }",
-                            mono: true,
-                            note: "Счётчик 0, last_success_at = now (П11).",
+                            frag: "alt",
+                            ops: [
+                              {
+                                guard: "finishDrain вернул Error",
+                                body: [
+                                  {
+                                    m: "ret",
+                                    a: 1,
+                                    b: 0,
+                                    label: "Error",
+                                    err: true,
+                                    note: "Повтор задания продолжит с нового курсора (П6, E8).",
+                                  },
+                                ],
+                              },
+                              {
+                                guard: "status more",
+                                body: [
+                                  {
+                                    m: "sync",
+                                    a: 1,
+                                    b: 4,
+                                    label: "enqueue([продолжение])",
+                                    mono: true,
+                                    note: "Продолжение после коммита; idempotencyKey — по курсору (П10).",
+                                  },
+                                  {
+                                    m: "ret",
+                                    a: 1,
+                                    b: 0,
+                                    label: "{ status: 'requeued', inserted }",
+                                    mono: true,
+                                    note: "next_run_at не меняется.",
+                                  },
+                                ],
+                              },
+                              {
+                                guard: "status failed",
+                                body: [
+                                  {
+                                    m: "ret",
+                                    a: 1,
+                                    b: 0,
+                                    label: "{ status: 'failed', inserted }",
+                                    mono: true,
+                                    err: true,
+                                    note: "Счётчик +1, пауза по П8. Ошибка сервиса — не Error: очередь её не повторяет.",
+                                  },
+                                ],
+                              },
+                              {
+                                guard: "status done",
+                                body: [
+                                  {
+                                    m: "ret",
+                                    a: 1,
+                                    b: 0,
+                                    label: "{ status: 'done', inserted }",
+                                    mono: true,
+                                    note: "Счётчик 0, last_success_at = now (П11).",
+                                  },
+                                ],
+                              },
+                            ],
                           },
                         ],
                       },
@@ -2160,7 +2247,7 @@
             ],
           },
         ],
-        "handleParseSourceJob движка",
+        "handleDrainSourceJob движка",
       );
 
       /* =================== rules =================== */
@@ -2176,7 +2263,7 @@
         ],
         [
           "П2",
-          "Задание опроса — { sourceId, delaySeconds, idempotencyKey }. delaySeconds = spreadDelay(sourceId) = hash(sourceId) mod 600: источники одного тика не идут к площадкам разом, а у одного источника задержка всегда одна. idempotencyKey = sourceId:now в ISO 8601. Задания уходят пачками по 100.",
+          "Задание опроса — { sourceId, delaySeconds, idempotencyKey }. delaySeconds = spreadDelay(sourceId) = hash(sourceId) mod 600: источники одного тика не идут к сервисам разом, а у одного источника задержка всегда одна. idempotencyKey = sourceId:now в ISO 8601. Задания уходят пачками по 100.",
           "определение",
           "engine/src/schedule.ts: spreadDelay; engine/src/tick.ts",
           "schedule.test, tick.test",
@@ -2193,64 +2280,64 @@
           "П4",
           "Задание опроса читает источник из базы заново. Источника нет, он выключен или его коннектора нет в реестре — задание пропускается со статусом skipped: источник не меняется, в логе — причина. Почему: между тиком и заданием источник могли выключить, а новый деплой — убрать коннектор.",
           "поведение",
-          "engine/src/parse-source-job.ts",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts",
+          "drain-source-job.test",
         ],
         [
           "П5",
-          "Движок зовёт parse с config и cursor источника как есть, since = now − DEPTH_DAYS и deadline вызывающего. Курсор проверяет сам коннектор (П4 плана 2). config, который не проходит configSchema коннектора, — неудачный опрос по П8 без вызова parse.",
+          "Движок зовёт drain коннектора источника с now и deadline вызывающего. Проверку config, вызов parse, чтение ссылок LinkedIn и запись публикаций с курсором делает drain (П9–П11, П13 плана 2); итог drain — done, more или failed.",
           "поведение",
-          "engine/src/parse-source-job.ts",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts",
+          "drain-source-job.test",
         ],
         [
           "П6",
-          "Публикация опроса записывается с source_id и platform источника. posted_at — дата публикации, а если площадка её не дала — now. Статус — empty, если текст пустой, иначе pending. Уже записанная публикация не меняется (П1 плана 1). inserted — число новых публикаций.",
-          "определение",
-          "engine/src/parse-source-job.ts; insertPublications плана 1",
-          "parse-source-job.test",
+          "После drain, кроме Error, движок отдельной транзакцией пишет расписание источника: last_fetched_at = now и счётчики по П8 или П11. Если эта запись не удалась, handleDrainSourceJob возвращает Error, а записанное drain остаётся. Почему отдельно: данные пишет коннектор, расписание — движок (решение владельца 23 ноября 2026). Повтор задания продолжает с нового курсора.",
+          "поведение",
+          "engine/src/drain-source-job.ts; db/src/sources/write.ts: finishDrain",
+          "drain-source-job.test",
         ],
         [
           "П7",
-          "Публикации, курсор, last_fetched_at = now и счётчики источника записываются одной транзакцией. Если запись не удалась, не записано ничего, а handleParseSourceJob возвращает Error.",
+          "drain вернул Error — сбой базы, drain ничего не записал. handleDrainSourceJob возвращает Error и расписание не пишет: задание повторит очередь.",
           "поведение",
-          "engine/src/parse-source-job.ts: db.transaction; db/src/sources/write.ts: finishParse",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts",
+          "drain-source-job.test",
         ],
         [
           "П8",
-          "Неудачный опрос — parse вернул Error, результат с error или config не прошёл схему. consecutive_failures увеличивается на 1, last_error — текст ошибки, next_run_at = now + min(interval_minutes · 2^n, 24 ч), где n — новое значение счётчика. Источник не выключается. При Error от parse и при неверном config курсор не меняется.",
+          "Неудачный опрос — drain вернул status failed. consecutive_failures увеличивается на 1, last_error — error из итога, next_run_at = now + min(interval_minutes · 2^n, 24 ч), где n — новое значение счётчика. Источник не выключается. Курсор движок не трогает: что записать, решил drain (П11 плана 2).",
           "поведение",
-          "engine/src/schedule.ts: nextRunAt; engine/src/parse-source-job.ts",
-          "schedule.test, parse-source-job.test",
+          "engine/src/schedule.ts: nextRunAt; engine/src/drain-source-job.ts",
+          "schedule.test, drain-source-job.test",
         ],
         [
           "П9",
-          "Частичный результат — у результата parse есть error: публикации и курсор записываются, потому что прочитанное не должно теряться (П6 плана 2), а опрос считается неудачным по П8. Продолжения нет: следующий опрос — после паузы П8, с записанного курсора. Почему: сбой площадки сразу повторять бесполезно.",
+          "После failed продолжения нет, даже если drain записал прочитанное до сбоя (П11 плана 2): следующий опрос — после паузы П8, с записанного курсора. Почему: сбой сервиса сразу повторять бесполезно.",
           "поведение",
-          "engine/src/parse-source-job.ts",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts",
+          "drain-source-job.test",
         ],
         [
           "П10",
-          "Проход не закончен — more: true без error. Курсор записывается, next_run_at и счётчик ошибок не меняются. После коммита движок кладёт задание этого источника в очередь снова с delaySeconds = 60 и idempotencyKey = sourceId:sha256(курсора). Почему 60 с: у парсера нет своей паузы, а запуску Apify нужно время. Почему ключ по курсору: два продолжения с разными курсорами — разные задания, повтор того же — одна.",
+          "Проход не закончен — drain вернул status more, курсор он уже записал. next_run_at и счётчик ошибок не меняются. После записи расписания движок кладёт задание этого источника в очередь снова с delaySeconds = 60 и idempotencyKey = sourceId:sha256(курсора из итога drain). Почему 60 с: у коннектора нет своей паузы, а запуску Apify нужно время. Почему ключ по курсору: два продолжения с разными курсорами — разные задания, повтор того же — одна.",
           "поведение",
-          "engine/src/parse-source-job.ts; REQUEUE_DELAY_SECONDS в engine/src/schedule.ts",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts; REQUEUE_DELAY_SECONDS в engine/src/schedule.ts",
+          "drain-source-job.test",
         ],
         [
           "П11",
-          "Удачный опрос — more: false без error: consecutive_failures = 0, last_error = NULL, last_success_at = now. next_run_at не меняется: его уже сдвинул tick (П1).",
+          "Удачный опрос — drain вернул status done: consecutive_failures = 0, last_error = NULL, last_success_at = now. next_run_at не меняется: его уже сдвинул tick (П1).",
           "поведение",
-          "engine/src/parse-source-job.ts; db/src/sources/write.ts: finishParse",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts; db/src/sources/write.ts: finishDrain",
+          "drain-source-job.test",
         ],
         [
           "П12",
-          "handleParseSourceJob возвращает статус done, requeued, failed или skipped и inserted. Error — только сбой базы или отправки продолжения: такое задание повторяет очередь. Ошибка площадки — status failed, а не Error: у неё своя пауза П8, и очередь её не повторяет.",
+          "handleDrainSourceJob возвращает статус done, requeued, failed или skipped и inserted из итога drain. Error — только сбой базы (в drain или в записи расписания) или отправки продолжения: такое задание повторяет очередь. Ошибка площадки — status failed, а не Error: у неё своя пауза П8, и очередь её не повторяет.",
           "поведение",
-          "engine/src/parse-source-job.ts",
-          "parse-source-job.test",
+          "engine/src/drain-source-job.ts",
+          "drain-source-job.test",
         ],
       ];
 
@@ -2275,35 +2362,29 @@
         {
           id: "Э1",
           t: "Пакет и обработчик задания",
-          res: "пакет @job-market/engine с handleParseSourceJob: задание опроса читает источник парсером коннектора и записывает публикации, курсор и итог; проверено на тестовой базе с open-telegram на фейковом t.me",
-          gres: "handleParseSourceJob в тестах",
+          res: "пакет @job-market/engine с handleDrainSourceJob: задание опроса зовёт drain коннектора источника, пишет расписание и ставит продолжение; проверено на тестовой базе с open-telegram на фейковом t.me",
+          gres: "handleDrainSourceJob в тестах",
           g: [0, 0],
           newDirs: ["packages/engine"],
           ctx: [
             ["packages/db/src/sources/source.ts", "плана 1"],
             ["packages/connectors/src/index.ts", "плана 2"],
             ["packages/connectors/src/open-telegram/fake-telegram.test-utils.ts", "плана 2"],
+            ["packages/connectors/src/test-connector.test-utils.ts", "плана 2"],
             ["packages/logger/src/index.ts", "old"],
           ],
           mods: [
             [
-              "packages/db/src/publications/write.ts",
-              "chg",
-              "insertPublications(rows, tx = db): необязательный параметр транзакции, чтобы движок писал публикации вместе с курсором (П7)",
-              [],
-            ],
-            [
               "packages/db/src/sources/write.ts",
-              "new",
-              "getSource(id); finishParse(tx, id, { cursor?, now, failure?: { error, nextRunAt } }) — курсор, last_fetched_at и счётчики по П8 и П11",
+              "chg",
+              "getSource(id); finishDrain(id, { now, success: true } | { now, failure: { error, nextRunAt } }) — last_fetched_at и счётчики по П6, П8 и П11; курсор не трогает, saveCursor плана 2 не меняется",
               ["sources/source.ts"],
             ],
-            ["packages/db/src/index.ts", "chg", "экспорт sources/write.ts", ["sources/write.ts"]],
             [
-              "packages/connectors/package.json",
+              "packages/db/src/index.ts",
               "chg",
-              'exports["./test-utils"] → src/open-telegram/fake-telegram.test-utils.ts: тестам движка нужен фейковый t.me',
-              [],
+              "экспорт getSource и finishDrain",
+              ["sources/write.ts"],
             ],
             [
               "packages/engine/package.json",
@@ -2314,7 +2395,7 @@
             [
               "packages/engine/src/job-queue.ts",
               "new",
-              "типы JobQueue и ParseSourceJob; BATCH_SIZE = 100",
+              "типы JobQueue и DrainSourceJob; BATCH_SIZE = 100",
               [],
             ],
             [
@@ -2324,9 +2405,9 @@
               [],
             ],
             [
-              "packages/engine/src/parse-source-job.ts",
+              "packages/engine/src/drain-source-job.ts",
               "new",
-              "handleParseSourceJob — обработчик задания из очереди: читает источник, зовёт pollSource и кладёт продолжение в очередь (П4, П10, П12); pollSource(source, connector, now, deadline) — сам опрос без очереди: parse и запись одной транзакцией (П5–П9, П11)",
+              "handleDrainSourceJob — обработчик задания из очереди: читает источник, зовёт drain его коннектора, пишет расписание через finishDrain и кладёт продолжение в очередь (П4–П12)",
               [
                 "engine/src/job-queue.ts",
                 "schedule.ts",
@@ -2344,13 +2425,13 @@
             [
               "packages/engine/src/index.ts",
               "new",
-              "экспорт handleParseSourceJob, JobQueue, ParseSourceJob, nextRunAt, spreadDelay",
-              ["parse-source-job.ts"],
+              "экспорт handleDrainSourceJob, JobQueue, DrainSourceJob, nextRunAt, spreadDelay",
+              ["drain-source-job.ts"],
             ],
           ],
           api: [
             [
-              "handleParseSourceJob({ sourceId, connectors, queue, now, deadline }): Promise<Error | { status, inserted }>",
+              "handleDrainSourceJob({ sourceId, connectors, queue, now, deadline }): Promise<Error | { status, inserted }>",
               "status — done, requeued, failed или skipped (П12).",
             ],
             ["nextRunAt(now, intervalMinutes, failures): Date", "пауза после неудачи (П8)."],
@@ -2364,26 +2445,27 @@
               ["schedule.ts"],
             ],
             [
-              "packages/engine/src/parse-source-job.test.ts",
+              "packages/engine/src/drain-source-job.test.ts",
               "new",
-              "db, open-telegram из createConnectors с fakeTelegram: канал без курсора → done, inserted 10, курсор { cursorId: 10 }, failures 0, last_success_at = now; повтор задания → inserted 0, публикаций 10; публикация без текста → empty, без даты → posted_at = now. Фейковый коннектор test-parse: Error «HTTP 503» при интервале 60 и 2 ошибках → failed, failures 3, last_error, next_run_at +8 ч, курсор прежний; 5 публикаций и error → 5 записаны, курсор новый, failures +1, заданий в queue нет; more: true → курсор записан, next_run_at прежний, задание { delaySeconds: 60 }, requeued; два more с разными курсорами → разные idempotencyKey, с одинаковыми — одинаковые; config не по схеме → failed, parse не вызван; выключенный источник, несуществующий id, коннектор не из реестра → skipped, строка не изменилась; текст с \\u0000 → Error, ни публикаций, ни курсора, счётчики прежние; queue упал на продолжении → Error, курсор записан",
+              "db, open-telegram из createConnectors с fakeTelegram и fakeReader: канал без курсора → done, inserted 10, failures 0, last_success_at = now, last_fetched_at = now; повтор задания → inserted 0. testConnector плана 2: parse → Error «HTTP 503» при интервале 60 и 2 ошибках → failed, failures 3, last_error «HTTP 503», next_run_at +8 ч; 5 публикаций и error → failed, failures +1, заданий в queue нет; more: true → requeued, next_run_at и failures прежние, задание { delaySeconds: 60 }; два more с разными курсорами → разные idempotencyKey, с одинаковыми — одинаковые; выключенный источник, несуществующий id, коннектор не из реестра → skipped, строка не изменилась; текст с \\u0000 → drain → Error, handleDrainSourceJob → Error, счётчики и last_fetched_at прежние; drain позван напрямую без записи расписания, как после её сбоя → задание с новым курсором → done, inserted 0, last_fetched_at = now; queue упал на продолжении → Error, курсор записан",
               [
-                "parse-source-job.ts",
+                "drain-source-job.ts",
                 "memory-job-queue.test-utils.ts",
                 "fake-telegram.test-utils.ts",
+                "test-connector.test-utils.ts",
               ],
             ],
           ],
-          note: "Движок не зависит от Vercel и не создаёт коннекторы: реестр и JobQueue приходят параметрами. Если планы 1 и 2 ещё не реализованы, параметр tx и экспорт test-utils вносятся сразу в них (раздел 7).",
+          note: "Движок не зависит от Vercel, не создаёт коннекторы и не пишет публикации: реестр и JobQueue приходят параметрами, публикации пишет drain плана 2.",
         },
         {
           id: "Э2",
           t: "tick",
-          res: "tick берёт источники, которые пора опросить, сдвигает их опрос и кладёт задания в очередь; задания тика выполняются handleParseSourceJob, и публикации канала появляются в тестовой базе",
+          res: "tick берёт источники, которые пора опросить, сдвигает их опрос и кладёт задания в очередь; задания тика выполняются handleDrainSourceJob, и публикации канала появляются в тестовой базе",
           gres: "tick в тестах",
           g: [1, 0],
           ctx: [
-            ["packages/engine/src/parse-source-job.ts", "Э1"],
+            ["packages/engine/src/drain-source-job.ts", "Э1"],
             ["packages/engine/src/schedule.ts", "Э1"],
             ["packages/engine/src/job-queue.ts", "Э1"],
             ["packages/engine/src/memory-job-queue.test-utils.ts", "Э1"],
@@ -2415,10 +2497,10 @@
             [
               "packages/engine/src/tick.test.ts",
               "new",
-              "db, фейковый коннектор test-tick: 3 источника пора, 1 выключен, 1 с next_run_at через час, 1 с коннектором не из реестра → due 3, enqueued 3, у трёх next_run_at = now + interval, остальные не изменились; задание — delaySeconds = spreadDelay(id), idempotencyKey = id:now; limit 2 при трёх → два с самым ранним next_run_at; два tick в Promise.all → заданий ровно 3; 2500 источников → 2000 и 20 пачек по 100, следующий tick → 500; 500 источников и сбой 3-й пачки → Error, 200 отправлены, у 300 прежний next_run_at, следующий tick берёт 300. Цепочка с open-telegram на fakeTelegram: tick → по каждому заданию handleParseSourceJob → публикации канала в базе, курсор записан",
+              "db, фейковый коннектор test-tick: 3 источника пора, 1 выключен, 1 с next_run_at через час, 1 с коннектором не из реестра → due 3, enqueued 3, у трёх next_run_at = now + interval, остальные не изменились; задание — delaySeconds = spreadDelay(id), idempotencyKey = id:now; limit 2 при трёх → два с самым ранним next_run_at; два tick в Promise.all → заданий ровно 3; 2500 источников → 2000 и 20 пачек по 100, следующий tick → 500; 500 источников и сбой 3-й пачки → Error, 200 отправлены, у 300 прежний next_run_at, следующий tick берёт 300. Цепочка с open-telegram на fakeTelegram: tick → по каждому заданию handleDrainSourceJob → публикации канала в базе, курсор записан",
               [
                 "tick.ts",
-                "parse-source-job.ts",
+                "drain-source-job.ts",
                 "memory-job-queue.test-utils.ts",
                 "fake-telegram.test-utils.ts",
               ],
@@ -2437,7 +2519,7 @@
             [
               "README.md",
               "chg",
-              "раздел о движке: tick и handleParseSourceJob, правила опроса коротко, как тестировать с memoryJobQueue; ссылка на этот план",
+              "раздел о движке: tick и handleDrainSourceJob, правила опроса коротко, как тестировать с memoryJobQueue; ссылка на этот план",
               [],
             ],
           ],

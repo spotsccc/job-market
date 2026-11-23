@@ -1,11 +1,3 @@
-import {
-  EMPLOYMENT_TYPES,
-  HIRING_PARTIES,
-  SALARY_PERIODS,
-  SENIORITIES,
-  WORKPLACES,
-} from '@job-market/core';
-import type { LanguageLevel, VacancySchemaVersion } from '@job-market/core';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -25,6 +17,15 @@ import {
 
 import { occupations } from '../occupation/occupation.ts';
 import { publications } from '../publication/publication.ts';
+import {
+  EMPLOYMENT_TYPES,
+  HIRING_PARTIES,
+  SALARY_PERIODS,
+  SENIORITIES,
+  VACANCY_SCHEMA_VERSIONS,
+  WORKPLACES,
+} from './values.ts';
+import type { LanguageLevel, VacancySchemaVersion } from './values.ts';
 
 /** Тип Postgres `tsvector`: в TypeScript — строка, читать его приложению не нужно. */
 export const tsvector = customType<{ data: string }>({
@@ -63,7 +64,7 @@ const emptyTextArray = sql`'{}'::text[]`;
  * Вакансия — одна роль, извлечённая из публикации: `position` — номер роли в ответе
  * экстрактора, повторный разбор перезаписывает строки по `(publicationId, position)`.
  * Места вакансии — строки `vacancy_locations`. Перечисления — `text` со списком
- * значений из `@job-market/core`, а не `pgEnum`: новое значение не требует миграции.
+ * значений из `values.ts`, а не `pgEnum`: новое значение не требует миграции.
  */
 export const vacancies = pgTable(
   'vacancies',
@@ -148,7 +149,10 @@ export const vacancies = pgTable(
   },
   (table) => [
     unique('vacancies_publication_id_position_unique').on(table.publicationId, table.position),
-    check('vacancies_schema_version_check', sql`"schema_version" IN (1, 2)`),
+    check(
+      'vacancies_schema_version_check',
+      sql`"schema_version" IN (${sql.raw(VACANCY_SCHEMA_VERSIONS.join(', '))})`,
+    ),
     // У строки версии 2 профессия есть всегда, хотя бы root.
     check('vacancies_occupation_check', sql`"schema_version" = 1 OR "occupation_id" IS NOT NULL`),
     // Больше 30 лет — ошибка разбора, а не требование.

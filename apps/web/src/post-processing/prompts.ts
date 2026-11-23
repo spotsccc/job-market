@@ -1,4 +1,4 @@
-import type { PostSource } from '@job-market/core';
+import type { PostSource } from '@job-market/db';
 import type { NewLegacyPostRow } from '@job-market/db';
 
 /** Поля поста, которые видит модель. */

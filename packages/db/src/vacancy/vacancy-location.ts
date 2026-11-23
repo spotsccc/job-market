@@ -1,4 +1,3 @@
-import { LOCATION_ROLES, RESOLUTIONS } from '@job-market/core';
 import { sql } from 'drizzle-orm';
 import {
   char,
@@ -14,6 +13,7 @@ import {
 
 import { geoCities, geoCountries, geoRegions } from '../geo/geo.ts';
 import { vacancies } from './vacancy.ts';
+import { LOCATION_ROLES, RESOLUTIONS } from './values.ts';
 
 /**
  * Одно место одной вакансии: где офис или откуда можно работать, сведённое к

@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   logging: { incomingRequests: false },
   experimental: { optimizePackageImports: ['@mantine/core', '@mantine/hooks'] },
   transpilePackages: [
-    '@job-market/core',
     '@job-market/db',
     '@job-market/errors',
     '@job-market/geo',

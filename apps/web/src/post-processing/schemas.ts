@@ -1,4 +1,4 @@
-import { NOT_VACANCY_REASONS } from '@job-market/core';
+import { NOT_VACANCY_REASONS } from '@job-market/db/values';
 import { z } from 'zod';
 
 import { extractedVacancySchema } from '../vacancy/vacancy.ts';

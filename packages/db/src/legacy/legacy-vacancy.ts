@@ -1,10 +1,3 @@
-import {
-  EMPLOYMENT_TYPES,
-  HIRING_PARTIES,
-  SALARY_PERIODS,
-  SENIORITIES,
-  WORKPLACES,
-} from '@job-market/core';
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -21,6 +14,13 @@ import {
 
 import { tsvector } from '../vacancy/vacancy.ts';
 import type { VacancyApply } from '../vacancy/vacancy.ts';
+import {
+  EMPLOYMENT_TYPES,
+  HIRING_PARTIES,
+  SALARY_PERIODS,
+  SENIORITIES,
+  WORKPLACES,
+} from '../vacancy/values.ts';
 import { legacyPosts } from './legacy-post.ts';
 
 /**
@@ -39,7 +39,7 @@ const searchVector = sql`setweight(to_tsvector('russian', "title"), 'A')
  * Вакансия, извлечённая моделью из поста. В одном посте бывает несколько ролей:
  * `position` — номер роли в ответе модели, повторный разбор поста перезаписывает
  * строки по `(postId, position)`. Перечисления — `text` со списком значений из
- * `@job-market/core`, а не `pgEnum`: новое значение не требует миграции.
+ * `../vacancy/values.ts`, а не `pgEnum`: новое значение не требует миграции.
  */
 export const legacyVacancies = pgTable(
   'legacy_vacancies',

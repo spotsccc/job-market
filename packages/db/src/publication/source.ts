@@ -1,4 +1,3 @@
-import { CONNECTORS } from '@job-market/core';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -14,6 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { platforms } from './platform.ts';
+import { CONNECTORS } from './values.ts';
 
 /**
  * Источник вакансий: открытый Telegram-канал, поисковый запрос LinkedIn, доска вакансий

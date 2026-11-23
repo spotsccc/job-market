@@ -1,4 +1,4 @@
-import type { EmploymentType, Seniority, Workplace } from '@job-market/core';
+import type { EmploymentType, Seniority, Workplace } from '@job-market/db/values';
 import { Anchor, Badge, Card, Group, Stack, Text, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
 

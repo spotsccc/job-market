@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./migrate": "./src/migrate.ts"
+    "./migrate": "./src/migrate.ts",
+    "./values": "./src/values.ts"
   },
   "scripts": {
     "generate": "drizzle-kit generate",
@@ -18,7 +19,6 @@
     "format:check": "oxfmt --check"
   },
   "dependencies": {
-    "@job-market/core": "workspace:*",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1"
   },

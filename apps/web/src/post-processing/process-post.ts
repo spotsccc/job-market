@@ -1,5 +1,5 @@
-import type { NotVacancyReason } from '@job-market/core';
 import type { NewLegacyPostRow, NewLegacyVacancyRow } from '@job-market/db';
+import type { NotVacancyReason } from '@job-market/db/values';
 import { generateText, Output } from 'ai';
 
 import type { ExtractedVacancy } from '../vacancy/vacancy.ts';

@@ -3,7 +3,7 @@
  * `/vacancies`, пока план 1 не перенесёт строки в новую модель и не удалит эти таблицы.
  */
 export { legacyPosts } from './legacy-post.ts';
-export type { LegacyPostRow, NewLegacyPostRow } from './legacy-post.ts';
+export type { LegacyPostRow, NewLegacyPostRow, PostSource } from './legacy-post.ts';
 export {
   legacyPostVacanciesRelations,
   legacyVacancies,

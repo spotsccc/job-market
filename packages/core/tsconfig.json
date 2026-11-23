@@ -1,4 +1,0 @@
-{
-  "extends": "@job-market/typescript-config/node.json",
-  "include": ["src", "*.config.ts"]
-}

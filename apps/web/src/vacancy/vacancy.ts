@@ -4,8 +4,8 @@ import {
   SALARY_PERIODS,
   SENIORITIES,
   WORKPLACES,
-} from '@job-market/core';
-import type { Workplace } from '@job-market/core';
+} from '@job-market/db/values';
+import type { Workplace } from '@job-market/db/values';
 import { z } from 'zod';
 
 /**

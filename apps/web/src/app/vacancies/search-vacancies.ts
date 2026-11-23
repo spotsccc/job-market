@@ -1,6 +1,6 @@
-import type { EmploymentType, Seniority, Workplace } from '@job-market/core';
 import { db, desc, eq, legacyPosts, sql, legacyVacancies } from '@job-market/db';
 import type { VacancyApply } from '@job-market/db';
+import type { EmploymentType, Seniority, Workplace } from '@job-market/db/values';
 
 /** Сколько вакансий показываем за раз. */
 export const SEARCH_LIMIT = 50;

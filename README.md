@@ -22,7 +22,6 @@ pnpm check          # turbo run format:check lint check-types
 | Пакет | Что это |
 | --- | --- |
 | `apps/web` | Next.js 16 (App Router, `src/app`) |
-| `packages/core` | значения полей поста и вакансии, общие для схемы ответа модели и базы |
 | `packages/channel-linkedin` | поиск постов LinkedIn через актор Apify |
 | `packages/channel-telegram` | чтение публичных Telegram-каналов через веб-превью `t.me/s/<канал>` |
 | `packages/geo` | гео-справочник: страны, регионы найма и города из GeoNames; разбор и поиск мест — [README](packages/geo/README.md) |
@@ -38,4 +37,4 @@ pnpm check          # turbo run format:check lint check-types
 - `pnpm format` / `pnpm format:check` — oxfmt. `oxfmt.config.ts` пакета реэкспортирует `baseConfig` из `@job-market/oxfmt-config`; свои настройки — `{ ...baseConfig, ... }`.
 - Файлы вне пакетов (README, docs, корневые json) не форматируются и не линтятся.
 - Конфиг-пакеты ссылаются друг на друга относительными путями (`../oxlint-config/base.json`), а не зависимостями — иначе цикл в графе turbo.
-- Новый пакет: `tsconfig.json`, `.oxlintrc.json`, `oxfmt.config.ts` по образцу `packages/core`, скрипты `check-types`, `lint`, `format`, `format:check`.
+- Новый пакет: `tsconfig.json`, `.oxlintrc.json`, `oxfmt.config.ts` по образцу `packages/logger`, скрипты `check-types`, `lint`, `format`, `format:check`.

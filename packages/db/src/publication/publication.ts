@@ -1,4 +1,3 @@
-import { NOT_VACANCY_REASONS, PUBLICATION_STATUSES } from '@job-market/core';
 import { relations, sql } from 'drizzle-orm';
 import {
   check,
@@ -16,6 +15,7 @@ import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 
 import { authors } from './author.ts';
 import { sources } from './source.ts';
+import { NOT_VACANCY_REASONS, PUBLICATION_STATUSES } from './values.ts';
 
 /**
  * Одна публикация на площадке: сообщение Telegram-канала, пост LinkedIn. Вакансия или
