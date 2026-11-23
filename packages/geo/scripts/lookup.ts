@@ -3,9 +3,9 @@
  *
  * `pnpm --filter @job-market/geo lookup resolve city:Питер "city:Alexandria country:US"` —
  * каждый аргумент — один вход из полей `city:`, `country:`, `region:`; печатает место,
- * его предков и название (S6).
+ * его предков и название.
  *
- * `pnpm --filter @job-market/geo lookup search бер [--en]` — автодополнение (S7).
+ * `pnpm --filter @job-market/geo lookup search бер [--en]` — автодополнение.
  */
 import { getDb } from '@job-market/db';
 

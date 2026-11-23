@@ -25,7 +25,7 @@ pnpm check          # turbo run format:check lint check-types
 | `packages/core` | значения полей поста и вакансии, общие для схемы ответа модели и базы |
 | `packages/channel-linkedin` | поиск постов LinkedIn через актор Apify |
 | `packages/channel-telegram` | чтение публичных Telegram-каналов через веб-превью `t.me/s/<канал>` |
-| `packages/geo` | гео-справочник: страны, регионы найма и города из GeoNames; пока — `normalizeName` для сравнения названий |
+| `packages/geo` | гео-справочник: страны, регионы найма и города из GeoNames; разбор и поиск мест — [README](packages/geo/README.md) |
 | `packages/errors` | общие ошибки на `@spotsccc/error-as-value`: базовая `AppError` (`extendable: true`), остальные — `createTaggedError({ ..., extends: AppError })` |
 | `packages/typescript-config` | общие tsconfig: `base.json`, `node.json`, `nextjs.json` |
 | `packages/oxlint-config` | общие конфиги oxlint: `base.json`, `next.json` (+ react, jsx-a11y, nextjs) |

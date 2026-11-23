@@ -19,7 +19,7 @@ const server = createServer((_request, response) => {
     response.writeHead(200, { 'content-length': Buffer.byteLength(BODY) }).end(BODY);
     return;
   }
-  // Обещаем 1 000 байт, отдаём 10 и рвём соединение — как оборванная загрузка в Э0.
+  // Обещаем 1 000 байт, отдаём 10 и рвём соединение — так оборвалась первая загрузка alternateNamesV2.zip.
   response.writeHead(200, { 'content-length': 1000 });
   response.write('0123456789');
   setTimeout(() => {
