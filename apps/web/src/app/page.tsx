@@ -9,6 +9,7 @@ export default function HomePage(): ReactNode {
       </Title>
       <Stack gap="xs">
         <Anchor href="/vacancies">Вакансии</Anchor>
+        <Anchor href="/geo">Гео-справочник</Anchor>
       </Stack>
     </Container>
   );
