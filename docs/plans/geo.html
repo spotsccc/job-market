@@ -1119,7 +1119,7 @@
             <b
               >Итог: справочник целиком — 7,2 МБ SQL, применяется за 2,3 с, база растёт на 47 МБ.</b
             >
-            Пункты 4 и 5 ещё не проверены.
+            Пункт 4 проверен 23 ноября 2026 перед Э2, пункт 5 ждёт доступа к Neon.
           </p>
           <table>
             <tr>
@@ -1160,6 +1160,16 @@
               <td class="small">ничего</td>
             </tr>
             <tr>
+              <td>4. drizzle-kit --custom</td>
+              <td class="small">
+                пишет файл с одной строкой-комментарием, запись в <code>_journal.json</code> и
+                снимок с тем же содержимым схемы, что у прошлого. После него
+                <code>pnpm db:generate</code> пишет «No schema changes» — CI-шаг «Migrations match
+                the schema» проходит. <code>migrate</code> применяет файл в 7,2 МБ за 3 с
+              </td>
+              <td class="small">ничего</td>
+            </tr>
+            <tr>
               <td>Качество</td>
               <td class="small">
                 ru-название есть у 17 780 городов из 31 801, из 5 869 городов от 100 000 жителей — у
@@ -1189,14 +1199,29 @@
               Азия); IR по тому же правилу попадает в apac, а не в mena.
             </li>
             <li>
-              23 ноября 2026: Э1 выполнен. Отличия от карточки: экспорт <code>./server</code>
-              перенесён в Э4 — до него файла нет; имена ограничений и индексов заданы явно, потому
-              что drizzle назвал бы уникальность <code>geo_countries_geonameId_unique</code>, а два
-              индекса по <code>normalized</code> получили бы одно имя. Тест
-              <code>tables.test</code> удалён по решению владельца: он проверял, что Postgres
-              соблюдает CHECK, UNIQUE и FK, то есть библиотеку, а не наш код. Схема и миграция
-              сверяются шагом CI «Migrations match the schema», наличие pg_trgm — применением
-              миграции в CI (E1). Правило — в AGENTS.md, раздел «Тесты».
+              23 ноября 2026: Э1 выполнен. Отличия от карточки: экспорт
+              <code>./server</code> перенесён в Э4 — до него файла нет; имена ограничений и индексов
+              заданы явно, потому что drizzle назвал бы уникальность
+              <code>geo_countries_geonameId_unique</code>, а два индекса по
+              <code>normalized</code> получили бы одно имя. Тест <code>tables.test</code> удалён по
+              решению владельца: он проверял, что Postgres соблюдает CHECK, UNIQUE и FK, то есть
+              библиотеку, а не наш код. Схема и миграция сверяются шагом CI «Migrations match the
+              schema», наличие pg_trgm — применением миграции в CI (E1). Правило — в AGENTS.md,
+              раздел «Тесты».
+            </li>
+            <li>
+              23 ноября 2026: Э2 выполнен. Отличия от карточки: разбор строк дампа вынесен в
+              <code>src/build/parse.ts</code>, типы снимка — в
+              <code>src/build/types.ts</code> (лимит oxlint — 300 строк на файл); дампы качаются
+              параллельно. П3 уточнён: у Петербурга нет предпочтительного en-названия, и «первое на
+              языке» дало бы разговорное «Peterburg», поэтому разговорные для показа не берутся, а
+              короткие идут после обычных. Проверки MERGE и DELETE перенесены из
+              <code>sql.test</code> в <code>geo-data.test</code>: строка SQL не показывает, что
+              делает база, а применение к настоящим таблицам — показывает; туда же добавлен случай с
+              ручным названием. Для db-теста в geo добавлен <code>@types/pg</code>. Находки: Intl
+              даёт короткие формы — «ОАЭ», «Antigua &amp; Barbuda»; это и есть name_ru и name_en
+              страны (П1). Две миграции geonames подряд в одной транзакции применяются (E5,
+              проверено на одноразовой базе).
             </li>
           </ul>
         </div>
@@ -3160,7 +3185,7 @@
         ],
         [
           "П3",
-          "Названия места из GeoNames: name и asciiname, для страны — коды alpha-2 и alpha-3, и альтернативные названия на ru, en, abbr и первом языке страны из countryInfo, кроме исторических (isHistoric). Повторы после нормализации убираются. name_ru и name_en города — название с isPreferredName, иначе первое на этом языке.",
+          "Названия места из GeoNames: name и asciiname, для страны — коды alpha-2 и alpha-3, и альтернативные названия на ru, en, abbr и первом языке страны из countryInfo, кроме исторических (isHistoric). Повторы после нормализации убираются. name_ru и name_en города — название с isPreferredName, иначе первое обычное, иначе первое короткое (isShortName); разговорные (isColloquial) для показа не берутся. name_en, совпадающее с name, — NULL.",
           "определение",
           "src/build/geonames.ts",
           "geonames.test",
@@ -3296,7 +3321,8 @@
           exit: "итог — раздел «Результаты spike»",
           no: "нет pg_trgm на Neon — автодополнение по btree с text_pattern_ops, только по началу слова, остальное без изменений; миграция на Neon дольше нескольких минут — применять её вручную до merge (раздел 7); CI-проверка падает после custom-миграции — разобрать снимок и поправить шаг CI",
           status: "в работе",
-          progress: "22 ноября 2026: п. 1–3 готовы при составлении плана; п. 4–5 — до Э2",
+          progress:
+            "22 ноября 2026: п. 1–3 готовы при составлении плана. 23 ноября 2026: п. 4 готов перед Э2. П. 5 (Neon) ждёт доступа владельца; до него ветку не пушим: прод применит 0004 и 0005 к Neon",
         },
         {
           id: "Э1",
@@ -3351,7 +3377,8 @@
             ],
           ],
           status: "готов",
-          progress: "23 ноября 2026: миграция 0004_geo.sql применена к локальной и тестовой базе; pnpm check и pnpm test проходят (geo — 8 unit-тестов); не закоммичен",
+          progress:
+            "23 ноября 2026: миграция 0004_geo.sql применена к локальной и тестовой базе; pnpm check и pnpm test проходят (geo — 8 unit-тестов); закоммичен",
           note: "Миграция только добавляет таблицы. drizzle-kit не создаёт расширения, поэтому CREATE EXTENSION дописывается в сгенерированный SQL до коммита. Индекс — index().using('gin', t.normalized.op('gin_trgm_ops')), уникальность — unique().on(…).nullsNotDistinct(). Скрипт test пакета — NODE_ENV=test node --env-file=../../apps/web/.env.test --test 'src/**/*.test.ts', как в apps/web.",
         },
         {
@@ -3362,6 +3389,7 @@
           g: [1, 1],
           newDirs: [
             "packages/geo/src/build",
+            "packages/geo/src/build/fixtures",
             "packages/geo/src/errors",
             "packages/geo/src/generated",
             "packages/geo/scripts",
@@ -3383,14 +3411,26 @@
             [
               "packages/geo/src/build/download.ts",
               "new",
-              "скачать в node_modules/.cache/geonames: временное имя, сверка с Content-Length, rename; флаг refresh",
+              "скачать в node_modules/.cache/geonames параллельно: временное имя, сверка с Content-Length, rename; флаг refresh",
               ["download.geonames.org", "geo/src/errors/*.ts"],
             ],
             [
               "packages/geo/src/build/geonames.ts",
               "new",
               "чтение трёх дампов потоком; отбор П1–П3; CountryRemovedError по прошлому countries.ts (П7)",
-              ["normalize.ts", "geo/src/errors/*.ts"],
+              ["normalize.ts", "geo/src/errors/*.ts", "build/parse.ts", "build/types.ts"],
+            ],
+            [
+              "packages/geo/src/build/parse.ts",
+              "new",
+              "splitRow, parseInteger, parseCoordinate: строка дампа → ячейки или GeonamesParseError с файлом и строкой",
+              ["geo/src/errors/*.ts"],
+            ],
+            [
+              "packages/geo/src/build/types.ts",
+              "new",
+              "GeonamesSources (строки трёх дампов), CountryRecord, CityRecord, AliasRecord, GeonamesData",
+              [],
             ],
             [
               "packages/geo/src/build/sql.ts",
@@ -3407,7 +3447,7 @@
             [
               "packages/geo/scripts/build-migration.ts",
               "new",
-              "CLI geo:build: разбор аргументов, runBuild с настоящими download и drizzle-kit, итоги в консоль",
+              "CLI geo:build: разбор аргументов, runBuild с настоящими download, unzip -p и drizzle-kit; oxfmt для countries.ts; итоги в консоль",
               ["build/run.ts", "drizzle-kit"],
             ],
             [
@@ -3417,12 +3457,24 @@
               [],
             ],
             [
-              "packages/db/migrations/*_geo_geonames.sql",
+              "packages/db/migrations/0005_geo_geonames.sql",
               "new",
-              "пишет pnpm geo:build geonames",
+              "пишет pnpm geo:build geonames; журнал и снимок — drizzle-kit",
               ["build-migration.ts"],
             ],
-            ["packages/geo/package.json", "chg", "скрипт geo:build", []],
+            [
+              "packages/geo/package.json",
+              "chg",
+              "скрипт geo:build; devDependency @types/pg для geo-data.test",
+              [],
+            ],
+            ["packages/geo/tsconfig.json", "chg", "include: scripts", []],
+            [
+              "packages/geo/src/build/fixtures/*.txt",
+              "new",
+              "строки настоящих дампов 23 ноября 2026: 7 стран, 6 городов, 26 названий",
+              [],
+            ],
             [
               "package.json",
               "chg",
@@ -3440,13 +3492,13 @@
             [
               "packages/geo/src/build/geonames.test.ts",
               "new",
-              "unit на фикстурах из строк настоящих дампов: PPLX и PPLH отброшены, Hamilton (столица, 902 жителя) остался; CS и AN отброшены, XK остался; исторический ru-алиас отброшен; «Питер» и «СПб» — у Санкт-Петербурга; name_ru — с isPreferredName; строка из 18 столбцов вместо 19 → GeonamesParseError с номером строки; DE в прошлом countries.ts, но нет в countryInfo → CountryRemovedError",
+              "unit на фикстурах из строк настоящих дампов: PPLX (Zehlendorf) и PPLH (Pittwater) отброшены, Hamilton (столица, 902 жителя) остался; CS и AN отброшены, XK остался; «Ленинград» и «Петроград» отброшены; «Питер» и «СПб» — у Санкт-Петербурга; fr-название отброшено, de у Мюнхена осталось; «St. Petersburg» и «St Petersburg» — одно название; у Германии названия germany, de, deu; name_ru — «Санкт-Петербург», name_en не разговорное «Peterburg»; строка из 18 столбцов вместо 19 → GeonamesParseError со строкой 3; DE в прошлом countries.ts, но нет в countryInfo → CountryRemovedError",
               ["build/geonames.ts"],
             ],
             [
               "packages/geo/src/build/sql.test.ts",
               "new",
-              "unit: «N'Djamena» → 'N''Djamena'; 2 500 городов → три INSERT; между операторами --> statement-breakpoint; каждая временная таблица удаляется в конце; MERGE городов с WHEN NOT MATCHED BY SOURCE … archived_at; DELETE только source = 'geonames'",
+              "unit: «N'Djamena» → 'N''Djamena'; 2 500 городов → три INSERT, в последнем 500 строк; каждый оператор кончается «;» и отделён --> statement-breakpoint; каждая временная таблица удаляется, последний оператор — DROP",
               ["build/sql.ts"],
             ],
             [
@@ -3458,10 +3510,13 @@
             [
               "packages/geo/src/geo-data.test.ts",
               "new",
-              "db: после db:migrate:test — 250 стран и не меньше 31 000 городов; коды geo_countries = COUNTRY_CODES; SQL миграции ещё раз в транзакции с ROLLBACK не меняет число строк; город, которого нет в укороченном снимке, получает archived_at, при возврате — NULL",
+              "db: после db:migrate:test — 250 стран и не меньше 31 000 городов; коды geo_countries = COUNTRY_CODES; SQL миграции ещё раз в транзакции с ROLLBACK не меняет число строк; Мюнхен, которого нет в укороченном снимке, получает archived_at, при возврате — NULL; ручное название Германии переживает миграцию geonames",
               ["generated/countries.ts"],
             ],
           ],
+          status: "готов",
+          progress:
+            "23 ноября 2026: 0005_geo_geonames.sql — 250 стран, 31 802 города, 63 919 названий, 7,2 МБ; применена к локальной и тестовой базе; pnpm check и pnpm test проходят (geo — 31 тест), db:generate изменений не находит",
           note: "Перед коммитом — pnpm db:migrate и pnpm db:migrate:test локально, затем pnpm test. alternateNamesV2 (787 МБ) читается потоком, а не в память. Фикстуры unit-тестов — несколько строк настоящих дампов в src/build/fixtures/.",
         },
         {

@@ -16,7 +16,8 @@
     "db:down": "docker compose down",
     "db:generate": "pnpm --filter @job-market/db generate",
     "db:migrate": "pnpm --filter @job-market/web db:migrate",
-    "db:migrate:test": "pnpm --filter @job-market/web db:migrate:test"
+    "db:migrate:test": "pnpm --filter @job-market/web db:migrate:test",
+    "geo:build": "pnpm --filter @job-market/geo geo:build"
   },
   "devDependencies": {
     "@job-market/typescript-config": "workspace:*",

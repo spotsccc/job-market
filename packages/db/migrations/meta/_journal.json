@@ -36,6 +36,13 @@
       "when": 1795449871786,
       "tag": "0004_geo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795451578515,
+      "tag": "0005_geo_geonames",
+      "breakpoints": true
     }
   ]
 }

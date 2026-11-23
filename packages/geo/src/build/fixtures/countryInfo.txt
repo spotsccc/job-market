@@ -1,0 +1,9 @@
+#																		
+#ISO	ISO3	ISO-Numeric	fips	Country	Capital	Area(in sq km)	Population	Continent	tld	CurrencyCode	CurrencyName	Phone	Postal Code Format	Postal Code Regex	Languages	geonameid	neighbours	EquivalentFipsCode
+AU	AUS	036	AS	Australia	Canberra	7686850	27614411	OC	.au	AUD	Dollar	61	####	^(\d{4})$	en-AU	2077456		
+BM	BMU	060	BD	Bermuda	Hamilton	53	64555	NA	.bm	BMD	Dollar	+1-441	@@ ##	^([A-Z]{2}\d{2})$	en-BM,pt	3573345		
+DE	DEU	276	GM	Germany	Berlin	357021	83491249	EU	.de	EUR	Euro	49	#####	^(\d{5})$	de	2921044	CH,PL,NL,DK,BE,CZ,LU,FR,AT	
+XK	XKX	0	KV	Kosovo	Pristina	10908	1576876	EU		EUR	Euro		#####	^(\d{5})$	sq,sr	831053	RS,AL,MK,ME	
+RU	RUS	643	RS	Russia	Moscow	17100000	143513328	EU	.ru	RUB	Ruble	7	######	^(\d{6})$	ru,tt,xal,cau,ady,kv,ce,tyv,cv,udm,tut,mns,bua,myv,mdf,chm,ba,inh,kbd,krc,av,sah,nog	2017370	GE,CN,BY,UA,KZ,LV,PL,EE,LT,FI,MN,NO,AZ,KP	
+CS	SCG	891	YI	Serbia and Montenegro	Belgrade	102350	10829175	EU	.cs	RSD	Dinar	381	#####	^(\d{5})$	cu,hu,sq,sr	8505033	AL,HU,MK,RO,HR,BA,BG	
+AN	ANT	530	NT	Netherlands Antilles	Willemstad	960	300000	NA	.an	ANG	Guilder	599			nl-AN,en,es	8505032	GP	
