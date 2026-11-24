@@ -21,10 +21,12 @@ export {
   addPublications,
   authorKey,
   findOriginals,
+  getSource,
   insertPublication,
   markFailed,
   saveCursor,
   setOutcome,
+  updateSourceSchedule,
   upsertAuthors,
 } from './write-publication.ts';
 export type {
@@ -32,6 +34,7 @@ export type {
   NewPublicationToSave,
   PublicationOutcome,
   PublicationToSave,
+  SourceSchedule,
 } from './write-publication.ts';
 export { replacePublicationLinks } from './write-links.ts';
 export type { LinkToSave } from './write-links.ts';

@@ -7,6 +7,7 @@ import { publicationLinks } from './publication-link.ts';
 import type { NewPublicationRow } from './publication.ts';
 import { publications } from './publication.ts';
 import { sources } from './source.ts';
+import type { NewSourceRow, SourceRow } from './source.ts';
 import type { Connector, NotVacancyReason } from './values.ts';
 import { linkRows } from './write-links.ts';
 import type { LinkToSave } from './write-links.ts';
@@ -231,4 +232,48 @@ export async function setOutcome(
  */
 export async function saveCursor(db: DbExecutor, sourceId: string, cursor: unknown): Promise<void> {
   await db.update(sources).set({ cursor }).where(eq(sources.id, sourceId));
+}
+
+/**
+ * Источник по id для движка: `undefined` — строки нет. Сбой базы — `Error`: движок отдаёт его
+ * очереди, и та повторяет задание.
+ */
+export async function getSource(
+  db: DbExecutor,
+  id: string,
+): Promise<Error | SourceRow | undefined> {
+  return db
+    .select()
+    .from(sources)
+    .where(eq(sources.id, id))
+    .then(([row]) => row)
+    .catch((cause: unknown) => new Error(`Reading source ${id} failed`, { cause }));
+}
+
+/** Поля расписания опроса источника. Какие из них писать, решает движок. */
+export type SourceSchedule = Readonly<
+  Partial<
+    Pick<
+      NewSourceRow,
+      'lastFetchedAt' | 'lastSuccessAt' | 'consecutiveFailures' | 'lastError' | 'nextRunAt'
+    >
+  >
+>;
+
+/**
+ * Пишет в источник переданные поля расписания и ничего не решает: поля, которого нет в
+ * `schedule`, не меняет, `null` пишет как NULL. Курсор не трогает — его пишет `saveCursor`.
+ */
+export async function updateSourceSchedule(
+  db: DbExecutor,
+  id: string,
+  schedule: SourceSchedule,
+): Promise<Error | undefined> {
+  const written = await db
+    .update(sources)
+    .set({ ...schedule })
+    .where(eq(sources.id, id))
+    .catch((cause: unknown) => new Error(`Writing schedule of source ${id} failed`, { cause }));
+  if (written instanceof Error) return written;
+  return undefined;
 }
