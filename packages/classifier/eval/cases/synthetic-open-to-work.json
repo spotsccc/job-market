@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-open-to-work",
+  "source": "synthetic",
+  "why": "«Open to work» от самого автора в LinkedIn",
+  "publication": {
+    "connector": "linkedin",
+    "content": "I'm open to work! After 6 years as a frontend developer (React, TypeScript) at a fintech startup, I'm looking for my next role. Remote or Berlin. Any referrals are appreciated 🙏 #OpenToWork",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Anna Kovacs",
+      "url": "https://www.linkedin.com/in/anna-kovacs",
+      "headline": "Frontend Developer | React | TypeScript"
+    }
+  },
+  "expected": "job_seeker"
+}

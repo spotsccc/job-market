@@ -2,48 +2,45 @@ import {
   and,
   asc,
   authors,
+  companies,
   db,
   desc,
   eq,
   geoCities,
-  inArray,
   listOccupations,
   platforms,
   publications,
   sources,
   sql,
   vacancies,
-  vacancyLocations,
 } from '@job-market/db';
 import type { SQL, VacancyApply, VacancyLanguage } from '@job-market/db';
-import type { EmploymentType, RESOLUTIONS, Seniority, Workplace } from '@job-market/db/values';
-import { formatPlace, isCountryCode } from '@job-market/geo';
+import type { EmploymentType, Seniority, Workplace } from '@job-market/db/values';
+import { isCountryCode } from '@job-market/geo';
 import type { Place } from '@job-market/geo';
 
 import { filterConditions, placeCondition } from './conditions.ts';
 import type { HiringParty, SalaryPeriod, VacancyFilters } from './filters.ts';
+import { loadPlaces } from './load-places.ts';
+import type { VacancyPlace } from './load-places.ts';
 import { buildOccupationTree } from './occupation-tree.ts';
 
-type Resolution = (typeof RESOLUTIONS)[number];
+export { loadPlaces } from './load-places.ts';
+export type { VacancyPlace } from './load-places.ts';
 
 /** Сколько вакансий на странице. */
 export const PAGE_SIZE = 20;
-
-/** Место вакансии для карточки: название по справочнику или как в тексте. */
-export type VacancyPlace = {
-  readonly role: 'office' | 'hiring';
-  readonly resolution: Resolution;
-  readonly label: string;
-  /** Как место написано в тексте. */
-  readonly raw: string;
-};
 
 /** Вакансия для страницы: поля вакансии, её места и публикация, из которой она извлечена. */
 export type VacancySearchItem = {
   readonly id: string;
   readonly title: string;
+  /** Компания как в тексте вакансии. */
   readonly company: string | null;
   readonly companyUrl: string | null;
+  /** Компания из справочника; `null` — у вакансии нет ключей компании. */
+  readonly companyId: string | null;
+  readonly companyName: string | null;
   readonly hiringParty: HiringParty;
   /** Путь профессии: «IT › Разработка › Frontend»; `null` — профессии нет. */
   readonly occupation: string | null;
@@ -86,7 +83,27 @@ export type VacancySearchResult = {
   readonly items: readonly VacancySearchItem[];
   /** Сколько вакансий подходит под фильтры всего, не только на странице. */
   readonly total: number;
+  /**
+   * Компания фильтра; `null` — фильтра нет или компании с таким id нет. Во втором случае
+   * `items` пуст (П9 плана компаний).
+   */
+  readonly company: CompanyFilter | null;
 };
+
+/** Компания фильтра (П9 плана компаний). */
+export type CompanyFilter = { readonly id: string; readonly name: string };
+
+export const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu;
+
+/** Компания фильтра по id. Не uuid — компании точно нет, а Postgres на таком id бросил бы ошибку (E8). */
+async function findCompany(id: string): Promise<CompanyFilter | null> {
+  if (!UUID.test(id)) return null;
+  const [row] = await db
+    .select({ id: companies.id, name: companies.name })
+    .from(companies)
+    .where(eq(companies.id, id));
+  return row ?? null;
+}
 
 /** Столбцы вакансии с публикацией, источником и автором: общие у выдачи и страницы вакансии. */
 export const VACANCY_COLUMNS = {
@@ -94,6 +111,8 @@ export const VACANCY_COLUMNS = {
   title: vacancies.title,
   company: vacancies.company,
   companyUrl: vacancies.companyUrl,
+  companyId: vacancies.companyId,
+  companyName: companies.name,
   hiringParty: vacancies.hiringParty,
   occupationId: vacancies.occupationId,
   suggestedOccupation: vacancies.suggestedOccupation,
@@ -146,84 +165,32 @@ async function resolveFilterPlace(
   return { kind: 'city', id: place.id, countryCode: city.countryCode };
 }
 
-/** Места вакансий страницы с названиями городов, по порядку. */
-export async function loadPlaces(ids: readonly string[]): Promise<Map<string, VacancyPlace[]>> {
-  const rows =
-    ids.length === 0
-      ? []
-      : await db
-          .select({
-            vacancyId: vacancyLocations.vacancyId,
-            role: vacancyLocations.role,
-            resolution: vacancyLocations.resolution,
-            regionCode: vacancyLocations.regionCode,
-            countryCode: vacancyLocations.countryCode,
-            cityId: vacancyLocations.cityId,
-            raw: vacancyLocations.raw,
-            cityName: geoCities.name,
-            cityNameRu: geoCities.nameRu,
-            cityNameEn: geoCities.nameEn,
-          })
-          .from(vacancyLocations)
-          .leftJoin(geoCities, eq(geoCities.id, vacancyLocations.cityId))
-          .where(inArray(vacancyLocations.vacancyId, [...ids]))
-          .orderBy(asc(vacancyLocations.vacancyId), asc(vacancyLocations.position));
-  const places = new Map<string, VacancyPlace[]>();
-  for (const row of rows) {
-    const list = places.get(row.vacancyId) ?? [];
-    list.push({
-      role: row.role,
-      resolution: row.resolution,
-      label: placeLabel(row),
-      raw: row.raw,
-    });
-    places.set(row.vacancyId, list);
-  }
-  return places;
-}
+/** Что фильтр вычислил до запроса: узлы профессий, место с его страной и поисковый запрос. */
+type Resolved = {
+  /** `null` — фильтра нет или все id профессий неизвестны: тогда он отброшен. */
+  readonly occupationIds: readonly string[] | null;
+  readonly place: Exclude<Place, { kind: 'anywhere' }> | null | undefined;
+  readonly tsQuery: SQL | null;
+};
 
-function placeLabel(row: {
-  readonly regionCode: string | null;
-  readonly countryCode: string | null;
-  readonly cityId: number | null;
-  readonly raw: string;
-  readonly cityName: string | null;
-  readonly cityNameRu: string | null;
-  readonly cityNameEn: string | null;
-}): string {
-  if (row.regionCode !== null) return formatPlace({ kind: 'region', code: row.regionCode }, 'ru');
-  if (row.countryCode === null || !isCountryCode(row.countryCode)) return row.raw;
-  if (row.cityId !== null && row.cityName !== null) {
-    return formatPlace({ kind: 'city', id: row.cityId, countryCode: row.countryCode }, 'ru', {
-      name: row.cityName,
-      nameRu: row.cityNameRu,
-      nameEn: row.cityNameEn,
-    });
-  }
-  return formatPlace({ kind: 'country', code: row.countryCode }, 'ru');
-}
-
-async function runSearch(filters: VacancyFilters, limit: number): Promise<VacancySearchResult> {
-  const [occupationList, place] = await Promise.all([
-    listOccupations(db),
-    resolveFilterPlace(filters.place),
-  ]);
-  const tree = buildOccupationTree(occupationList);
-  const occupationIds = tree.expand(filters.occupations);
-  const tsQuery: SQL | null =
-    filters.q === '' ? null : sql`websearch_to_tsquery('russian', ${filters.q})`;
-
-  const rows = await db
+/** Страница выдачи с числом всех подходящих строк. */
+function queryPage(
+  filters: VacancyFilters,
+  limit: number,
+  // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- SQL drizzle — класс, readonly его не сделать
+  { occupationIds, place, tsQuery }: Resolved,
+) {
+  return db
     .select({ ...VACANCY_COLUMNS, total: sql<number>`count(*) over ()`.mapWith(Number) })
     .from(vacancies)
     .innerJoin(publications, eq(vacancies.publicationId, publications.id))
     .innerJoin(sources, eq(publications.sourceId, sources.id))
     .innerJoin(platforms, eq(sources.platform, platforms.id))
     .leftJoin(authors, eq(publications.authorId, authors.id))
+    .leftJoin(companies, eq(vacancies.companyId, companies.id))
     .where(
       and(
-        // Все id профессий неизвестны — фильтр отброшен, как прочие неизвестные значения.
-        filterConditions(filters, occupationIds.length === 0 ? null : occupationIds, tsQuery),
+        filterConditions(filters, occupationIds, tsQuery),
         place === undefined
           ? undefined
           : place === null
@@ -238,6 +205,25 @@ async function runSearch(filters: VacancyFilters, limit: number): Promise<Vacanc
     )
     .limit(limit)
     .offset((filters.page - 1) * limit);
+}
+
+async function runSearch(filters: VacancyFilters, limit: number): Promise<VacancySearchResult> {
+  const [occupationList, place, company] = await Promise.all([
+    listOccupations(db),
+    resolveFilterPlace(filters.place),
+    filters.companyId === null ? null : findCompany(filters.companyId),
+  ]);
+  if (filters.companyId !== null && company === null) return { items: [], total: 0, company };
+  const tree = buildOccupationTree(occupationList);
+  const occupationIds = tree.expand(filters.occupations);
+  const tsQuery: SQL | null =
+    filters.q === '' ? null : sql`websearch_to_tsquery('russian', ${filters.q})`;
+
+  const rows = await queryPage(filters, limit, {
+    occupationIds: occupationIds.length === 0 ? null : occupationIds,
+    place,
+    tsQuery,
+  });
 
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- строки drizzle с изменяемыми массивами
   const places = await loadPlaces(rows.map(({ id }) => id));
@@ -249,6 +235,7 @@ async function runSearch(filters: VacancyFilters, limit: number): Promise<Vacanc
       places: places.get(row.id) ?? [],
     })),
     total: rows[0]?.total ?? 0,
+    company,
   };
 }
 

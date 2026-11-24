@@ -5,6 +5,7 @@
  */
 export * from './publication/index.ts';
 export * from './occupation/index.ts';
+export * from './company/index.ts';
 export * from './vacancy/index.ts';
 export * from './legacy/index.ts';
 export * from './geo/index.ts';

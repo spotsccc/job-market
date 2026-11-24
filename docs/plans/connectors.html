@@ -850,9 +850,9 @@
         <h2><span class="num">1</span>Задача</h2>
         <p class="lead">
           Старый сбор — ручной поиск <code>/linkedin</code> и ежедневная задача Telegram с таблицами
-          <code>telegram_*</code> — удалён отдельной задачей (раздел 2). Его логика
-          чтения площадок осталась в git-истории, а движок, который будет опрашивать сотни
-          источников, её в прежнем виде не переиспользует.
+          <code>telegram_*</code> — удалён отдельной задачей (раздел 2). Его логика чтения площадок
+          осталась в git-истории, а движок, который будет опрашивать сотни источников, её в прежнем
+          виде не переиспользует.
         </p>
         <p class="lead">
           План создаёт пакет <code>packages/connectors</code>. Снаружи у коннектора два метода.
@@ -871,9 +871,9 @@
           Коннекторы пока никто не зовёт: их проверяют тесты, а подключит движок следующего плана.
           До него новые вакансии в базу не поступают. Коннекторам нужны классификатор из
           <a href="classifier.html">плана классификатора</a>, экстрактор и функции записи из
-          <a href="vacancy-extraction.html">плана экстрактора</a> и чтение ссылок LinkedIn из
-          <a href="enricher.html">плана енричера</a> (раздел 2). Э1 от них не зависит и идёт
-          параллельно с ними; остальные этапы ждут нужных этапов этих планов (раздел 8).
+          <a href="vacancy-extraction.html">плана экстрактора</a> и чтение ссылок LinkedIn — пакет
+          <code>@job-market/enricher</code>, он уже в коде (раздел 2). Э1 от этих планов не зависит
+          и идёт параллельно с ними; остальные этапы ждут нужных этапов этих планов (раздел 8).
         </p>
         <div class="card">
           <h3>Сценарии — критерии готовности</h3>
@@ -896,17 +896,16 @@
       <section id="now">
         <h2><span class="num">2</span>Исходное состояние</h2>
         <p class="small muted">
-          Факты сверены с рабочей копией 23 ноября 2026, коммит <code>eb62f22</code> и
-          незакоммиченный Э1 плана енричера (пакет <code>@job-market/apify</code>).
+          Факты сверены с рабочей копией 23 ноября 2026, коммит <code>1110506</code>: пакеты
+          <code>@job-market/apify</code> и <code>@job-market/enricher</code> уже в коде.
         </p>
         <div class="card"><table id="facts"></table></div>
         <div class="card">
           <h3>Что дают другие планы</h3>
           <p class="small muted">
             Этих модулей ещё нет в коде. Имена взяты из карточек этапов планов
-            <a href="classifier.html">классификатора</a>,
-            <a href="vacancy-extraction.html">экстрактора</a> и
-            <a href="enricher.html">енричера</a>. Если план назовёт их иначе, этот план
+            <a href="classifier.html">классификатора</a> и
+            <a href="vacancy-extraction.html">экстрактора</a>. Если план назовёт их иначе, этот план
             поправляется до начала этапа, которому они нужны (раздел 7).
           </p>
           <table id="prereq"></table>
@@ -934,11 +933,10 @@
             <figcaption>
               Классификатор — из плана классификатора; экстрактор, функции записи
               <code>@job-market/db</code>, <code>listOccupations</code> и
-              <code>locateVacancies</code> — из плана экстрактора; enricher — из плана енричера.
-              Вызывающего у
-              пакета нет: его подключит движок следующего плана, а пока — только тесты. Движок пишет
-              в <code>sources</code> только состояние расписания: когда опрашивать снова и сколько
-              ошибок подряд.
+              <code>locateVacancies</code> — из плана экстрактора; enricher уже в коде. Вызывающего
+              у пакета нет: его подключит движок следующего плана, а пока — только тесты. Движок
+              пишет в <code>sources</code> только состояние расписания: когда опрашивать снова и
+              сколько ошибок подряд.
             </figcaption>
           </figure>
         </div>
@@ -1021,18 +1019,17 @@
         <div class="card">
           <h3>Что коннектор кладёт в поля</h3>
           <p class="small muted">
-            Строка — коннектор, колонка — поле <code>sources</code> или
-            <code>publications</code>. Форму <code>config</code> и
-            <code>cursor</code> проверяют zod-схемы коннектора, база хранит их как
-            <code>jsonb</code>. Пишет их drain (П9).
+            Строка — коннектор, колонка — поле <code>sources</code> или <code>publications</code>.
+            Форму <code>config</code> и <code>cursor</code> проверяют zod-схемы коннектора, база
+            хранит их как <code>jsonb</code>. Пишет их drain (П9).
           </p>
           <table id="matrix"></table>
         </div>
         <div class="card">
           <h3>Какие столбцы пишут drain и mine</h3>
           <p class="small muted">
-            Строка — столбец таблицы. Остальные столбцы <code>sources</code> — расписание и
-            ошибки опроса — пишет движок.
+            Строка — столбец таблицы. Остальные столбцы <code>sources</code> — расписание и ошибки
+            опроса — пишет движок.
           </p>
           <table id="writes"></table>
         </div>
@@ -1085,13 +1082,12 @@
             <div id="stagesGraph"></div>
             <figcaption>
               Клик по этапу — его карточка. Э1 — пакет, контракт и чтение Telegram — не зависит от
-              других планов и идёт параллельно с ними. Э2 (разбор) ждёт Э1 плана классификатора и
-              Э3 плана экстрактора. Э3 (drain и mine) ждёт Э4 плана экстрактора и Э2 плана
-              енричера. Э4 (linkedin) ждёт коммита Э1 плана енричера: он меняет те же файлы
-              <code>channel-linkedin</code>. Э3 и Э4 после Э2 идут параллельно. Пунктир — мягкая
-              зависимость: README пишется, когда готовы Э3 и Э4. Каждый этап — отдельный коммит,
-              который проходит
-              <code>pnpm check</code> и <code>pnpm test</code>.
+              других планов и идёт параллельно с ними. Э2 (разбор) ждёт Э1 плана классификатора и Э3
+              плана экстрактора. Э3 (drain и mine) ждёт Э4 плана экстрактора. Э4 (linkedin) от
+              других планов не зависит: <code>@job-market/apify</code> уже в коде. Э3 и Э4 после Э2
+              идут параллельно. Пунктир — мягкая зависимость: README пишется, когда готовы Э3 и Э4.
+              Каждый этап — отдельный коммит, который проходит <code>pnpm check</code> и
+              <code>pnpm test</code>.
             </figcaption>
           </figure>
         </div>
@@ -1104,8 +1100,7 @@
             Пунктирная стрелка идёт от того, кто зависит: чёрная — «импортирует», зелёная — «тест
             проверяет». Под именем модуля — что с ним в этом этапе или откуда он: «из плана
             экстрактора» — его создаёт тот план. Тесты — <code>node --test</code>: «unit» — без
-            базы, «db» — на тестовой
-            базе из <code>apps/web/.env.test</code>.
+            базы, «db» — на тестовой базе из <code>apps/web/.env.test</code>.
           </p>
           <div class="legend" style="margin: 0">
             <span class="l-new">новый модуль</span><span class="l-chg">изменённый</span
@@ -1195,19 +1190,43 @@
               <code>channel-*</code> не тронуты: перенос их внутрь connectors не решался.
             </li>
             <li>
-              23 ноября 2026: енричер вынесен из плана экстрактора в
-              <a href="enricher.html">план енричера</a>. Ссылки на него заменены: пакет enricher —
-              Э1 плана енричера (был Э5 плана экстрактора), правила чтения ссылок — П1–П4 плана
-              енричера (были П8–П11 плана экстрактора). Содержание плана не менялось.
+              23 ноября 2026: енричер вынесен из плана экстрактора в план енричера. Ссылки на него
+              заменены: пакет enricher — Э1 плана енричера (был Э5 плана экстрактора), правила
+              чтения ссылок — П1–П4 плана енричера (были П8–П11 плана экстрактора). Содержание плана
+              не менялось.
             </li>
             <li>
-              23 ноября 2026: енричер переписан под читателей (<a href="enricher.html"
-                >план енричера</a
-              >). drain получает читателей енричера из deps вместо канала LinkedIn и зовёт
+              23 ноября 2026: енричер переписан под читателей (план енричера). drain получает
+              читателей енричера из deps вместо канала LinkedIn и зовёт
               <code>enrich(тексты, { readers })</code>; модуль
               <code>fake-linkedin.test-utils.ts</code> убран — тесты drain и движка берут
               <code>fakeReader</code> из <code>@job-market/enricher/test-utils</code>. Енричер — Э2
               плана енричера (был Э1).
+            </li>
+            <li>
+              23 ноября 2026, по решению владельца: планы 1 (<code>vacancy-model.html</code>) и
+              <code>sources-queues.html</code> удалены. Модель данных уже в коде, а классификатор,
+              экстрактор, запись и чтение ссылок разошлись по
+              <a href="classifier.html">плану классификатора</a>,
+              <a href="vacancy-extraction.html">плану экстрактора</a> и плану енричера. Карточка
+              «Что даёт план 1» стала «Что дают другие планы» и сверена с их этапами. По ним
+              исправлено: запись — <code>upsertAuthors</code>, <code>insertPublication</code>,
+              <code>contentHash</code> и <code>saveVacancies(tx, …)</code> Э4 плана экстрактора;
+              <code>setOutcome</code> и <code>saveCursor</code> добавляет Э3 этого плана в
+              <code>write-publication.ts</code>; правка «параметр tx» и её риск убраны. process
+              получает <code>PublicationForModel</code> и дерево профессий, а mine читает дерево
+              <code>listOccupations</code> и сводит места <code>locateVacancies</code> до записи:
+              изменены П3, П8, П12, контракт, таблица записи, карта компонентов (geo), схемы process
+              и mine, новый E9. Содержание П1 и П2 плана 1 — уникальность по
+              <code>(connector, external_id)</code>, запись один раз, автор — перенесено в П7 и П10.
+              Пустой текст — по <code>skipReason</code>. Начинается раньше: process вынесен из Э1 в
+              новый Э2, поэтому Э1 не зависит от других планов и идёт параллельно с ними; drain и
+              mine стали Э3, linkedin — Э4 (<code>startActor</code> и <code>collectRun</code> — в
+              <code>@job-market/apify</code>), README — Э5. Енричер и
+              <code>@job-market/apify</code> уже в коде (коммиты <code>5e83169</code>,
+              <code>1552ff5</code>), план енричера удалён: ссылки на его этапы и правила заменены
+              ссылками на <code>packages/enricher</code>, зависимости от него сняты. Из сигнатуры
+              drain убран <code>log</code> в options (AGENTS.md).
             </li>
           </ul>
         </div>
@@ -1392,7 +1411,7 @@
         ],
         [
           "Чтение ссылок LinkedIn: разбор ссылок, акторы Apify, разделы в тексте",
-          "пакет enricher плана енричера; drain только зовёт enrich и повторяет его при сбое (П13)",
+          "пакет @job-market/enricher, уже в коде; drain только зовёт enrich и повторяет его при сбое (П13)",
         ],
         ["Другие сервисы и API", "позже, отдельными планами по образцу этих коннекторов"],
       ];
@@ -1415,8 +1434,13 @@
         ],
         [
           "Канал LinkedIn",
-          "searchPosts зовёт runActor пакета @job-market/apify (Э1 плана енричера, пока не закоммичен); runActor ждёт конца запуска через call(), не SUCCEEDED → ActorRunError, в том числе RUNNING после waitSecs (packages/apify/src/apify.ts:45–76, packages/channel-linkedin/src/channel.ts:89–102)",
+          "searchPosts зовёт runActor пакета @job-market/apify; runActor ждёт конца запуска через call(), не SUCCEEDED → ActorRunError, в том числе RUNNING после waitSecs (packages/apify/src/apify.ts:45–77, packages/channel-linkedin/src/channel.ts:89–102)",
           "чтобы вернуть курсор { runId } на дедлайне, нужны отдельные startActor и collectRun в @job-market/apify и startSearch и collectSearch в канале поверх них (Э4)",
+        ],
+        [
+          "Чтение ссылок LinkedIn",
+          "@job-market/enricher (packages/enricher/src): enrich(texts, { readers }) → по каждому тексту { text, failures }; ссылки берутся из текста до разделов, не больше MAX_LINKS_PER_TEXT = 3, ссылка с уже дописанным разделом не читается снова; разделы «--- … по ссылке <url>» — section.ts; в базу и в лог не пишет. createReaders({ apifyToken }) — читатели вакансий и постов; fakeReader — в @job-market/enricher/test-utils",
+          "drain зовёт enrich между parse и записью, повторяет его при сбое и сам пишет сбои в лог (П13); читателей берёт из deps",
         ],
         [
           "Схема publications и authors",
@@ -1455,16 +1479,6 @@
           "Разбор",
           "план классификатора, Э1: classify(publication, { model, timeoutMs }) → Classification | NothingToClassifyError | ClassificationError; skipReason(text) → 'empty' | 'no_words' | undefined и PublicationForModel из @job-market/publication-text. План экстрактора, Э3: extract(publication, { occupations, model }) → роли подробной модели с местами словами или Error",
           "process коннектора — тонкая обёртка над ними (П8); Э2 идёт после Э1 плана классификатора и Э3 плана экстрактора",
-        ],
-        [
-          "Ссылки LinkedIn в постах",
-          "план енричера, Э2: @job-market/enricher — enrich(texts, { readers }) → по каждому тексту текст с разделами и сбои по ссылкам; ссылку, раздел для которой уже есть, не читает; в базу не пишет. createReaders({ apifyToken }) — читатели",
-          "drain зовёт enrich между parse и записью (П13), читателей енричера берёт из deps; Э3 идёт после Э2 плана енричера",
-        ],
-        [
-          "Apify",
-          "план енричера, Э1: пакет @job-market/apify с runActor; канал LinkedIn строит на нём searchPosts. Этап в рабочей копии, не закоммичен",
-          "Э4 меняет те же файлы channel-linkedin и apify, поэтому начинается после коммита Э1 плана енричера",
         ],
       ];
 
@@ -1541,7 +1555,7 @@
           "принятая цена: решение владельца; движок — следующий план",
         ],
         [
-          "Планы классификатора, экстрактора и енричера назовут функции и пакеты иначе",
+          "Планы классификатора и экстрактора назовут функции и пакеты иначе",
           "ревью этих планов и их коммитов: сверка с карточкой «Что дают другие планы» раздела 2",
           "поправить этот план до начала этапа, которому они нужны; контракт коннектора от этого не меняется",
         ],
@@ -1832,7 +1846,7 @@
             id: "db",
             x: 300,
             y: 410,
-            w: 230,
+            w: 190,
             k: "chg",
             t: "@job-market/db",
             type: "[Компонент: Drizzle]",
@@ -1846,7 +1860,7 @@
             k: "old",
             t: "@job-market/enricher",
             type: "[Компонент: пакет]",
-            d: ["enrich — из плана", "енричера"],
+            d: ["enrich —", "уже в коде"],
           },
           {
             id: "geo",
@@ -1912,26 +1926,31 @@
           { a: "eng", b: "con", l: ["зовёт drain", "и mine"] },
           { a: "con", b: "mod", l: ["разбирает", "текст"] },
           { a: "con", b: "ch", l: ["читает", "сервис"] },
-          { a: "con", b: "db", l: ["пишет публикации,", "курсор, вакансии"], side: "r" },
+          {
+            a: "con",
+            b: "db",
+            from: [395, 315],
+            to: [395, 407],
+            l: ["пишет публикации,", "курсор, вакансии"],
+            side: "l",
+          },
           { a: "con", b: "enr", l: ["дочитывает", "ссылки"] },
           {
             a: "con",
             b: "geo",
-            via: [
-              [585, 290],
-              [585, 486],
-            ],
+            from: [510, 315],
+            via: [[510, 486]],
             l: ["сводит места"],
-            lx: 585,
-            ly: 400,
-            side: "l",
+            lx: 510,
+            ly: 445,
+            side: "r",
           },
           { a: "geo", b: "pg", l: ["[TCP]"], lx: 900, ly: 538 },
           { a: "enr", b: "ch", l: ["читает по ссылкам"], side: "r" },
           { a: "mod", b: "gw", l: ["[HTTPS]"] },
           { a: "ch", b: "tme", l: ["[HTTPS]"] },
           { a: "ch", b: "apf", l: ["[HTTPS]"] },
-          { a: "db", b: "pg", l: ["[TCP]"], lx: 960, ly: 586 },
+          { a: "db", b: "pg", via: [[395, 606]], l: ["[TCP]"], lx: 930, ly: 606 },
         ],
         "Пакет коннекторов и его зависимости",
       );
@@ -2335,7 +2354,7 @@
           ["вызывающий", "движок или тест"],
           ["drain", "drain.ts"],
           ["parse", "коннектора"],
-          ["enricher", "план енричера"],
+          ["enricher", "@job-market/enricher"],
           ["@job-market/db", "план экстрактора"],
         ],
         [
@@ -2722,7 +2741,7 @@
         ],
         [
           "П10",
-          "Публикация drain записывается с source_id и connector источника; платформы в publications нет — она у источника. Публикация определяется (connector, external_id) и пишется один раз, какой бы источник её ни нашёл: уже записанная не меняется, source_id остаётся у того, кто нашёл её первым. Автор пишется до публикации: новый вставляется, у найденного по (connector, external_id) обновляются name, url и headline. content — текст parse с разделами по ссылкам (П13), content_hash — contentHash текста parse без разделов (П4 плана экстрактора; разделы — П3 плана енричера). posted_at — дата публикации, а если сервис её не дал — now. Статус — empty по П8, иначе pending. inserted — число новых публикаций.",
+          "Публикация drain записывается с source_id и connector источника; платформы в publications нет — она у источника. Публикация определяется (connector, external_id) и пишется один раз, какой бы источник её ни нашёл: уже записанная не меняется, source_id остаётся у того, кто нашёл её первым. Автор пишется до публикации: новый вставляется, у найденного по (connector, external_id) обновляются name, url и headline. content — текст parse с разделами по ссылкам (П13), content_hash — contentHash текста parse без разделов (П4 плана экстрактора; разделы — packages/enricher/src/section.ts). posted_at — дата публикации, а если сервис её не дал — now. Статус — empty по П8, иначе pending. inserted — число новых публикаций.",
           "определение",
           "connectors/src/drain.ts; upsertAuthors и insertPublication плана экстрактора (Э4)",
           "drain.test",
@@ -2743,9 +2762,9 @@
         ],
         [
           "П13",
-          "drain дочитывает ссылки LinkedIn до записи. Тексты всех непустых публикаций результата parse drain одной пачкой передаёт в enrich пакета enricher; какие ссылки читаются, как дописываются разделы и что такое сбой — П1–П4 плана енричера. При сбое drain повторяет enrich (E8). Ссылка, которая не прочиталась и после повторов, остаётся без раздела: публикация пишется с остальными разделами, в лог — предупреждение Linked content fetch failed с видом, id и причиной; итог drain не меняется. Почему при сборе, а не в mine: публикация сразу ложится в базу целиком, ссылки страницы читаются одной пачкой, а process и mine не знают об Apify (решение владельца 23 ноября 2026).",
+          "drain дочитывает ссылки LinkedIn до записи. Тексты всех непустых публикаций результата parse drain одной пачкой передаёт в enrich пакета enricher; какие ссылки читаются, как дописываются разделы и что такое сбой — пакет enricher (раздел 2). При сбое drain повторяет enrich (E8). Ссылка, которая не прочиталась и после повторов, остаётся без раздела: публикация пишется с остальными разделами, в лог — предупреждение Linked content fetch failed с видом, id и причиной; итог drain не меняется. Почему при сборе, а не в mine: публикация сразу ложится в базу целиком, ссылки страницы читаются одной пачкой, а process и mine не знают об Apify (решение владельца 23 ноября 2026).",
           "поведение",
-          "connectors/src/drain.ts; enricher/enrich.ts плана енричера",
+          "connectors/src/drain.ts; packages/enricher/src/enrich.ts",
           "drain.test",
         ],
       ];
@@ -2769,30 +2788,27 @@
       const STAGES = [
         {
           id: "Э1",
-          t: "Пакет и open-telegram",
-          res: "пакет @job-market/connectors с контрактом и коннектором open-telegram: проход по каналу и разбор публикации проверены тестами",
-          gres: "контракт и open-telegram",
+          t: "Пакет и чтение Telegram",
+          res: "пакет @job-market/connectors с контрактом и коннектором open-telegram, который проходит канал t.me: проход, курсор, дедлайн и сбой страницы проверены тестами",
+          gres: "контракт и parse open-telegram",
           g: [0, 0],
-          newDirs: ["packages/connectors"],
+          newDirs: ["packages/connectors", "packages/connectors/src/open-telegram"],
           ctx: [
             ["zod", "npm"],
             ["packages/channel-telegram/src/index.ts", "old"],
-            ["packages/classifier/src/index.ts", "плана 1"],
-            ["packages/extractor/src/index.ts", "плана 1"],
-            ["packages/db/src/sources/source.ts", "плана 1"],
           ],
           mods: [
             [
               "packages/connectors/package.json",
               "new",
-              "зависимости @job-market/channel-telegram, classifier, extractor, @spotsccc/error-as-value, zod; скрипт test без .env.test — все тесты пакета unit; tsconfig.json, .oxlintrc.json, oxfmt.config.ts — по образцу channel-telegram",
+              "зависимости @job-market/channel-telegram, @spotsccc/error-as-value, zod; скрипт test без .env.test — тесты этапа unit; tsconfig.json, .oxlintrc.json, oxfmt.config.ts — по образцу channel-telegram",
               [],
             ],
             [
               "packages/connectors/src/contract.ts",
               "new",
-              "типы Connector, ParseInput, ParseResult, ParsedPublication, ParsedAuthor, ProcessOutcome, ConnectorDeps; DEPTH_DAYS = 30",
-              ["zod", "extractor/src/index.ts"],
+              "типы Connector (id, configSchema, cursorSchema, parse), ParseInput, ParseResult, ParsedPublication, ParsedAuthor, ConnectorDeps; DEPTH_DAYS = 30. Типы process — Э2",
+              ["zod"],
             ],
             [
               "packages/connectors/src/open-telegram/parse.ts",
@@ -2801,16 +2817,10 @@
               ["channel-telegram/src/index.ts"],
             ],
             [
-              "packages/connectors/src/open-telegram/process.ts",
-              "new",
-              "classify → для вакансии extract → ProcessOutcome (П8)",
-              ["classifier/src/index.ts", "extractor/src/index.ts"],
-            ],
-            [
               "packages/connectors/src/open-telegram/index.ts",
               "new",
-              "коннектор open-telegram: configSchema { channel }, cursorSchema, parse, process",
-              ["open-telegram/parse.ts", "open-telegram/process.ts", "contract.ts"],
+              "коннектор open-telegram: configSchema { channel }, cursorSchema, parse",
+              ["open-telegram/parse.ts", "contract.ts"],
             ],
             [
               "packages/connectors/src/open-telegram/fake-telegram.test-utils.ts",
@@ -2835,57 +2845,123 @@
             [
               "packages/connectors/src/open-telegram/open-telegram.test.ts",
               "new",
-              "unit parse с fakeTelegram — случаи сбора из telegram.test.ts: первый проход — всё за 30 дней, cursorId 10; следующий — только 11 и 12; 429 на второй странице → первая страница, курсор { passTopId: 12, resumeBeforeId: 6 } и error, повтор доходит до 1 без дыр; дедлайн до второй страницы → more: true; курсор {} → как первый проход; external_id forhr/9120, автор forhr. process с фейковыми моделями: job_seeker → not_vacancy, экстрактор не вызван; вакансия с двумя ролями → две ExtractedVacancy; таймаут модели → Error",
-              ["open-telegram/parse.ts", "open-telegram/process.ts", "fake-telegram.test-utils.ts"],
+              "unit parse с fakeTelegram — случаи сбора из telegram.test.ts: первый проход — всё за 30 дней, cursorId 10; следующий — только 11 и 12; 429 на второй странице → первая страница, курсор { passTopId: 12, resumeBeforeId: 6 } и error, повтор доходит до 1 без дыр; дедлайн до второй страницы → more: true; курсор {} → как первый проход; external_id forhr/9120, автор forhr; сообщение-картинка без подписи → публикация с пустым content",
+              ["open-telegram/parse.ts", "fake-telegram.test-utils.ts"],
             ],
           ],
-          note: "planPage, fakeTelegram и случаи сбора берутся из apps/web/src/telegram (crawl.ts, telegram.test.ts); старый сбор удалён, поэтому из git-истории: git show <коммит удаления>^:apps/web/src/telegram/crawl.ts. Глубина CRAWL_DEPTH_DAYS из channels.ts становится DEPTH_DAYS контракта. Нужны пакеты classifier и extractor плана 1.",
+          note: "Не зависит от других планов: идёт параллельно с планами классификатора и экстрактора. planPage, fakeTelegram и случаи сбора берутся из apps/web/src/telegram (crawl.ts, telegram.test.ts); старый сбор удалён, поэтому из git-истории: git show <коммит удаления>^:apps/web/src/telegram/crawl.ts. Глубина CRAWL_DEPTH_DAYS из channels.ts становится DEPTH_DAYS контракта.",
         },
         {
           id: "Э2",
-          t: "drain и mine",
-          res: "у коннекторов реестра есть drain и mine: drain пишет публикации канала с прочитанным по ссылкам LinkedIn и курсор, mine — вакансии и итог разбора; проверено на тестовой базе с open-telegram на фейковом t.me",
-          gres: "drain и mine на тестовой базе",
+          t: "Разбор публикации",
+          res: "у open-telegram есть process: классификатор, затем экстрактор для вакансии; вакансия, не вакансия, пустой ответ экстрактора и сбой модели проверены тестами с фейковыми моделями",
+          gres: "process",
           g: [1, 0],
           ctx: [
-            ["packages/connectors/src/contract.ts", "Э1"],
-            ["packages/connectors/src/open-telegram/index.ts", "Э1"],
-            ["packages/connectors/src/open-telegram/fake-telegram.test-utils.ts", "Э1"],
-            ["packages/db/src/sources/source.ts", "плана 1"],
-            ["packages/enricher/src/index.ts", "плана енричера"],
-            ["packages/enricher/src/test-utils.ts", "плана енричера"],
+            ["packages/classifier/src/index.ts", "плана классификатора"],
+            ["packages/publication-text/src/index.ts", "плана классификатора"],
+            ["packages/extractor/src/index.ts", "плана экстрактора"],
           ],
           mods: [
             [
-              "packages/db/src/publications/write.ts",
+              "packages/connectors/package.json",
               "chg",
-              "insertPublications(rows, tx = db), saveVacancies(publicationId, vacancies, tx = db), setOutcome(id, outcome, tx = db): необязательный параметр транзакции, чтобы drain и mine писали несколько вызовов одной транзакцией (П9, П12)",
+              "зависимости @job-market/classifier, @job-market/extractor, @job-market/publication-text",
               [],
             ],
             [
-              "packages/db/src/sources/write.ts",
-              "new",
-              "saveCursor(tx, sourceId, cursor) — только столбец cursor (П9)",
-              ["sources/source.ts"],
+              "packages/connectors/src/contract.ts",
+              "chg",
+              "process(publication: PublicationForModel, { occupations }) → ProcessOutcome | Error; ProcessOutcome — { kind: 'vacancy', roles } или { kind: 'not_vacancy', reason, note }; в ConnectorDeps — модели классификатора и экстрактора (П3)",
+              ["publication-text/src/index.ts", "extractor/src/index.ts"],
             ],
-            ["packages/db/src/index.ts", "chg", "экспорт sources/write.ts", ["sources/write.ts"]],
+            [
+              "packages/connectors/src/classify-extract.ts",
+              "new",
+              "classifyAndExtract(models) → process: classify → для вакансии extract с деревом → ProcessOutcome; ролей нет → not_vacancy no_specific_role (П8)",
+              ["classifier/src/index.ts", "extractor/src/index.ts", "contract.ts"],
+            ],
+            [
+              "packages/connectors/src/open-telegram/index.ts",
+              "chg",
+              "process = classifyAndExtract(deps.models)",
+              ["classify-extract.ts"],
+            ],
+            [
+              "packages/connectors/src/index.ts",
+              "chg",
+              "createConnectors(deps) передаёт модели коннекторам",
+              ["open-telegram/index.ts"],
+            ],
+          ],
+          tests: [
+            [
+              "packages/connectors/src/classify-extract.test.ts",
+              "new",
+              "unit с фейковыми моделями: job_seeker → not_vacancy с причиной и пояснением, экстрактор не вызван; вакансия с двумя ролями → две роли в порядке ответа, в extract передано то же дерево; вакансия, экстрактор вернул ноль ролей → not_vacancy no_specific_role, «экстрактор не нашёл ролей»; таймаут классификатора → Error, экстрактор не вызван; ошибка экстрактора → Error",
+              ["classify-extract.ts"],
+            ],
+            [
+              "packages/connectors/src/connectors.test.ts",
+              "chg",
+              "unit: у open-telegram из реестра есть process",
+              ["connectors/src/index.ts"],
+            ],
+          ],
+          note: "Идёт после Э1 плана классификатора (classify, PublicationForModel, skipReason) и Э3 плана экстрактора: process передаёт дерево профессий, а подпись extract с деревом появляется только там. Почему одна функция на оба коннектора: open-telegram и linkedin разбираются одинаково (П8); коннектор с другим разбором задаст свой process.",
+        },
+        {
+          id: "Э3",
+          t: "drain и mine",
+          res: "у коннекторов реестра есть drain и mine: drain пишет авторов, публикации канала с прочитанным по ссылкам LinkedIn и курсор, mine — вакансии с местами из гео-справочника и итог разбора; проверено на тестовой базе с open-telegram на фейковом t.me",
+          gres: "drain и mine на тестовой базе",
+          g: [2, 0],
+          ctx: [
+            ["packages/connectors/src/contract.ts", "Э2"],
+            ["packages/connectors/src/open-telegram/index.ts", "Э2"],
+            ["packages/connectors/src/open-telegram/fake-telegram.test-utils.ts", "Э1"],
+            ["packages/db/src/vacancy/save-vacancies.ts", "плана экстрактора"],
+            ["packages/db/src/occupation/occupation.ts", "плана экстрактора"],
+            ["packages/geo/src/server.ts", "плана экстрактора"],
+            ["packages/enricher/src/index.ts", "old"],
+            ["packages/enricher/src/test-utils.ts", "old"],
+          ],
+          mods: [
+            [
+              "packages/db/src/publication/write-publication.ts",
+              "chg",
+              "setOutcome(tx, id, outcome) — status vacancy или not_vacancy с not_vacancy_reason и note, processed_at = now (П12); saveCursor(tx, sourceId, cursor) — только столбец sources.cursor (П9). Остальные функции модуля из Э4 плана экстрактора не меняются",
+              [],
+            ],
+            [
+              "packages/db/src/publication/index.ts",
+              "chg",
+              "экспорт setOutcome и saveCursor",
+              ["publication/write-publication.ts"],
+            ],
             [
               "packages/connectors/package.json",
               "chg",
-              'зависимости @job-market/db и @job-market/enricher; скрипт test: node --env-file=../../apps/web/.env.test --test, как у packages/db плана 1; exports["./test-utils"] → fakeTelegram и testConnector — их берут тесты движка; фейковых читателей для enrich тесты берут из @job-market/enricher/test-utils (fakeReader)',
+              'зависимости @job-market/db, @job-market/geo, @job-market/enricher, @job-market/logger; скрипт test: node --env-file=../../apps/web/.env.test --test, как у packages/db; exports["./test-utils"] → fakeTelegram и testConnector — их берут тесты движка; фейковых читателей для enrich тесты берут из @job-market/enricher/test-utils (fakeReader)',
               [],
             ],
             [
               "packages/connectors/src/drain.ts",
               "new",
-              "drain(connector, source, { now, deadline, readers, log }) по П9–П11 и П13: configSchema → parse → enrich непустых текстов и повторы по E8 → insertPublications и saveCursor одной транзакцией → итог",
-              ["contract.ts", "db/src/index.ts", "enricher/src/index.ts"],
+              "drain(connector, source, { now, deadline, readers }) по П9–П11 и П13: configSchema → parse → skipReason → enrich непустых текстов и повторы по E8 → upsertAuthors, insertPublication и saveCursor одной транзакцией → итог. Лог — log.with({ module: 'connectors' }) на уровне модуля (AGENTS.md)",
+              ["contract.ts", "db/src/publication/index.ts", "enricher/src/index.ts"],
             ],
             [
               "packages/connectors/src/mine.ts",
               "new",
-              "mine(connector, publication) по П12: статус → process → saveVacancies и setOutcome одной транзакцией → итог",
-              ["contract.ts", "db/src/index.ts"],
+              "mine(connector, publication) по П12: статус → listOccupations → process → locateVacancies → saveVacancies и setOutcome одной транзакцией → итог",
+              [
+                "contract.ts",
+                "db/src/publication/index.ts",
+                "vacancy/save-vacancies.ts",
+                "occupation/occupation.ts",
+                "geo/src/server.ts",
+              ],
             ],
             [
               "packages/connectors/src/index.ts",
@@ -2907,7 +2983,7 @@
             ],
             [
               "mine(publication): Promise<Error | { status, vacancies }>",
-              "метод коннектора из реестра; status — vacancy, not_vacancy или skipped (П12).",
+              "метод коннектора из реестра; publication — PublicationForModel с id и status; status — vacancy, not_vacancy или skipped (П12).",
             ],
           ],
           tests: [
@@ -2918,9 +2994,15 @@
               ["connectors/src/index.ts"],
             ],
             [
+              "packages/db/src/publication/write-publication.test.ts",
+              "chg",
+              "db: setOutcome not_vacancy → status, not_vacancy_reason, note и processed_at записаны; setOutcome vacancy → not_vacancy_reason и note NULL; saveCursor меняет только cursor — consecutive_failures, next_run_at и last_error прежние",
+              ["publication/write-publication.ts"],
+            ],
+            [
               "packages/connectors/src/drain.test.ts",
               "new",
-              "db, open-telegram на fakeTelegram и fakeReader вакансий и постов: источник без курсора → done, inserted 10, курсор { cursorId: 10 } в sources, 9 публикаций pending и 1 empty; повтор → inserted 0, публикаций 10; публикация без даты → posted_at = now; consecutive_failures, next_run_at, last_fetched_at не изменились. Пост со ссылкой /jobs/view/4479627327 → в content раздел «--- Вакансия LinkedIn по ссылке», content_hash как у текста без раздела; читатель вакансий падает дважды, потом отвечает → раздел есть, читатель позван 3 раза; падает всегда → 3 вызова, публикация без раздела, done, предупреждение в логе; пост со ссылками на вакансию и пост, падает только читатель вакансий → раздел поста остался после повторов; 402 → один вызов; до deadline меньше 60 с → один вызов; пустая публикация → в enrich не передаётся. testConnector: parse → Error → failed, публикаций нет, курсор прежний; 5 публикаций и error → 5 записаны, курсор новый, failed; more: true → more, курсор записан; config не по схеме → failed, parse не вызван; текст с \\u0000 → Error, ни публикаций, ни нового курсора",
+              "db, open-telegram на fakeTelegram и fakeReader вакансий и постов: источник без курсора → done, inserted 10, курсор { cursorId: 10 } в sources, 9 публикаций pending и 1 empty, автор forhr — одна строка authors; повтор → inserted 0, публикаций 10; публикация без даты → posted_at = now; сообщение «🔥🔥🔥» → empty; consecutive_failures, next_run_at, last_fetched_at не изменились. Пост со ссылкой /jobs/view/4479627327 → в content раздел «--- Вакансия LinkedIn по ссылке», content_hash как у текста без раздела; читатель вакансий падает дважды, потом отвечает → раздел есть, читатель позван 3 раза; падает всегда → 3 вызова, публикация без раздела, done, предупреждение в логе; пост со ссылками на вакансию и пост, падает только читатель вакансий → раздел поста остался после повторов; 402 → один вызов; до deadline меньше 60 с → один вызов; пустая публикация → в enrich не передаётся. testConnector: parse → Error → failed, публикаций нет, курсор прежний; 5 публикаций и error → 5 записаны, курсор новый, failed; more: true → more, курсор записан; config не по схеме → failed, parse не вызван; текст с \\u0000 → Error, ни публикаций, ни авторов, ни нового курсора",
               [
                 "drain.ts",
                 "fake-telegram.test-utils.ts",
@@ -2931,55 +3013,60 @@
             [
               "packages/connectors/src/mine.test.ts",
               "new",
-              "db, testConnector: pending и вакансия с двумя ролями → vacancy, vacancies 2, две строки vacancies; processing и job_seeker → not_vacancy, причина и пояснение записаны, вакансий нет; empty и vacancy → skipped, process не вызван; process → Error → Error, статус pending, вакансий нет; вакансия, которую база не принимает → Error, статус прежний",
+              "db, testConnector и справочник тестовой базы: pending и вакансия с двумя ролями, у первой «Berlin, Germany» → vacancy, vacancies 2, две строки vacancies, одна строка vacancy_locations у первой; в process передано дерево из базы; processing и job_seeker → not_vacancy, причина и пояснение записаны, вакансий нет, справочник не вызван; empty и vacancy → skipped, process не вызван; process → Error → Error, статус pending, вакансий нет; справочник недоступен (GeoQueryError) → Error, ни вакансий, ни мест, статус прежний; вакансия, которую база не принимает → Error, статус прежний",
               ["mine.ts", "test-connector.test-utils.ts"],
             ],
           ],
-          note: "Этап идёт после Э2 плана енричера: ему нужен пакет enricher. Тесты drain и mine — db: им нужен .env.test из apps/web. Тесты parse и process остаются unit. Если план 1 ещё не реализован, параметр tx вносится сразу в него (раздел 7).",
+          note: "Идёт после Э2, Э4 плана экстрактора (ключи по connector, upsertAuthors, insertPublication, contentHash, saveVacancies, listOccupations, источники каналов); enrich и fakeReader уже в коде. locateVacancies — из Э3 плана экстрактора. Тесты drain и mine — db: им нужен .env.test из apps/web. Тесты parse и process остаются unit.",
         },
         {
-          id: "Э3",
+          id: "Э4",
           t: "Коннектор linkedin",
-          res: "коннектор linkedin запускает поиск Apify, возвращает курсор { runId }, если запуск не успел, и разбирает посты; проверено тестами",
+          res: "коннектор linkedin запускает поиск Apify, возвращает курсор { runId }, если запуск не успел, разбирает посты общим process; проверено тестами",
           gres: "поиск LinkedIn",
-          g: [1, 1],
+          g: [2, 1],
           newDirs: ["packages/connectors/src/linkedin"],
           ctx: [
             ["apify-client", "npm"],
-            ["packages/connectors/src/contract.ts", "Э1"],
-            ["packages/classifier/src/index.ts", "плана 1"],
-            ["packages/extractor/src/index.ts", "плана 1"],
+            ["packages/connectors/src/contract.ts", "Э2"],
+            ["packages/connectors/src/classify-extract.ts", "Э2"],
           ],
           mods: [
             [
+              "packages/apify/src/apify.ts",
+              "chg",
+              "startActor(actorId, input) → runId: запуск без ожидания; collectRun(runId, waitSecs) → 'running' или ActorRun; не SUCCEEDED → ActorRunError. runActor строится на них",
+              ["apify-client"],
+            ],
+            [
+              "packages/apify/src/index.ts",
+              "chg",
+              "экспорт startActor и collectRun в типе Apify",
+              ["apify/src/apify.ts"],
+            ],
+            [
               "packages/channel-linkedin/src/channel.ts",
               "chg",
-              "startSearch(options) → runId: запуск актора без ожидания; collectRun(runId, waitSecs) → 'running' или посты датасета; searchPosts строится на них",
-              ["apify-client"],
+              "startSearch(options) → runId; collectSearch(runId, waitSecs) → 'running' или посты датасета; searchPosts строится на них",
+              ["apify/src/index.ts"],
             ],
             [
               "packages/channel-linkedin/src/index.ts",
               "chg",
-              "экспорт startSearch и collectRun",
+              "экспорт startSearch и collectSearch",
               ["channel-linkedin/src/channel.ts"],
             ],
             [
               "packages/connectors/src/linkedin/parse.ts",
               "new",
-              "нет runId в курсоре — startSearch; collectRun до дедлайна; 'running' → курсор { runId }, more (П5); посты → ParsedPublication (П7)",
+              "нет runId в курсоре — startSearch; collectSearch до дедлайна; 'running' → курсор { runId }, more (П5); посты → ParsedPublication (П7)",
               ["channel-linkedin/src/index.ts"],
-            ],
-            [
-              "packages/connectors/src/linkedin/process.ts",
-              "new",
-              "classify → для вакансии extract (П8)",
-              ["classifier/src/index.ts", "extractor/src/index.ts"],
             ],
             [
               "packages/connectors/src/linkedin/index.ts",
               "new",
-              "коннектор linkedin: configSchema { queries, maxPosts ≤ 100, postedLimit?, sortBy? }, parse, process",
-              ["linkedin/parse.ts", "linkedin/process.ts", "contract.ts"],
+              "коннектор linkedin: configSchema { queries, maxPosts ≤ 100, postedLimit?, sortBy? }, parse, process = classifyAndExtract(deps.models)",
+              ["linkedin/parse.ts", "classify-extract.ts", "contract.ts"],
             ],
             [
               "packages/connectors/src/index.ts",
@@ -2996,26 +3083,32 @@
           ],
           tests: [
             [
+              "packages/apify/src/apify.test.ts",
+              "chg",
+              "unit: startActor → runId из ответа Apify; collectRun у RUNNING после waitSecs → 'running'; у SUCCEEDED → элементы датасета; у FAILED → ActorRunError",
+              ["apify/src/apify.ts"],
+            ],
+            [
               "packages/channel-linkedin/src/channel.test.ts",
               "chg",
-              "unit: startSearch → runId из ответа Apify; collectRun у RUNNING после waitSecs → 'running'; у SUCCEEDED → посты датасета; у FAILED → ActorRunError",
+              "unit: collectSearch у SUCCEEDED → посты, разобранные как у searchPosts; у RUNNING → 'running'",
               ["channel-linkedin/src/channel.ts"],
             ],
             [
               "packages/connectors/src/linkedin/linkedin.test.ts",
               "new",
-              "unit с фейковым каналом: запуск закончился → 30 публикаций, курсор без runId; идёт дольше дедлайна → { runId }, more; вызов с runId → collectRun без нового запуска; FAILED → Error; external_id — id поста без префикса; автор in/jane-doe с подписью. process: not_hiring → not_vacancy; вакансия → вакансии",
-              ["linkedin/parse.ts", "linkedin/process.ts"],
+              "unit с фейковым каналом: запуск закончился → 30 публикаций, курсор без runId; идёт дольше дедлайна → { runId }, more; вызов с runId → collectSearch без нового запуска; FAILED → Error; external_id — id поста без префикса; автор in/jane-doe с подписью; в реестре у linkedin есть process",
+              ["linkedin/parse.ts", "linkedin/index.ts"],
             ],
           ],
-          note: "Ключ Apify коннектор получает в deps: переменную окружения для него заведёт движок. searchPosts остаётся в channel-linkedin, но после Э1 его никто не зовёт; он строится на startSearch и collectRun, чтобы тесты канала оставались одними.",
+          note: "Идёт после Э2: linkedin берёт его общий process. Пакет @job-market/apify уже в коде. Ключ Apify коннектор получает в deps: переменную окружения для него заведёт движок. searchPosts остаётся в channel-linkedin, но его никто не зовёт; он строится на startSearch и collectSearch, чтобы тесты канала оставались одними. Почему startActor и collectRun — в @job-market/apify, а не в канале: запуск без ожидания — общая работа с Apify, как runActor.",
         },
         {
-          id: "Э4",
+          id: "Э5",
           t: "Документация",
           res: "README описывает коннекторы и как добавить новый; старого сбора в нём нет",
           gres: "README",
-          g: [2, 0],
+          g: [3, 0],
           ctx: [],
           mods: [
             [
@@ -3026,7 +3119,7 @@
             ],
           ],
           tests: [],
-          note: "После Э2 и Э3 или вместе с последним из них.",
+          note: "После Э3 и Э4 или вместе с последним из них.",
         },
       ];
       (function graph() {
@@ -3049,9 +3142,10 @@
           } else b += L(p.x + W, p.y + H / 2, q.x - 3, q.y + H / 2, o);
         };
         edge("Э1", "Э2");
-        edge("Э1", "Э3");
-        edge("Э2", "Э4", { dash: "5 4", cls: "lm" });
-        edge("Э3", "Э4", { dash: "5 4", cls: "lm" });
+        edge("Э2", "Э3");
+        edge("Э2", "Э4");
+        edge("Э3", "Э5", { dash: "5 4", cls: "lm" });
+        edge("Э4", "Э5", { dash: "5 4", cls: "lm" });
         STAGES.forEach((s) => {
           const p = pos(s.id);
           b +=
@@ -3076,7 +3170,7 @@
               size: 12,
             }) + "</g>";
         });
-        svg("stagesGraph", 860, 230, b, "Этапы и зависимости");
+        svg("stagesGraph", 1150, 230, b, "Этапы и зависимости");
       })();
       /** Размер — в `style`: правило страницы `.mono { font-size: 0.9em }` перебивает атрибут `font-size` у текста SVG. */
       const MONO = 12.5;

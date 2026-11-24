@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-article",
+  "source": "synthetic",
+  "why": "Статья о собеседованиях: про найм, но никого не нанимают",
+  "publication": {
+    "connector": "linkedin",
+    "content": "5 mistakes I see candidates make in system design interviews:\n1. Jumping into details too early\n2. Ignoring non-functional requirements\n3. Not estimating load\n4. Forgetting about failure modes\n5. Not summarizing the trade-offs\nWhat would you add?",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Raj Patel",
+      "url": "https://www.linkedin.com/in/raj-patel",
+      "headline": "Engineering Manager at Globex"
+    }
+  },
+  "expected": "not_hiring"
+}

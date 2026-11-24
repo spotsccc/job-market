@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-positions-soon",
+  "source": "synthetic",
+  "why": "«Скоро откроем позиции» на русском",
+  "publication": {
+    "connector": "linkedin",
+    "content": "В следующем квартале открываем офис в Белграде и будем нанимать. Подробности и вакансии — позже, следите за обновлениями!",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Игорь Петров",
+      "url": "https://www.linkedin.com/in/igor-petrov",
+      "headline": "CTO at Northwind"
+    }
+  },
+  "expected": "no_specific_role"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-talent-pool",
+  "source": "synthetic",
+  "why": "Приглашение в кадровый резерв: про найм, но роли нет",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Talent pool at Lumen**\nWe don't have open roles right now, but we're always looking for great people. Leave your contacts in the form and we'll reach out when something fits: https://lumen.example/talent",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for Media & Content",
+      "url": "https://t.me/forallmedia",
+      "headline": null
+    }
+  },
+  "expected": "no_specific_role"
+}

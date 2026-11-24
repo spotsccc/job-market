@@ -1,0 +1,4513 @@
+{
+  "createdAt": "2026-11-23T22:58:06.918Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "summary": {
+    "cases": 30,
+    "errors": 1,
+    "roleCount": {
+      "compared": 29,
+      "matched": 29
+    },
+    "fields": {
+      "title": {
+        "compared": 35,
+        "matched": 31
+      },
+      "company": {
+        "compared": 35,
+        "matched": 35
+      },
+      "hiringParty": {
+        "compared": 35,
+        "matched": 24
+      },
+      "seniority": {
+        "compared": 35,
+        "matched": 30
+      },
+      "workplace": {
+        "compared": 35,
+        "matched": 31
+      },
+      "salaryMin": {
+        "compared": 35,
+        "matched": 34
+      },
+      "salaryMax": {
+        "compared": 35,
+        "matched": 34
+      },
+      "salaryCurrency": {
+        "compared": 35,
+        "matched": 33
+      },
+      "salaryPeriod": {
+        "compared": 35,
+        "matched": 30
+      },
+      "relocation": {
+        "compared": 35,
+        "matched": 35
+      },
+      "visaSponsorship": {
+        "compared": 35,
+        "matched": 35
+      },
+      "isRemoteFromAnywhere": {
+        "compared": 35,
+        "matched": 35
+      },
+      "employmentTypes": {
+        "compared": 35,
+        "matched": 34,
+        "precision": 0.8,
+        "recall": 1
+      },
+      "skills": {
+        "compared": 35,
+        "matched": 24,
+        "precision": 0.2641509433962264,
+        "recall": 1
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "forallmedia-4329",
+      "error": null,
+      "actual": [
+        {
+          "title": "LinkedIn Engagement Specialist",
+          "company": "Workflows.io",
+          "companyUrl": "https://workflows.io/",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["LinkedIn", "B2B", "GTM"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://workflowsio.notion.site/LinkedIn-Engagement-Specialist-3f26a857e59280468a10c64293af4bdd",
+              "https://lnkd.in/p/ejtyNCS9"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Workflows.io — AI-native GTM-компания, помогающая B2B-компаниям расти через LinkedIn-контент, outbound, RevOps и ABM. Специалист по вовлечению в LinkedIn работает удалённо с гибким графиком."
+        },
+        {
+          "title": "LinkedIn Content Writer",
+          "company": "Workflows.io",
+          "companyUrl": "https://workflows.io/",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["LinkedIn", "B2B", "GTM"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://app.notion.com/p/LinkedIn-Content-Writer-2406a857e59280d28df1d52703852065",
+              "https://lnkd.in/p/ejtyNCS9"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Workflows.io — AI-native GTM-компания, помогающая B2B-компаниям расти через LinkedIn-контент, outbound, RevOps и ABM. Автор контента для LinkedIn работает удалённо с гибким графиком."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 2,
+          "actual": 2,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "LinkedIn Engagement Specialist",
+              "actual": "LinkedIn Engagement Specialist"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Workflows.io",
+              "actual": "Workflows.io"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": ["linkedin", "b2b", "gtm"]
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "LinkedIn Content Writer",
+              "actual": "LinkedIn Content Writer"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Workflows.io",
+              "actual": "Workflows.io"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": ["linkedin", "b2b", "gtm"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4330",
+      "error": null,
+      "actual": [
+        {
+          "title": "Native English Copywriter",
+          "company": "Meaningful",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": ["North America", "Central America", "South America"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["English copywriting", "SEO", "content marketing"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.orlandosorio.com/join-us#en-native-english-copywriters",
+              "https://lnkd.in/p/ehWmHsRx"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Meaningful — growth-агентство и продуктовая студия, которая помогает компаниям и стартапам масштабироваться через SEO, контент-маркетинг, веб-разработку и внедрение AI. Копирайтер с нативным английским будет создавать для них англоязычные тексты."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Native English Copywriter",
+              "actual": "Native English Copywriter"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Meaningful",
+              "actual": "Meaningful"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": ["english copywriting", "seo", "content marketing"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4334",
+      "error": null,
+      "actual": [
+        {
+          "title": "Middle Content Creator",
+          "company": "Ventora",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "middle",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["США"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://geekjob.ru/vacancy/6af1f19e69ce62b9ac05eff7"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Ventora — AI-платформа без кода, которая помогает нетехническим соло-фаундерам создавать, запускать и монетизировать продукты. Нужен контент-криэйтор уровня middle, английский на хорошем уровне, удалённая работа из США."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "middle",
+              "actual": "middle"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Middle Content Creator",
+              "actual": "Middle Content Creator"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Ventora",
+              "actual": "Ventora"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4335",
+      "error": null,
+      "actual": [
+        {
+          "title": "Миддл Переводчик-редактор EN-RU",
+          "company": "Allcorrect",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "middle",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": ["part_time", "freelance"],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://geekjob.ru/vacancy/6af3400fed0282151f0393c4"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Компания Allcorrect локализует и тестирует игры и ПО, переводит сайты и документы. Нужен переводчик-редактор EN-RU на удалённую частичную занятость или фриланс."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "middle",
+              "actual": "middle"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Миддл Переводчик-редактор EN-RU",
+              "actual": "Миддл Переводчик-редактор EN-RU"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Allcorrect",
+              "actual": "Allcorrect"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 2,
+              "expected": ["part_time", "freelance"],
+              "actual": ["part_time", "freelance"]
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4336",
+      "error": null,
+      "actual": [
+        {
+          "title": "Video Editor",
+          "company": "Republic Affairs",
+          "companyUrl": "https://www.linkedin.com/jobs/view/video-editor-at-republic-affairs-4476845711",
+          "hiringParty": "unknown",
+          "seniority": null,
+          "workplace": "onsite",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Washington, DC, USA"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://lnkd.in/p/etG6DY53"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Republic Affairs — бутиковая компания по кризисным коммуникациям. Нужен видеоредактор, работа в офисе в Вашингтоне или гибрид."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": false,
+              "expected": null,
+              "actual": "onsite"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Video Editor",
+              "actual": "Video Editor"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Republic Affairs",
+              "actual": "Republic Affairs"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4338",
+      "error": null,
+      "actual": [
+        {
+          "title": "Writer, Content Marketing",
+          "company": "Stripe",
+          "companyUrl": "https://stripe.com",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["New York, NY, USA"],
+          "employmentTypes": ["full_time"],
+          "salary": {
+            "min": 159500,
+            "max": 239300,
+            "currency": "USD",
+            "period": "year",
+            "raw": "The annual US base salary range for this role is $159,500 - $239,300"
+          },
+          "skills": [
+            "content marketing",
+            "journalism",
+            "fintech",
+            "data analysis",
+            "AI",
+            "revenue strategy"
+          ],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.linkedin.com/jobs/view/writer-content-marketing-at-stripe-4478302617",
+              "https://lnkd.in/p/eMgfesMY"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Stripe — платформа финансовой инфраструктуры для бизнеса. Команда Product Marketing формирует инсайты о клиентах и выводит продукты на рынок. Writer будет создавать аналитический контент о запуске, монетизации и росте стартапов и AI-бизнесов."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 159500,
+              "actual": 159500
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 239300,
+              "actual": 239300
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "USD",
+              "actual": "USD"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": "year",
+              "actual": "year"
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Writer, Content Marketing",
+              "actual": "Writer, Content Marketing"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Stripe",
+              "actual": "Stripe"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": ["full_time"]
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": [
+                "content marketing",
+                "journalism",
+                "fintech",
+                "data analysis",
+                "ai",
+                "revenue strategy"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forallmedia-4339",
+      "error": null,
+      "actual": [
+        {
+          "title": "Миддл Видеомонтажёр / Editor",
+          "company": "Next Genium",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "middle",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": {
+            "min": 60000,
+            "max": null,
+            "currency": null,
+            "period": null,
+            "raw": "60К"
+          },
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://geekjob.ru/vacancy/6af5de2a0b411376380d2dca"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Независимая студия, создающая сюжетные игры для ПК и консолей, ищет видеомонтажёра (Editor). Гибкий график, удалённая работа."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "middle",
+              "actual": "middle"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 60000,
+              "actual": 60000
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": false,
+              "expected": 60000,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": false,
+              "expected": "RUB",
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": false,
+              "expected": "month",
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Миддл Видеомонтажёр / Editor",
+              "actual": "Миддл Видеомонтажёр / Editor"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Next Genium",
+              "actual": "Next Genium"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10888",
+      "error": null,
+      "actual": [
+        {
+          "title": "Delivery Manager (SAP BTP Re-Platforming)",
+          "company": "Andersen Lab",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Kazakhstan", "Kyrgyzstan", "Tajikistan", "Turkmenistan", "Uzbekistan"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["SAP BTP"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://lnkd.in/p/eF-8KPK2"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Andersen Lab — международная компания-разработчик сложных цифровых продуктов для FinTech, Healthcare, eCommerce и других отраслей. Роль Delivery Manager по миграции на SAP BTP, удалённо из стран Центральной Азии. Подробности — в посте Julia Avchinikova в LinkedIn."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Delivery Manager (SAP BTP Re-Platforming)",
+              "actual": "Delivery Manager (SAP BTP Re-Platforming)"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Andersen Lab",
+              "actual": "Andersen Lab"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": ["sap btp"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10891",
+      "error": null,
+      "actual": [
+        {
+          "title": "Middle+ Product Manager [Origination]",
+          "company": "Banco Plata",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "middle",
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Mexico City"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": true,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://plata.careers/vacancy/details?id=5485627008",
+              "https://lnkd.in/p/euS64C34"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Banco Plata — крупная финтех-платформа в Латинской Америке, работающая по принципу Open Finance. Роль — продуктовый менеджер по направлению origination (привлечение и оформление клиентов), уровень Middle+. Работа on-site или гибрид в Мехико, есть поддержка с релокацией."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "middle",
+              "actual": "middle"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": false,
+              "expected": null,
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Middle+ Product Manager [Origination]",
+              "actual": "Middle+ Product Manager [Origination]"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Banco Plata",
+              "actual": "Banco Plata"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10895",
+      "error": null,
+      "actual": [
+        {
+          "title": "Senior Product Manager",
+          "company": "WFM Technology",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "senior",
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Москва", "Московская область"],
+          "employmentTypes": [],
+          "salary": {
+            "min": null,
+            "max": 450000,
+            "currency": null,
+            "period": null,
+            "raw": "450К"
+          },
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://lnkd.in/p/gNeQfxAd"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "WFM Technology — аккредитованная IT-компания, занимающаяся разработкой и поддержкой ПО. Проект — HRTech-платформа «Джем Работа»; ищут Senior Product Manager в гибридном формате, рассматривают кандидатов из Москвы и МО."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "senior",
+              "actual": "senior"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": false,
+              "expected": 450000,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 450000,
+              "actual": 450000
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": false,
+              "expected": "RUB",
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": false,
+              "expected": "month",
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Senior Product Manager",
+              "actual": "Senior Product Manager"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "WFM Technology",
+              "actual": "WFM Technology"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10897",
+      "error": null,
+      "actual": [
+        {
+          "title": "Lead Product Manager, Online Donations",
+          "company": "Fundraise Up",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "lead",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [
+            "Spain",
+            "Poland",
+            "Portugal",
+            "Georgia",
+            "Armenia",
+            "Serbia",
+            "Turkey",
+            "Cyprus"
+          ],
+          "employmentTypes": [],
+          "salary": {
+            "min": 6200,
+            "max": 7300,
+            "currency": "EUR",
+            "period": null,
+            "raw": "€6,2K – €7,3K"
+          },
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.linkedin.com/jobs/view/4480703617/",
+              "https://lnkd.in/p/g3Xdwd7g"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Fundraise Up — глобальная платформа для быстрых и недорогих пожертвований некоммерческим организациям. Требуется Lead Product Manager по онлайн-донатам. Нужен русский на уровне носителя и английский C1."
+        },
+        {
+          "title": "Lead Product Manager, Platform & Surfaces",
+          "company": "Fundraise Up",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "lead",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [
+            "Spain",
+            "Poland",
+            "Portugal",
+            "Georgia",
+            "Armenia",
+            "Serbia",
+            "Turkey",
+            "Cyprus"
+          ],
+          "employmentTypes": [],
+          "salary": {
+            "min": 6200,
+            "max": 7300,
+            "currency": "EUR",
+            "period": null,
+            "raw": "€6,2K – €7,3K"
+          },
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.linkedin.com/jobs/view/4490292945/",
+              "https://lnkd.in/p/g3Xdwd7g"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Fundraise Up — глобальная платформа для быстрых и недорогих пожертвований некоммерческим организациям. Требуется Lead Product Manager по платформе и пользовательским поверхностям. Нужен русский на уровне носителя и английский C1."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 2,
+          "actual": 2,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "lead",
+              "actual": "lead"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 6200,
+              "actual": 6200
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 7300,
+              "actual": 7300
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "EUR",
+              "actual": "EUR"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": false,
+              "expected": "month",
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Lead Product Manager, Online Donations",
+              "actual": "Lead Product Manager, Online Donations"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Fundraise Up",
+              "actual": "Fundraise Up"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "lead",
+              "actual": "lead"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 6200,
+              "actual": 6200
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 7300,
+              "actual": 7300
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "EUR",
+              "actual": "EUR"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": false,
+              "expected": "month",
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Lead Product Manager, Platform & Surfaces",
+              "actual": "Lead Product Manager, Platform & Surfaces"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Fundraise Up",
+              "actual": "Fundraise Up"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10898",
+      "error": null,
+      "actual": [
+        {
+          "title": "Product Builder",
+          "company": "TownLive Games",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://lnkd.in/p/dQYEMWh2"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Студия разработки и продвижения мобильных игр TownLive Games ищет Product Builder на удалённую работу с гибким графиком."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Product Builder",
+              "actual": "Product Builder"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "TownLive Games",
+              "actual": "TownLive Games"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10901",
+      "error": null,
+      "actual": [
+        {
+          "title": "Event & Special Projects Manager",
+          "company": "Twinby",
+          "companyUrl": "https://www.linkedin.com/company/twinby/posts",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Москва"],
+          "employmentTypes": ["full_time"],
+          "salary": null,
+          "skills": [
+            "event",
+            "special projects",
+            "маркетинг",
+            "ROI/ROMI",
+            "CAC",
+            "CPL",
+            "бюджетирование",
+            "работа с подрядчиками",
+            "переговоры"
+          ],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://t.me/f_dash1k",
+              "https://www.linkedin.com/posts/twinby_%D1%81%D0%B5%D0%B9%D1%87%D0%B0%D1%81-%D0%BC%D1%8B-%D0%B2-%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B5event-special-projects-activity-7525883513603076096-IOJy?utm_source=share&utm_medium=member_android&rcm=ACoAAClX-tUBKHoUZwCujxq4Qf2VESA4UISoRsg"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Twinby — сервис знакомств на основе психологической совместимости. Компания ищет специалиста, который будет вести коммерческие офлайн- и event-проекты полного цикла, искать партнёров и масштабировать форматы в другие города. Требуется опыт от 3 лет и нахождение в Москве для офлайн-проектов."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Event & Special Projects Manager",
+              "actual": "Event & Special Projects Manager"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Twinby",
+              "actual": "Twinby"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 1,
+              "expected": ["full_time"],
+              "actual": ["full_time"]
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": [
+                "event",
+                "special projects",
+                "маркетинг",
+                "roi/romi",
+                "cac",
+                "cpl",
+                "бюджетирование",
+                "работа с подрядчиками",
+                "переговоры"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "forproducts-10907",
+      "error": null,
+      "actual": [
+        {
+          "title": "Project Manager",
+          "company": "OWLCAT GAMES",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://owlcat.games/careers/296"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "OWLCAT GAMES — студия по разработке крупных изометрических cRPG. Требуется Project Manager; языки: русский B2, английский C1. Работа в офисе или удалённо, гибкий график."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Project Manager",
+              "actual": "Project Manager"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "OWLCAT GAMES",
+              "actual": "OWLCAT GAMES"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10521",
+      "error": null,
+      "actual": [
+        {
+          "title": "Executive Researcher, DoorDash International",
+          "company": "Deliveroo",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": null,
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": ["UK", "Germany", "Finland"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://uk.linkedin.com/jobs/view/executive-researcher-doordash-international-at-deliveroo-4486793014",
+              "https://lnkd.in/p/ezcPanpQ"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Deliveroo — британская компания по доставке еды и продуктов. Роль исследователя (Executive Researcher) для направления DoorDash International; локации — Великобритания, Германия или Финляндия."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Executive Researcher, DoorDash International",
+              "actual": "Executive Researcher, DoorDash International"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Deliveroo",
+              "actual": "Deliveroo"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10522",
+      "error": null,
+      "actual": [
+        {
+          "title": "UX Writer – Loyalty and Commercial Incentives",
+          "company": "Booking.com",
+          "companyUrl": "https://booking.com/",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Amsterdam, Netherlands"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://jobs.booking.com/booking/jobs/30513", "https://lnkd.in/p/eScapAig"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Booking.com — глобальная онлайн-платформа для путешествий, которая связывает путешественников с жильём, авиабилетами и другими туристическими услугами. Роль UX Writer отвечает за тексты в направлении лояльности и коммерческих программ."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "UX Writer – Loyalty and Commercial Incentives",
+              "actual": "UX Writer – Loyalty and Commercial Incentives"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Booking.com",
+              "actual": "Booking.com"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10523",
+      "error": null,
+      "actual": [
+        {
+          "title": "University Recruiter",
+          "company": "NVIDIA",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": ["Munich, Germany"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/Germany-Munich/University-Recruiter_JR2029371",
+              "https://lnkd.in/p/dAwGYwtw"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "NVIDIA — американская технологическая компания, разрабатывающая ускоренные вычисления и инфраструктуру для ИИ. Ищут University Recruiter в Мюнхене; требуется свободное владение английским и немецким, знание другого европейского языка будет плюсом."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "University Recruiter",
+              "actual": "University Recruiter"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "NVIDIA",
+              "actual": "NVIDIA"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10525",
+      "error": "Vacancy extraction failed: No object generated: response did not match schema.",
+      "actual": null,
+      "comparison": null
+    },
+    {
+      "id": "geekjobs-10526",
+      "error": null,
+      "actual": [
+        {
+          "title": "QA Engineering Lead (AI)",
+          "company": "Meta",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "lead",
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": ["Menlo Park, USA"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.linkedin.com/jobs/view/qa-engineering-lead-ai-at-meta-4486617493",
+              "https://lnkd.in/p/egtkujCb"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Лидерская роль в QA-инжиниринге с фокусом на AI в компании Meta. Подробности — в описании вакансии на LinkedIn и в посте рекрутёра Rachel Compeau."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "lead",
+              "actual": "lead"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "QA Engineering Lead (AI)",
+              "actual": "QA Engineering Lead (AI)"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Meta",
+              "actual": "Meta"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10529",
+      "error": null,
+      "actual": [
+        {
+          "title": "Senior Product Analyst",
+          "company": "Sniffspot",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "senior",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.linkedin.com/jobs/view/4488218184/",
+              "https://lnkd.in/p/ebB8bPJF"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Sniffspot — крупнейший маркетплейс частных площадок для выгула собак, где можно арендовать участок на несколько часов. Требуется Senior Product Analyst на удалённую работу с существенным перекрытием по времени с US Eastern Time."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "senior",
+              "actual": "senior"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Senior Product Analyst",
+              "actual": "Senior Product Analyst"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Sniffspot",
+              "actual": "Sniffspot"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10532",
+      "error": null,
+      "actual": [
+        {
+          "title": "Software Engineer, Robotics Controls — Teleoperation",
+          "company": null,
+          "companyUrl": null,
+          "hiringParty": "agency",
+          "seniority": null,
+          "workplace": "onsite",
+          "isRemoteFromAnywhere": false,
+          "locations": ["London, UK"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["C++", "Python", "ROS", "ROS2", "real-time data streaming", "CI/CD"],
+          "relocation": true,
+          "visaSponsorship": true,
+          "apply": {
+            "urls": [
+              "https://geekjob.ru/hiqq",
+              "https://newhr.notion.site/senior-infrastructure-engineer-singapore"
+            ],
+            "emails": ["margarita@new.hr"],
+            "directMessage": false
+          },
+          "summary": "Команда Control глобальной робототехнической компании строит стек удалённого управления роботами в реальном времени: преобразование действий оператора в плавное движение, интеграция VR, хаптики и захвата движения, ограничения безопасности и сбор демонстраций для обучения роботов."
+        },
+        {
+          "title": "Software Engineer, Robotics Controls — Control Quality & Evaluation",
+          "company": null,
+          "companyUrl": null,
+          "hiringParty": "agency",
+          "seniority": null,
+          "workplace": "onsite",
+          "isRemoteFromAnywhere": false,
+          "locations": ["London, UK"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["C++", "Python", "ROS", "ROS2", "real-time data streaming", "CI/CD"],
+          "relocation": true,
+          "visaSponsorship": true,
+          "apply": {
+            "urls": [
+              "https://geekjob.ru/hiqq",
+              "https://newhr.notion.site/senior-infrastructure-engineer-singapore"
+            ],
+            "emails": ["margarita@new.hr"],
+            "directMessage": false
+          },
+          "summary": "Команда Control определяет метрики качества управления, создаёт тестовые стенды и CI-гейты на симуляции и hardware-in-the-loop, а также отслеживает работу контроллеров на каждом роботе и по всему парку во времени."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 2,
+          "actual": 2,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "agency",
+              "actual": "agency"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "onsite",
+              "actual": "onsite"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": false,
+              "expected": "Software Engineer, Teleoperation",
+              "actual": "Software Engineer, Robotics Controls — Teleoperation"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 4,
+              "expected": ["c++", "python", "ros", "ci/cd"],
+              "actual": ["c++", "python", "ros", "ros2", "real-time data streaming", "ci/cd"]
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "agency",
+              "actual": "agency"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "onsite",
+              "actual": "onsite"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": false,
+              "expected": "Software Engineer, Control Quality & Evaluation",
+              "actual": "Software Engineer, Robotics Controls — Control Quality & Evaluation"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 4,
+              "expected": ["c++", "python", "ros", "ci/cd"],
+              "actual": ["c++", "python", "ros", "ros2", "real-time data streaming", "ci/cd"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10533",
+      "error": null,
+      "actual": [
+        {
+          "title": "Frontend Vue-разработчик",
+          "company": "Lamoda",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Россия"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": ["Vue"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://job.lamoda.ru/vacancies/moskva/frontend-vue-developer--1946",
+              "https://lnkd.in/p/dWPpmwze"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Lamoda — онлайн-платформа по продаже одежды, обуви и аксессуаров в России и странах СНГ. Разработчик frontend на Vue, работа удалённо только из РФ."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Frontend Vue-разработчик",
+              "actual": "Frontend Vue-разработчик"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Lamoda",
+              "actual": "Lamoda"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 1,
+              "expected": ["vue"],
+              "actual": ["vue"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10534",
+      "error": null,
+      "actual": [
+        {
+          "title": "Head of Measurement & Advertising Effectiveness",
+          "company": "Spotify",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["New York"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://jobs.lever.co/spotify/01b41b49-7d43-4933-9ba7-06ebe0a2a749?lever-via=idOkPxhVNj&lever-social=job_site",
+              "https://lnkd.in/p/edWFfwGk"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Spotify — глобальная платформа потокового музыкального сервиса, где пользователи находят, слушают и создают персональные плейлисты из миллионов треков и подкастов. Роль отвечает за измерение и эффективность рекламы."
+        },
+        {
+          "title": "Senior Director, Global Advertising Product Marketing",
+          "company": "Spotify",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "senior",
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["New York"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://jobs.lever.co/spotify/b9533f31-7bff-43f6-aaf0-60003f017d88?lever-via=idOkPxhVNj&lever-social=job_site",
+              "https://lnkd.in/p/edWFfwGk"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Spotify — глобальная платформа потокового музыкального сервиса, где пользователи находят, слушают и создают персональные плейлисты из миллионов треков и подкастов. Роль отвечает за продуктовый маркетинг глобальной рекламы."
+        },
+        {
+          "title": "VP, Head of Product - Advertising",
+          "company": "Spotify",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "principal",
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["New York"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://jobs.lever.co/spotify/1a1c0754-29b1-4651-a399-3c078866b9d0?lever-via=idOkPxhVNj&lever-social=job_site",
+              "https://lnkd.in/p/edWFfwGk"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Spotify — глобальная платформа потокового музыкального сервиса, где пользователи находят, слушают и создают персональные плейлисты из миллионов треков и подкастов. Роль руководит продуктом рекламного направления."
+        },
+        {
+          "title": "VP, Head of Engineering - Advertising",
+          "company": "Spotify",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": "principal",
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["New York"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://jobs.lever.co/spotify/2c51f265-b95b-4b47-b467-e0fdc7744b5c?lever-via=idOkPxhVNj&lever-social=job_site",
+              "https://lnkd.in/p/edWFfwGk"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Spotify — глобальная платформа потокового музыкального сервиса, где пользователи находят, слушают и создают персональные плейлисты из миллионов треков и подкастов. Роль руководит инженерной командой рекламного направления."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 4,
+          "actual": 4,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": false,
+              "expected": "lead",
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Head of Measurement & Advertising Effectiveness",
+              "actual": "Head of Measurement & Advertising Effectiveness"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Spotify",
+              "actual": "Spotify"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": false,
+              "expected": "lead",
+              "actual": "senior"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Senior Director, Global Advertising Product Marketing",
+              "actual": "Senior Director, Global Advertising Product Marketing"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Spotify",
+              "actual": "Spotify"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": false,
+              "expected": "lead",
+              "actual": "principal"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "VP, Head of Product - Advertising",
+              "actual": "VP, Head of Product - Advertising"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Spotify",
+              "actual": "Spotify"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          },
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": false,
+              "expected": "lead",
+              "actual": "principal"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "VP, Head of Engineering - Advertising",
+              "actual": "VP, Head of Engineering - Advertising"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Spotify",
+              "actual": "Spotify"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10535",
+      "error": null,
+      "actual": [
+        {
+          "title": "Senior Full-Stack Engineer",
+          "company": "Lomi Labs",
+          "companyUrl": "https://www.lomilabs.ai/careers/senior-full-stack-engineer",
+          "hiringParty": "employer",
+          "seniority": "senior",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": {
+            "min": 3000,
+            "max": 4500,
+            "currency": "USD",
+            "period": null,
+            "raw": "$3K – $4,5K"
+          },
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://www.lomilabs.ai/careers/senior-full-stack-engineer",
+              "https://lnkd.in/p/dmTAkDdh"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Lomi Labs — команда продуктовой разработки, стоящая за продуктом Lomi. Ищут Senior Full-Stack инженера на удалённую работу; подробности о роли — в посте рекрутёра Nafis Reza в LinkedIn."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "senior",
+              "actual": "senior"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 3000,
+              "actual": 3000
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 4500,
+              "actual": 4500
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "USD",
+              "actual": "USD"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": false,
+              "expected": "month",
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Senior Full-Stack Engineer",
+              "actual": "Senior Full-Stack Engineer"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Lomi Labs",
+              "actual": "Lomi Labs"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "geekjobs-10537",
+      "error": null,
+      "actual": [
+        {
+          "title": "Creative Director, Brand Experience",
+          "company": "Figma",
+          "companyUrl": "https://www.figma.com/",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "onsite",
+          "isRemoteFromAnywhere": false,
+          "locations": ["San Francisco", "New York", "USA"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [
+              "https://job-boards.greenhouse.io/figma/jobs/6232528004?gh_jid=6232528004",
+              "https://lnkd.in/p/enSBQBKk"
+            ],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Figma — дизайн-платформа для совместной работы команд: мозговых штурмов, прототипирования, перевода дизайна в код и итераций с ИИ. Роль Creative Director по brand experience, работа в офисе в Сан-Франциско или Нью-Йорке либо удалённо из США."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": false,
+              "expected": "lead",
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": false,
+              "expected": null,
+              "actual": "onsite"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Creative Director, Brand Experience",
+              "actual": "Creative Director, Brand Experience"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Figma",
+              "actual": "Figma"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "linkedin-7525883513603076096",
+      "error": null,
+      "actual": [
+        {
+          "title": "Event & Special Projects Manager",
+          "company": "Twinby",
+          "companyUrl": "https://www.linkedin.com/company/twinby/posts",
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Москва"],
+          "employmentTypes": ["full_time"],
+          "salary": null,
+          "skills": [
+            "event-маркетинг",
+            "бюджетирование",
+            "экономика проектов",
+            "ROI/ROMI",
+            "CAC",
+            "CPL",
+            "переговоры с партнёрами",
+            "работа с подрядчиками"
+          ],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://t.me/f_dash1k"],
+            "emails": [],
+            "directMessage": true
+          },
+          "summary": "Развивает и масштабирует коммерческое офлайн-направление Twinby: вечеринки, «быстрые свидания», поп-апы. Отвечает за проекты полного цикла, экономику, поиск партнёров и координацию подрядчиков. Работа полностью удалённая, но нужно находиться в Москве для участия в офлайн-проектах."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Event & Special Projects Manager",
+              "actual": "Event & Special Projects Manager"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Twinby",
+              "actual": "Twinby"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 1,
+              "expected": ["full_time"],
+              "actual": ["full_time"]
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 0,
+              "expected": [],
+              "actual": [
+                "event-маркетинг",
+                "бюджетирование",
+                "экономика проектов",
+                "roi/romi",
+                "cac",
+                "cpl",
+                "переговоры с партнёрами",
+                "работа с подрядчиками"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "synthetic-frontend-eu",
+      "error": null,
+      "actual": [
+        {
+          "title": "Senior Frontend Engineer",
+          "company": "Acme",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "senior",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": false,
+          "locations": ["EU", "Berlin"],
+          "employmentTypes": [],
+          "salary": {
+            "min": 70000,
+            "max": 90000,
+            "currency": "EUR",
+            "period": "year",
+            "raw": "€70–90k gross per year"
+          },
+          "skills": ["React", "TypeScript", "Next.js"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://acme.dev/jobs/frontend"],
+            "emails": [],
+            "directMessage": false
+          },
+          "summary": "Acme — B2B-платформа для логистики. Ищут senior фронтенд-разработчика на React и TypeScript, опыт от 5 лет, English B2. Remote из EU или офис в Берлине."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "senior",
+              "actual": "senior"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": false,
+              "expected": null,
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 70000,
+              "actual": 70000
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 90000,
+              "actual": 90000
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "EUR",
+              "actual": "EUR"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": "year",
+              "actual": "year"
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": false,
+              "expected": "Senior Frontend Engineer (React, TypeScript)",
+              "actual": "Senior Frontend Engineer"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Acme",
+              "actual": "Acme"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 2,
+              "expected": ["react", "typescript"],
+              "actual": ["react", "typescript", "next.js"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "synthetic-go-net-salary",
+      "error": null,
+      "actual": [
+        {
+          "title": "Middle Go-разработчик",
+          "company": "Финлайн",
+          "companyUrl": null,
+          "hiringParty": "unknown",
+          "seniority": "middle",
+          "workplace": "remote",
+          "isRemoteFromAnywhere": true,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": {
+            "min": 250000,
+            "max": 300000,
+            "currency": "RUB",
+            "period": "month",
+            "raw": "250–300 тыс. ₽ на руки"
+          },
+          "skills": ["Go", "PostgreSQL", "Kafka", "Kubernetes"],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://t.me/finline_hr"],
+            "emails": [],
+            "directMessage": true
+          },
+          "summary": "Финлайн — сервис онлайн-кредитования для малого бизнеса. Команда развивает сервис скоринга, проектирует API и пишет тесты. Требуется опыт коммерческой разработки от 2 лет; Kubernetes будет плюсом."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "unknown"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": "middle",
+              "actual": "middle"
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "remote",
+              "actual": "remote"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": 250000,
+              "actual": 250000
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": 300000,
+              "actual": 300000
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": "RUB",
+              "actual": "RUB"
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": "month",
+              "actual": "month"
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": true,
+              "actual": true
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Middle Go-разработчик",
+              "actual": "Middle Go-разработчик"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Финлайн",
+              "actual": "Финлайн"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": false,
+              "truePositives": 3,
+              "expected": ["go", "postgresql", "kafka"],
+              "actual": ["go", "postgresql", "kafka", "kubernetes"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "synthetic-paris",
+      "error": null,
+      "actual": [
+        {
+          "title": "Product Designer",
+          "company": "Lumen",
+          "companyUrl": null,
+          "hiringParty": "employer",
+          "seniority": null,
+          "workplace": "hybrid",
+          "isRemoteFromAnywhere": false,
+          "locations": ["Paris"],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": [],
+            "emails": [],
+            "directMessage": true
+          },
+          "summary": "Lumen ищет Product Designer в Париж в гибридном формате: 3 дня в неделю в офисе. Для отклика нужно написать автору поста в личные сообщения."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": true,
+              "expected": "employer",
+              "actual": "employer"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": "hybrid",
+              "actual": "hybrid"
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Product Designer",
+              "actual": "Product Designer"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Lumen",
+              "actual": "Lumen"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "synthetic-platform-developer",
+      "error": null,
+      "actual": [
+        {
+          "title": "Разработчик в команду платформы",
+          "company": "Acme",
+          "companyUrl": null,
+          "hiringParty": "agency",
+          "seniority": null,
+          "workplace": null,
+          "isRemoteFromAnywhere": false,
+          "locations": [],
+          "employmentTypes": [],
+          "salary": null,
+          "skills": [],
+          "relocation": null,
+          "visaSponsorship": null,
+          "apply": {
+            "urls": ["https://www.linkedin.com/in/anna-smirnova"],
+            "emails": [],
+            "directMessage": true
+          },
+          "summary": "Acme ищет разработчика в команду платформы. Подробности и отклик — в личных сообщениях рекрутёра Анны Смирновой."
+        }
+      ],
+      "comparison": {
+        "roleCount": {
+          "expected": 1,
+          "actual": 1,
+          "match": true
+        },
+        "roles": [
+          {
+            "hiringParty": {
+              "kind": "exact",
+              "match": false,
+              "expected": "employer",
+              "actual": "agency"
+            },
+            "seniority": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "workplace": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMin": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryMax": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryCurrency": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "salaryPeriod": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "relocation": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "visaSponsorship": {
+              "kind": "exact",
+              "match": true,
+              "expected": null,
+              "actual": null
+            },
+            "isRemoteFromAnywhere": {
+              "kind": "exact",
+              "match": true,
+              "expected": false,
+              "actual": false
+            },
+            "title": {
+              "kind": "exact",
+              "match": false,
+              "expected": "Разработчик",
+              "actual": "Разработчик в команду платформы"
+            },
+            "company": {
+              "kind": "exact",
+              "match": true,
+              "expected": "Acme",
+              "actual": "Acme"
+            },
+            "employmentTypes": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            },
+            "skills": {
+              "kind": "set",
+              "match": true,
+              "truePositives": 0,
+              "expected": [],
+              "actual": []
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

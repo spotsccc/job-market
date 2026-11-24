@@ -57,6 +57,7 @@ function fieldData(options: FilterOptions): FieldData {
     skills: [...options.skills],
     languages: [...options.languages],
     currencies: [...options.currencies],
+    companies: [...options.companies],
     platforms: [...options.platforms],
   };
 }

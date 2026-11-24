@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { after, before, describe, test } from 'node:test';
 
 import {
+  companies,
+  companyKeys,
   db,
   eq,
   getDb,
@@ -17,6 +19,7 @@ import { EMPTY_FILTERS, parseFilters } from './filters.ts';
 import type { VacancyFilters } from './filters.ts';
 import { getVacancy } from './get-vacancy.ts';
 import { searchVacancies } from './search-vacancies.ts';
+import type { VacancySearchResult } from './search-vacancies.ts';
 
 /** Тесты идут в тестовую базу из `.env.test`: `pnpm db:up && pnpm db:migrate:test`. */
 
@@ -59,15 +62,34 @@ function role(title: string, fields: Partial<VacancyToSave> = {}): VacancyToSave
 }
 
 /** Заголовки найденных вакансий этого теста, в порядке выдачи. */
-async function search(filters: Partial<VacancyFilters>): Promise<string[]> {
+async function run(filters: Partial<VacancyFilters>): Promise<VacancySearchResult> {
   const result = await searchVacancies({ ...EMPTY_FILTERS, ...filters }, 1000);
   assert.ok(!(result instanceof Error), result instanceof Error ? String(result.cause) : '');
-  return result.items.filter((item) => item.publicationUrl.includes(KEY)).map((item) => item.title);
+  return result;
+}
+
+/** Заголовки найденных вакансий этого теста, в порядке выдачи. */
+async function search(filters: Partial<VacancyFilters>): Promise<string[]> {
+  const { items } = await run(filters);
+  return items.filter((item) => item.publicationUrl.includes(KEY)).map((item) => item.title);
+}
+
+async function companyIdOf(name: string): Promise<string> {
+  const [row] = await db.select().from(companies).where(eq(companies.name, name));
+  assert.ok(row !== undefined);
+  return row.id;
+}
+
+/** Вакансии пишутся в транзакции: сопоставление компаний блокирует их ключи. */
+async function save(publicationId: string, roles: readonly VacancyToSave[]): Promise<void> {
+  await db.transaction(async (tx) => saveVacancies(tx, publicationId, roles));
 }
 
 async function removeTestRows(): Promise<void> {
   await db.delete(publications).where(like(publications.externalId, `${KEY}/%`));
   await db.delete(sources).where(eq(sources.key, KEY));
+  await db.delete(companyKeys).where(like(companyKeys.value, `%${KEY}%`));
+  await db.delete(companies).where(like(companies.name, `%${KEY}%`));
 }
 
 async function insertPublication(sourceId: string, n: number, postedAt: string): Promise<string> {
@@ -98,10 +120,10 @@ describe('searchVacancies', () => {
     assert.ok(source !== undefined);
     const older = await insertPublication(source.id, 1, '2026-11-18T10:00:00.000Z');
     const newer = await insertPublication(source.id, 2, '2026-11-19T10:00:00.000Z');
-    await saveVacancies(db, older, [
+    await save(older, [
       role('Ведущий разработчик', {
         occupationId: 'backend',
-        company: 'Ромашка',
+        company: `Ромашка ${KEY}`,
         skills: ['Go', 'PostgreSQL'],
         experienceYearsMin: 5,
         salaryMin: 50_000,
@@ -111,10 +133,10 @@ describe('searchVacancies', () => {
         summary: 'Команда платёжных сервисов, писать бэкенд.',
       }),
     ]);
-    await saveVacancies(db, newer, [
+    await save(newer, [
       role('Senior Frontend Developer', {
         occupationId: 'frontend',
-        company: 'Acme',
+        company: `Acme ${KEY}`,
         skills: ['TypeScript'],
         niceSkills: ['React'],
         experienceYearsMin: 3,
@@ -204,6 +226,32 @@ describe('searchVacancies', () => {
     assert.deepEqual(await search({ salaryFrom: 90_000, salaryCurrency: 'EUR' }), [
       'Senior Frontend Developer',
     ]);
+  });
+
+  test('a company filter keeps only its vacancies and works with the query', async () => {
+    const companyId = await companyIdOf(`Acme ${KEY}`);
+    const result = await run({ companyId });
+    assert.deepEqual(result.company, { id: companyId, name: `Acme ${KEY}` });
+    assert.deepEqual(
+      result.items.map((item) => item.title),
+      ['Senior Frontend Developer'],
+    );
+    assert.deepEqual(await search({ companyId, q: 'react' }), ['Senior Frontend Developer']);
+    assert.deepEqual(await search({ companyId, q: 'playwright' }), []);
+  });
+
+  test('a missing or malformed company gives no vacancies and no company', async () => {
+    const empty = { items: [], total: 0, company: null };
+    assert.deepEqual(await run({ companyId: '00000000-0000-4000-8000-000000000000' }), empty);
+    assert.deepEqual(await run({ companyId: 'not-a-uuid' }), empty);
+  });
+
+  test('a vacancy without a company has no company name', async () => {
+    const { items } = await run({ q: 'playwright' });
+    const qa = items.find((item) => item.title === 'QA Engineer');
+    assert.ok(qa !== undefined);
+    assert.equal(qa.companyId, null);
+    assert.equal(qa.companyName, null);
   });
 
   test('getVacancy returns the vacancy with the other roles of its publication', async () => {

@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import type { ReactNode } from 'react';
 
+import { Company, hostname } from './company.tsx';
 import { formatSalary } from './format-salary.ts';
 import {
   EMPLOYMENT_TYPE_LABELS,
@@ -30,14 +31,6 @@ type VacancyProps = Readonly<{ vacancy: VacancySearchItem }>;
 // Карточка рендерится на сервере: часовой пояс задаём явно, чтобы дата не зависела от машины.
 const dateFormat = new Intl.DateTimeFormat('ru', { dateStyle: 'medium', timeZone: 'UTC' });
 
-function hostname(url: string): string {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
-}
-
 function placeList(places: readonly VacancyPlace[], role: VacancyPlace['role']): string {
   return places
     .filter((place) => place.role === role)
@@ -46,7 +39,6 @@ function placeList(places: readonly VacancyPlace[], role: VacancyPlace['role']):
 }
 
 function Header({ vacancy }: VacancyProps): ReactNode {
-  const { company, companyUrl } = vacancy;
   return (
     <Stack gap={4}>
       <Title order={3}>
@@ -55,13 +47,7 @@ function Header({ vacancy }: VacancyProps): ReactNode {
         </Anchor>
       </Title>
       <Group gap="xs">
-        {company === null ? null : companyUrl === null ? (
-          <Text fw={500}>{company}</Text>
-        ) : (
-          <Anchor href={companyUrl} target="_blank" rel="noreferrer" fw={500}>
-            {company}
-          </Anchor>
-        )}
+        <Company vacancy={vacancy} />
         {vacancy.hiringParty === 'agency' ? (
           <Badge variant="outline" color="orange" size="sm">
             агентство

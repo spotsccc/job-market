@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-course-ad",
+  "source": "synthetic",
+  "why": "Реклама курса с обещанием трудоустройства",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Станьте Python-разработчиком за 6 месяцев!**\nКурс от SkillUp: 120 часов практики, ментор и помощь с трудоустройством. Скидка 30% до конца недели — успейте записаться: https://skillup.example/python",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for Developers",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": "not_hiring"
+}

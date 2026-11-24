@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-we-are-growing",
+  "source": "synthetic",
+  "why": "«Мы растём» без конкретной роли",
+  "publication": {
+    "connector": "linkedin",
+    "content": "We're growing! 🚀 Acme just closed our Series B and we'll be expanding the team across engineering, sales and operations this year. Stay tuned for open positions!",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Laura Chen",
+      "url": "https://www.linkedin.com/in/laura-chen",
+      "headline": "CEO at Acme"
+    }
+  },
+  "expected": "no_specific_role"
+}

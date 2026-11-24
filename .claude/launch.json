@@ -6,6 +6,15 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@job-market/web", "dev"],
       "port": 3000
+    },
+    {
+      "name": "web-test-db",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd apps/web && set -a && . ./.env.test && set +a && exec pnpm exec next dev -p 3100"
+      ],
+      "port": 3100
     }
   ]
 }

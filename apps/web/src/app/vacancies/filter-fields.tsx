@@ -7,7 +7,6 @@ import {
   NumberInput,
   SegmentedControl,
   Select,
-  TextInput,
   TreeSelect,
 } from '@mantine/core';
 import type { ComboboxItem, ComboboxItemGroup, TreeNodeData } from '@mantine/core';
@@ -48,6 +47,7 @@ export type FieldData = {
   skills: ComboboxItem[];
   languages: ComboboxItem[];
   currencies: ComboboxItem[];
+  companies: ComboboxItem[];
   platforms: ComboboxItem[];
 };
 
@@ -222,7 +222,7 @@ export function SalaryFields({ filters, data }: FieldsProps): ReactNode {
 }
 
 // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- Mantine ждёт изменяемые массивы в data и defaultValue
-export function TermsFields({ filters, defaults }: FieldsProps): ReactNode {
+export function TermsFields({ filters, defaults, data }: FieldsProps): ReactNode {
   return (
     <>
       <MultiSelect
@@ -233,11 +233,16 @@ export function TermsFields({ filters, defaults }: FieldsProps): ReactNode {
         defaultValue={defaults.employmentTypes}
         clearable
       />
-      <TextInput
+      <Select
         name="company"
         label="Компания"
-        placeholder="Часть названия"
-        defaultValue={filters.company}
+        placeholder="Любая"
+        description="Из справочника компаний"
+        data={data.companies}
+        defaultValue={filters.companyId}
+        searchable
+        clearable
+        limit={50}
       />
       <MultiSelect
         name="hiring"

@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-congrats",
+  "source": "synthetic",
+  "why": "Поздравление коллеги с новой должностью",
+  "publication": {
+    "connector": "linkedin",
+    "content": "Congratulations to our own Sarah Kim on being promoted to VP of Engineering! 🎉 Sarah joined us as a backend engineer five years ago. So proud of you!",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "David Lee",
+      "url": "https://www.linkedin.com/in/david-lee",
+      "headline": "CEO at Initech"
+    }
+  },
+  "expected": "not_hiring"
+}

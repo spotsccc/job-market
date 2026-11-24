@@ -849,13 +849,12 @@
       <section id="task">
         <h2><span class="num">1</span>Задача</h2>
         <p class="lead">
-          Это третий из планов, на которые делится
-          <a href="sources-queues.html">большой план сбора источников</a>.
-          <a href="vacancy-model.html">План 1</a> создаёт таблицы <code>sources</code> и
-          <code>publications</code>. <a href="connectors.html">План 2</a> создаёт пакет коннекторов:
-          у каждого коннектора есть <code>drain</code> — выкачать новые публикации источника и
-          записать их вместе с курсором, и <code>mine</code> — добыть вакансии из публикации. Их
-          пока никто не зовёт.
+          Это третий из планов, на которые делился большой план сбора источников. Таблицы
+          <code>sources</code> и <code>publications</code> уже есть в коде (миграция
+          <code>0008_data_model.sql</code>, схема <code>packages/db/src/publication</code>).
+          <a href="connectors.html">План 2</a> создаёт пакет коннекторов: у каждого коннектора есть
+          <code>drain</code> — выкачать новые публикации источника и записать их вместе с курсором,
+          и <code>mine</code> — добыть вакансии из публикации. Их пока никто не зовёт.
         </p>
         <p class="lead">
           Этот план начинает пакет <code>packages/engine</code>. Движок работает через очередь
@@ -901,10 +900,11 @@
         </p>
         <div class="card"><table id="facts"></table></div>
         <div class="card">
-          <h3>Что дают планы 1 и 2</h3>
+          <h3>Что дают модель данных и план 2</h3>
           <p class="small muted">
-            Планов 1 и 2 ещё нет в коде. Имена ниже взяты из их этапов. Если реализация назовёт их
-            иначе, этот план поправляется до начала Э1 (раздел 7).
+            Модель данных уже в коде, плана 2 ещё нет. Имена плана 2 и плана экстрактора взяты из их
+            этапов. Если реализация назовёт их иначе, этот план поправляется до начала Э1 (раздел
+            7).
           </p>
           <table id="prereq"></table>
         </div>
@@ -1007,14 +1007,14 @@
           <h3>ER-схема</h3>
           <p class="small">
             Не применимо: таблицы не добавляются и не меняются. Все столбцы, которые нужны движку,
-            создаёт план 1.
+            уже есть в схеме <code>packages/db/src/publication/source.ts</code>.
           </p>
         </div>
         <div class="card">
           <h3>Кто пишет столбцы при опросе</h3>
           <p class="small muted">
-            Строка — столбец таблицы плана 1, который пишется при опросе источника. Как вычисляется
-            значение — в правилах раздела 5 и в правилах плана 2.
+            Строка — столбец таблицы sources или publications, который пишется при опросе источника.
+            Как вычисляется значение — в правилах раздела 5 и в правилах плана 2.
           </p>
           <table id="matrix"></table>
         </div>
@@ -1025,7 +1025,7 @@
         <p class="lead">
           Что можно делать с данными и как по ним считается. «Поведение» — что разрешено и что
           запрещено, «определение» — как вычисляется значение. Что хранится — в разделе 4. Правила
-          планов 1 и 2 здесь не повторяются, на них ссылки: «П1 плана 1».
+          плана 2 здесь не повторяются, на них ссылки: «П10 плана 2».
         </p>
         <div class="card"><table id="rulesTable"></table></div>
       </section>
@@ -1067,7 +1067,7 @@
           <figure class="scroll">
             <div id="stagesGraph"></div>
             <figcaption>
-              Клик по этапу — его карточка. План идёт после планов 1 и 2. Э1 создаёт пакет и задание
+              Клик по этапу — его карточка. План идёт после плана 2. Э1 создаёт пакет и задание
               опроса, Э2 добавляет к нему tick. Пунктир — мягкая зависимость: README пишется, когда
               готов Э2. Каждый этап — отдельный коммит, который проходит
               <code>pnpm check</code> и <code>pnpm test</code>.
@@ -1081,13 +1081,13 @@
             вкладкой — пакет репозитория или каталог, вложенная рамка — вложенный каталог; каталог
             без своих модулей входит в путь на вкладке. Тест лежит рядом со своим модулем.
             Пунктирная стрелка идёт от того, кто зависит: чёрная — «импортирует», зелёная — «тест
-            проверяет». Под именем модуля — что с ним в этом этапе или откуда он: «из плана 1» — его
-            создаёт план 1. Тесты — <code>node --test</code>: «unit» — без базы, «db» — на тестовой
+            проверяет». Под именем модуля — что с ним в этом этапе или откуда он: «из плана 2» — его
+            создаёт план 2. Тесты — <code>node --test</code>: «unit» — без базы, «db» — на тестовой
             базе из <code>apps/web/.env.test</code>.
           </p>
           <div class="legend" style="margin: 0">
             <span class="l-new">новый модуль</span><span class="l-chg">изменённый</span
-            ><span class="l-old">уже есть, из плана 1, 2 или прошлого этапа</span
+            ><span class="l-old">уже есть в коде, из плана 2 или прошлого этапа</span
             ><span class="l-testnew">новый тест</span><span class="l-test">изменённый тест</span
             ><span class="l-pknew">новый каталог</span><span class="l-pk">каталог</span
             ><span class="l-ext">вне репозитория</span>
@@ -1159,10 +1159,21 @@
               не меняется: platform он не читает.
             </li>
             <li>
-              23 ноября 2026: енричер переписан под читателей (<a href="enricher.html"
-                >план енричера</a
-              >). Тесты движка берут фейковых читателей <code>fakeReader</code> из
+              23 ноября 2026: енричер переписан под читателей (план енричера). Тесты движка берут
+              фейковых читателей <code>fakeReader</code> из
               <code>@job-market/enricher/test-utils</code> вместо <code>fakeLinkedin</code> плана 2.
+            </li>
+            <li>
+              23 ноября 2026: владелец удалил план 1, большой план сбора источников и план енричера.
+              Ссылки на них заменены. Таблицы <code>sources</code> и <code>publications</code> уже в
+              коде: схема <code>packages/db/src/publication</code>, миграция 0008. Ключи connector,
+              <code>insertPublication</code>, модуль <code>write-publication.ts</code> и источники в
+              базе — Э4 плана экстрактора. <code>saveCursor</code> и
+              <code>setOutcome</code> добавляет в <code>write-publication.ts</code> Э3 плана 2, он
+              же экспортирует <code>./test-utils</code>. Модуль
+              <code>sources/write.ts</code> заменён на
+              <code>publication/write-publication.ts</code>. «П1 плана 1» стало «П10 плана 2».
+              <code>fakeReader</code> уже в коде.
             </li>
           </ul>
         </div>
@@ -1330,7 +1341,7 @@
         ],
         [
           "Включение и импорт источников",
-          "решение владельца: не в этом плане. 14 каналов плана 1 остаются выключенными, tick на production их не берёт",
+          "решение владельца: не в этом плане. Каналы, которые заводит Э4 плана экстрактора, остаются выключенными, tick на production их не берёт",
         ],
         [
           "Страница /sources с состоянием источников",
@@ -1370,7 +1381,7 @@
         [
           "Тесты",
           "node --test: channel-telegram, channel-linkedin, logger, http-client — 'src/**/*.test.ts' без базы; на тестовой базе — только apps/web: node --env-file=.env.test --test",
-          "db-тестам движка нужен .env.test из apps/web, как db-тестам packages/db плана 1",
+          "db-тестам движка нужен .env.test из apps/web, как db-тестам packages/db",
         ],
         [
           "Ошибки",
@@ -1387,33 +1398,33 @@
       const PREREQ = [
         [
           "sources",
-          "план 1, Э1 (packages/db/src/sources/source.ts): connector, key, platform, config, interval_minutes ≥ 15 (по умолчанию 1440), enabled, next_run_at, cursor, last_fetched_at, last_success_at, consecutive_failures, last_error; индекс (next_run_at) WHERE enabled",
+          "в коде (packages/db/src/publication/source.ts, миграция 0008; connector и key в базе — Э4 плана экстрактора): connector, key, platform, config, interval_minutes ≥ 15 (по умолчанию 1440), enabled, next_run_at, cursor, last_fetched_at, last_success_at, consecutive_failures, last_error; индекс (next_run_at) WHERE enabled",
           "движок читает и пишет эти столбцы; миграции в плане нет",
         ],
         [
           "publications",
-          "план 1, Э1: таблица publications; пишет её drain плана 2 через insertPublications (П9–П10 плана 2)",
+          "в коде (packages/db/src/publication/publication.ts, миграция 0008); пишет её drain плана 2 через insertPublication Э4 плана экстрактора (П9–П10 плана 2)",
           "движок publications не читает и не пишет",
         ],
         [
           "Источники в базе",
-          "план 1 заводит 14 каналов open-telegram и linkedin/manual — все выключены",
+          "Э4 плана экстрактора заводит каналы open-telegram и linkedin/manual — все выключены",
           "на production tick их не берёт, пока источники не включат (вне плана)",
         ],
         [
           "Коннекторы",
-          "план 2, Э1–Э3 (packages/connectors): createConnectors(deps) → реестр по id; коннектор снаружи — { id, drain, mine }, platform он не знает (план 1: platform — бренд источника, только в sources); drain(source, { now, deadline }) → { status: 'done' | 'more' | 'failed', inserted, cursor, error? } или Error — сбой базы; drain сам дочитывает ссылки LinkedIn и пишет публикации и курсор одной транзакцией",
+          "план 2, Э1–Э3 (packages/connectors): createConnectors(deps) → реестр по id; коннектор снаружи — { id, drain, mine }, platform он не знает (platform — бренд источника, только в sources); drain(source, { now, deadline }) → { status: 'done' | 'more' | 'failed', inserted, cursor, error? } или Error — сбой базы; drain сам дочитывает ссылки LinkedIn и пишет публикации и курсор одной транзакцией",
           "движок зовёт только drain; mine позовёт план разбора",
         ],
         [
-          "sources/write.ts",
-          "план 2, Э2 (packages/db/src/sources/write.ts): saveCursor(tx, sourceId, cursor) для drain",
+          "write-publication.ts",
+          "план 2, Э3 (packages/db/src/publication/write-publication.ts): saveCursor(tx, sourceId, cursor) для drain и setOutcome; модуль создаёт Э4 плана экстрактора",
           "Э1 добавляет в этот модуль getSource и finishDrain — запись расписания",
         ],
         [
           "Фейковый t.me",
           "план 2, Э1: fakeTelegram в packages/connectors/src/open-telegram/fake-telegram.test-utils.ts, пакет его не экспортирует",
-          "план 2, Э2 экспортирует его и testConnector через ./test-utils, фейковых читателей для enrich — fakeReader из @job-market/enricher/test-utils (план енричера, Э2): тестам движка нужны фейковые t.me и читатели и коннектор с заданными ответами",
+          "план 2, Э3 экспортирует его и testConnector через ./test-utils, фейковых читателей для enrich — fakeReader из @job-market/enricher/test-utils (уже в коде, packages/enricher/src/test-utils.ts): тестам движка нужны фейковые t.me и читатели и коннектор с заданными ответами",
         ],
       ];
 
@@ -1428,7 +1439,7 @@
         {
           id: "E2",
           sit: "Очередь доставила задание опроса второй раз, в том числе пока первая ещё идёт",
-          beh: "второй опрос стартует с записанного курсора; уже записанные публикации не дублируются (П1 плана 1); курсор пишет тот, кто закончил последним, и оба курсора указывают на прочитанное",
+          beh: "второй опрос стартует с записанного курсора; уже записанные публикации не дублируются (П10 плана 2); курсор пишет тот, кто закончил последним, и оба курсора указывают на прочитанное",
           test: "drain-source-job.test",
           st: "Э1",
         },
@@ -1470,7 +1481,7 @@
         {
           id: "E8",
           sit: "drain записал публикации и курсор, а запись расписания упала: обрыв соединения между двумя транзакциями",
-          beh: "handleDrainSourceJob → Error, задание повторит очередь; повтор зовёт drain с нового курсора, уже записанные публикации не дублируются (П1 плана 1); расписание пишет повтор (П6)",
+          beh: "handleDrainSourceJob → Error, задание повторит очередь; повтор зовёт drain с нового курсора, уже записанные публикации не дублируются (П10 плана 2); расписание пишет повтор (П6)",
           test: "drain-source-job.test",
           st: "Э1",
         },
@@ -1489,7 +1500,7 @@
         ],
         [
           "Планы 1 и 2 назовут таблицы, функции и пакеты иначе",
-          "ревью планов; сверка с карточкой «Что дают планы 1 и 2» раздела 2",
+          "ревью планов; сверка с карточкой «Что дают модель данных и план 2» раздела 2",
           "поправить этот план до начала Э1; функции движка от этого не меняются",
         ],
         [
@@ -1538,7 +1549,7 @@
         `<tr><th>Вопрос</th><th>Факт в коде</th><th>Что из этого следует</th></tr>` +
         factRows(FACTS);
       $("prereq").innerHTML =
-        `<tr><th>Что</th><th>Что даёт план 1</th><th>Что из этого следует</th></tr>` +
+        `<tr><th>Что</th><th>Что даёт код или план</th><th>Что из этого следует</th></tr>` +
         factRows(PREREQ);
 
       /* =================== Contract, matrix, migration =================== */
@@ -1606,7 +1617,11 @@
             "П8, П11",
           ],
           ["sources.enabled, interval_minutes, config", "движок только читает", "П1, П5"],
-          ["publications.*", "drain плана 2: insertPublications плана 1", "П9, П10 плана 2"],
+          [
+            "publications.*",
+            "drain плана 2: insertPublication плана экстрактора",
+            "П9, П10 плана 2",
+          ],
         ],
       );
 
@@ -1733,7 +1748,7 @@
             k: "chg",
             t: "@job-market/db",
             type: "[Компонент: Drizzle]",
-            d: ["sources/write.ts:", "getSource, finishDrain"],
+            d: ["write-publication.ts:", "getSource, finishDrain"],
           },
           {
             id: "ch",
@@ -1960,7 +1975,7 @@
         [
           ["вызывающий", "тест или следующий план"],
           ["tick.ts", "engine"],
-          ["db", "sources/write.ts"],
+          ["db", "publication/write-publication.ts"],
           ["Postgres", "база"],
           ["JobQueue", "интерфейс"],
         ],
@@ -2258,7 +2273,7 @@
           "П1",
           "Источник пора опросить, если он включён, next_run_at ≤ now и его коннектор есть в переданном реестре. tick берёт таких не больше 2000, с самым ранним next_run_at первыми, и тем же запросом сдвигает их next_run_at на now + interval_minutes — до постановки заданий в очередь. Второй tick, идущий одновременно, и повтор того же тика эти источники уже не берут. Почему коннектор из реестра: источник без коннектора задание всё равно пропустит (П4).",
           "поведение",
-          "db/src/sources/write.ts: claimDueSources — FOR UPDATE SKIP LOCKED",
+          "db/src/publication/write-publication.ts: claimDueSources — FOR UPDATE SKIP LOCKED",
           "tick.test",
         ],
         [
@@ -2272,7 +2287,7 @@
           "П3",
           "Если пачка не отправилась, источники этой и следующих пачек получают прежний next_run_at и берутся следующим тиком; tick возвращает Error. Отправленные пачки не откатываются.",
           "поведение",
-          "engine/src/tick.ts; db/src/sources/write.ts: releaseSources",
+          "engine/src/tick.ts; db/src/publication/write-publication.ts: releaseSources",
           "tick.test",
         ],
         { group: "Опрос" },
@@ -2294,7 +2309,7 @@
           "П6",
           "После drain, кроме Error, движок отдельной транзакцией пишет расписание источника: last_fetched_at = now и счётчики по П8 или П11. Если эта запись не удалась, handleDrainSourceJob возвращает Error, а записанное drain остаётся. Почему отдельно: данные пишет коннектор, расписание — движок (решение владельца 23 ноября 2026). Повтор задания продолжает с нового курсора.",
           "поведение",
-          "engine/src/drain-source-job.ts; db/src/sources/write.ts: finishDrain",
+          "engine/src/drain-source-job.ts; db/src/publication/write-publication.ts: finishDrain",
           "drain-source-job.test",
         ],
         [
@@ -2329,7 +2344,7 @@
           "П11",
           "Удачный опрос — drain вернул status done: consecutive_failures = 0, last_error = NULL, last_success_at = now. next_run_at не меняется: его уже сдвинул tick (П1).",
           "поведение",
-          "engine/src/drain-source-job.ts; db/src/sources/write.ts: finishDrain",
+          "engine/src/drain-source-job.ts; db/src/publication/write-publication.ts: finishDrain",
           "drain-source-job.test",
         ],
         [
@@ -2367,7 +2382,7 @@
           g: [0, 0],
           newDirs: ["packages/engine"],
           ctx: [
-            ["packages/db/src/sources/source.ts", "плана 1"],
+            ["packages/db/src/publication/source.ts", "old"],
             ["packages/connectors/src/index.ts", "плана 2"],
             ["packages/connectors/src/open-telegram/fake-telegram.test-utils.ts", "плана 2"],
             ["packages/connectors/src/test-connector.test-utils.ts", "плана 2"],
@@ -2375,21 +2390,21 @@
           ],
           mods: [
             [
-              "packages/db/src/sources/write.ts",
+              "packages/db/src/publication/write-publication.ts",
               "chg",
-              "getSource(id); finishDrain(id, { now, success: true } | { now, failure: { error, nextRunAt } }) — last_fetched_at и счётчики по П6, П8 и П11; курсор не трогает, saveCursor плана 2 не меняется",
-              ["sources/source.ts"],
+              "getSource(id); finishDrain(id, { now, success: true } | { now, failure: { error, nextRunAt } }) — last_fetched_at и счётчики по П6, П8 и П11; курсор не трогает, saveCursor Э3 плана 2 не меняется",
+              ["publication/source.ts"],
             ],
             [
               "packages/db/src/index.ts",
               "chg",
               "экспорт getSource и finishDrain",
-              ["sources/write.ts"],
+              ["publication/write-publication.ts"],
             ],
             [
               "packages/engine/package.json",
               "new",
-              "@job-market/engine; зависимости @job-market/db, @job-market/connectors, @job-market/logger, @spotsccc/error-as-value; скрипт test: node --env-file=../../apps/web/.env.test --test, как у packages/db плана 1; tsconfig.json, .oxlintrc.json, oxfmt.config.ts — по образцу channel-telegram",
+              "@job-market/engine; зависимости @job-market/db, @job-market/connectors, @job-market/logger, @spotsccc/error-as-value; скрипт test: node --env-file=../../apps/web/.env.test --test, как у packages/db; tsconfig.json, .oxlintrc.json, oxfmt.config.ts — по образцу channel-telegram",
               [],
             ],
             [
@@ -2474,7 +2489,7 @@
           ],
           mods: [
             [
-              "packages/db/src/sources/write.ts",
+              "packages/db/src/publication/write-publication.ts",
               "chg",
               "claimDueSources({ now, connectorIds, limit }) → [{ id, previousRunAt }] одним запросом WITH … FOR UPDATE SKIP LOCKED UPDATE … RETURNING (П1); releaseSources(rows) — вернуть прежний next_run_at (П3)",
               [],

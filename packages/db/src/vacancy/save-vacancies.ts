@@ -1,6 +1,8 @@
 import { and, eq, getTableColumns, gte, inArray, sql } from 'drizzle-orm';
 
 import type { DbExecutor } from '../client.ts';
+import { keysOf } from '../company/company-keys.ts';
+import { lockKeys, matchCompany } from '../company/match-company.ts';
 import type { NewVacancyLocationRow } from './vacancy-location.ts';
 import { vacancyLocations } from './vacancy-location.ts';
 import type { NewVacancyRow } from './vacancy.ts';
@@ -17,12 +19,13 @@ export type PlaceToSave = Readonly<Omit<NewVacancyLocationRow, 'vacancyId' | 'po
 /**
  * Роль для записи: строка `vacancies` без публикации и номера — номер роли это её индекс в
  * списке — и её места. `locations` пишет тот, кто сводил места к справочнику: там и «откуда
- * угодно», которого нет среди мест (П16, П17).
+ * угодно», которого нет среди мест (П16, П17). Компанию (`companyId`) задаёт сопоставление по
+ * `company` и `companyUrl`, а не вызывающий (П6 плана компаний).
  */
 export type VacancyToSave = ReadonlyArrays<
   Omit<
     NewVacancyRow,
-    'id' | 'publicationId' | 'position' | 'createdAt' | 'updatedAt' | 'searchVector'
+    'id' | 'publicationId' | 'position' | 'companyId' | 'createdAt' | 'updatedAt' | 'searchVector'
   >
 > & { readonly places: readonly PlaceToSave[] };
 
@@ -30,12 +33,14 @@ function vacancyRow(
   publicationId: string,
   position: number,
   role: VacancyToSave,
+  companyId: string | null,
 ): Mutable<NewVacancyRow> {
   const { places: _places, ...fields } = role;
   return {
     ...fields,
     publicationId,
     position,
+    companyId,
     locations: fields.locations === undefined ? undefined : [...fields.locations],
     employmentTypes: fields.employmentTypes === undefined ? undefined : [...fields.employmentTypes],
     skills: fields.skills === undefined ? undefined : [...fields.skills],
@@ -74,9 +79,34 @@ const OVERWRITE = {
 };
 
 /**
+ * Компании ролей по порядку (П6 плана компаний). Блокировки всех ключей берутся сразу, в общем
+ * порядке: по ролям по очереди две транзакции взяли бы их навстречу друг другу.
+ */
+async function matchCompanies(
+  db: DbExecutor,
+  roles: readonly VacancyToSave[],
+): Promise<(string | null)[]> {
+  const inputs = roles.map((role) => ({
+    company: role.company ?? null,
+    companyUrl: role.companyUrl ?? null,
+  }));
+  await lockKeys(
+    db,
+    inputs.flatMap((input) => keysOf(input.company, input.companyUrl)),
+  );
+  const ids: (string | null)[] = [];
+  for (const input of inputs) {
+    // oxlint-disable-next-line no-await-in-loop -- роли одной транзакции идут по очереди
+    ids.push(await matchCompany(db, input));
+  }
+  return ids;
+}
+
+/**
  * Пишет роли публикации (П9, П17): вакансия — upsert по `(publication_id, position)`, лишние
  * вакансии прежней записи удаляются; места каждой вакансии стираются и пишутся заново по
- * порядку. Транзакцию держит вызывающий: вакансии и места пишутся вместе с публикацией.
+ * порядку. Компания каждой роли ищется заново при каждой записи (П6 плана компаний).
+ * Транзакцию держит вызывающий: вакансии, места и компании пишутся вместе с публикацией.
  */
 export async function saveVacancies(
   db: DbExecutor,
@@ -88,9 +118,14 @@ export async function saveVacancies(
     .where(and(eq(vacancies.publicationId, publicationId), gte(vacancies.position, roles.length)));
   if (roles.length === 0) return;
 
+  const companyIds = await matchCompanies(db, roles);
   const saved = await db
     .insert(vacancies)
-    .values(roles.map((role, position) => vacancyRow(publicationId, position, role)))
+    .values(
+      roles.map((role, position) =>
+        vacancyRow(publicationId, position, role, companyIds[position] ?? null),
+      ),
+    )
     .onConflictDoUpdate({ target: [vacancies.publicationId, vacancies.position], set: OVERWRITE })
     .returning({ id: vacancies.id, position: vacancies.position });
 

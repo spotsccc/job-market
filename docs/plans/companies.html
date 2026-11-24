@@ -994,8 +994,9 @@
             <div id="er"></div>
             <figcaption>
               <code>companies</code> и <code>company_keys</code> — новые таблицы Э1. У
-              <code>vacancies</code> показаны только столбцы про компанию; остальные описаны в
-              <a href="vacancy-model.html">плане 1</a>. <code>company</code> и
+              <code>vacancies</code> показаны только столбцы про компанию; остальные — в схеме
+              <code>packages/db/src/vacancy/vacancy.ts</code> (миграция
+              <code>0008_data_model.sql</code>). <code>company</code> и
               <code>company_url</code> остаются как есть: это ответ экстрактора, по нему компанию
               можно найти заново.
             </figcaption>
@@ -1034,7 +1035,7 @@
         <h2><span class="num">7</span>Риски и открытые вопросы</h2>
         <div class="card">
           <h3>Открытые вопросы</h3>
-          <p class="small">Открытых вопросов нет. Ответы на ❓1–❓3 — в журнале раздела 9.</p>
+          <p class="small">Открытых вопросов нет. Ответы на ❓1–❓4 — в журнале раздела 9.</p>
           <h3>Риски</h3>
           <table id="riskTable"></table>
         </div>
@@ -1050,10 +1051,10 @@
               Клик по этапу — его карточка. Э2 меняет <code>saveVacancies</code>, которую создаёт Э4
               <a href="vacancy-extraction.html">плана экстрактора</a>, поэтому идёт после него.
               Пересчёт Э3 и слияние Э4 зависят только от Э1 и идут параллельно с Э2. Фильтр Э5
-              читает новые таблицы, поэтому ждёт переключения <code>/vacancies</code> — Э1
-              <a href="vacancy-model.html">плана 1</a>. Пунктир — мягкая зависимость: без Э2 новые
-              вакансии получают компанию только при следующем пересчёте Э3. Каждый этап — отдельный
-              коммит, который проходит <code>pnpm check</code> и <code>pnpm test</code>.
+              сначала переключает <code>/vacancies</code> на новые таблицы, а читает
+              <code>company_id</code>, который заполняет пересчёт Э3. Пунктир — мягкая зависимость:
+              без Э2 новые вакансии получают компанию только при следующем пересчёте Э3. Каждый этап
+              — отдельный коммит, который проходит <code>pnpm check</code> и <code>pnpm test</code>.
             </figcaption>
           </figure>
         </div>
@@ -1100,6 +1101,69 @@
             <li>
               23 ноября 2026: в плане экстрактора енричер вынесен в отдельный план, правила П12–П23
               стали П9–П20. Ссылка на прежние поля экстрактора исправлена: П21 → П18.
+            </li>
+            <li>
+              23 ноября 2026: владелец удалил план 1 (vacancy-model.html). Модель данных уже в коде,
+              поэтому подпись ER-схемы и зерно vacancies ссылаются на схему
+              <code>packages/db/src/vacancy/vacancy.ts</code> и миграцию 0008. Переключение
+              <code>/vacancies</code> было Э1 плана 1; теперь это шаг после сверки S6 плана
+              экстрактора. Поправлены факт «Страница /vacancies», риск про чужие планы, порядок
+              этапов и заметка Э5.
+            </li>
+            <li>
+              23 ноября 2026: сверка с планом экстрактора и кодом. (1) У
+              <code>packages/db</code> нет логгера, а П4 пишет предупреждение: Э1 добавляет
+              зависимость <code>@job-market/logger</code> и <code>companyLog</code> в
+              <code>match-company.ts</code>, факт «Зависимости packages/db» дополнен. (2)
+              Переключения <code>/vacancies</code> нет ни в одном плане — открыт ❓4, статус
+              «требует принятия решений». (3) Схема экстрактора переезжает в
+              <code>packages/extractor/src/vacancy.ts</code> — факт «Что значат поля» дополнен. (4)
+              Миграции Э1 и Э4 экстрактора могут получить один номер — порядок в особенностях Э1.
+              (5) Числа сценариев S1, S2, S5, S6, S8 приведены к объёму переноса: 1 240 постов,
+              около 1 873 вакансий.
+            </li>
+            <li>
+              23 ноября 2026: вторая сверка с кодом. (1) Схема экстрактора — в
+              <code>packages/extractor/src/vacancy.ts:94–100</code>, в <code>apps/web</code> её нет.
+              (2) <code>saveVacancies</code> уже есть в рабочей копии и зовётся только из переноса
+              постов; mine коннекторов — по плану коннекторов. Факт «Кто пишет вакансии» и результат
+              Э2 поправлены. (3) В <code>DbExecutor</code> нет <code>execute</code>: новый факт, Э1
+              меняет <code>client.ts</code>. (4) Связь вакансии с компанией названа
+              <code>employer</code>: имя <code>company</code> занято столбцом. (5) Последняя
+              миграция — <code>0010_occupations_sources</code>, миграция Э1 —
+              <code>0011_companies</code>; особенности Э1 поправлены. (6) Ключ
+              <code>linkedin</code> совпадает с <code>external_id</code> автора-компании — новый
+              факт. (7) Заметка Э5 больше не говорит, что <code>searchVacancies</code> уже читает
+              новые таблицы. В Э2 <code>companyId</code> исключён из <code>VacancyToSave</code>.
+            </li>
+            <li>
+              23 ноября 2026: реализованы Э1–Э4, Э5 ждёт ❓4. Отличия от плана: (1)
+              <code>saveVacancies</code> и пачка пересчёта сначала берут блокировки всех своих
+              ключей одним отсортированным списком: по ролям по очереди две транзакции взяли бы их
+              навстречу друг другу. (2) Пересчёту нужен признак «компания создана», поэтому в
+              <code>match-company.ts</code> есть <code>resolveCompany</code> →
+              <code>{ companyId, created }</code>; <code>matchCompany</code> — обёртка над ней. (3)
+              У <code>rematchCompanies</code> есть необязательный <code>publicationIds</code>: тесты
+              идут в общую базу параллельно, без него счётчики теста не сходятся. (4)
+              <code>mergeCompanies</code> возвращает и название удалённой компании — его печатает
+              <code>companies:merge</code>. (5) В <code>NOT_COMPANY_HOSTS</code> сразу добавлены
+              <code>telegram.me</code>, <code>career.habr.com</code>, <code>getmatch.ru</code> из
+              рисков; ссылка без схемы (<code>yandex.ru/jobs</code>) читается как https. (6)
+              Окружение обеих команд — общий <code>apps/web/scripts/script-env.ts</code>;
+              <code>companies:match</code> после итога печатает 20 компаний с наибольшим числом
+              вакансий — по ним видно дубли (риски). (7) Ошибки слияния — по файлу на класс. (8)
+              <code>save-vacancies.ts</code> закоммичен в 8dd2356: факты «Кто пишет вакансии» и
+              «Миграции» поправлены.
+            </li>
+            <li>
+              23 ноября 2026, ответ владельца на ❓4 — вариант (а): Э5 сначала переключает
+              <code>searchVacancies</code> на <code>vacancies</code> и <code>publications</code>,
+              legacy-таблицы не трогает. Поправлены факт «Страница /vacancies», риск про чужие
+              планы, подпись графа этапов, модули и заметка Э5. Открытых вопросов нет, статус —
+              «требует ревью». Э5 реализован. Отличия от плана: у вакансии публикации без автора в
+              карточке имя источника без ссылки; название в карточке — из справочника
+              (<code>companyName</code>), а без компании — <code>company</code> как в тексте;
+              «Компания не найдена» показывается и без запроса к базе, если id не uuid.
             </li>
           </ul>
         </div>
@@ -1166,7 +1230,7 @@
             ["tool", "saveVacancies → matchCompany: ключи domain yandex.ru, name яндекс"],
             ["bot", "вакансия записана; компания — «Яндекс» (найдена по domain yandex.ru)"],
           ],
-          eff: [["вакансии «Яндекса»", "57 → 58", "+1"]],
+          eff: [["вакансии «Яндекса»", "14 → 15", "+1"]],
           note: "новых компаний и ключей нет",
         },
         {
@@ -1179,7 +1243,7 @@
           ],
           eff: [
             ["ключи «Яндекса»", "2 → 3", "+1"],
-            ["вакансии «Яндекса»", "58 → 59", "+1"],
+            ["вакансии «Яндекса»", "15 → 16", "+1"],
           ],
           note: "следующая «Yandex» без ссылки найдётся по названию (П4)",
         },
@@ -1214,12 +1278,9 @@
           chat: [
             ["me", "pnpm --filter @job-market/web companies:match"],
             ["tool", "rematchCompanies: пачки по 500 по id вакансии"],
-            [
-              "bot",
-              "обработано 12 430 · изменено 10 526 · создано компаний 3 210 · без компании 1 904",
-            ],
+            ["bot", "обработано 1 873 · изменено 1 590 · создано компаний 640 · без компании 283"],
           ],
-          eff: [["вакансии с компанией", "0 → 10 526", "+10 526"]],
+          eff: [["вакансии с компанией", "0 → 1 590", "+1 590"]],
           note: "повторный запуск: изменено 0, создано 0",
         },
         {
@@ -1231,11 +1292,11 @@
               "pnpm --filter @job-market/web companies:merge --from <id «Yandex LLC»> --into <id «Яндекс»>",
             ],
             ["tool", "mergeCompanies: ключи и вакансии «Yandex LLC» → «Яндекс»"],
-            ["bot", "перенесено ключей 2, вакансий 12; компания «Yandex LLC» удалена"],
+            ["bot", "перенесено ключей 2, вакансий 3; компания «Yandex LLC» удалена"],
           ],
           eff: [
-            ["companies", "3 210 → 3 209", "−1"],
-            ["вакансии «Яндекса»", "59 → 71", "+12"],
+            ["companies", "640 → 639", "−1"],
+            ["вакансии «Яндекса»", "16 → 19", "+3"],
           ],
           note: "новые вакансии «Yandex LLC» теперь находят «Яндекс» по перенесённым ключам",
         },
@@ -1259,7 +1320,7 @@
           chat: [
             ["me", "клик по «Яндекс» в карточке вакансии на /vacancies"],
             ["tool", "/vacancies?company=<id «Яндекс»> → searchVacancies(q, { companyId })"],
-            ["bot", "чип «Компания: Яндекс ✕» и 71 вакансия; поиск по словам работает внутри"],
+            ["bot", "чип «Компания: Яндекс ✕» и 19 вакансий; поиск по словам работает внутри"],
           ],
           eff: [],
           note: "данные не меняются; ✕ снимает фильтр",
@@ -1298,12 +1359,12 @@
       const FACTS = [
         [
           "Компания у вакансии",
-          "vacancies.company text NULL и company_url text NULL (packages/db/src/vacancy/vacancy.ts:85–88)",
+          "vacancies.company text NULL и company_url text NULL (packages/db/src/vacancy/vacancy.ts:85–87)",
           "компания — только строка; по ней не собрать вакансии одной компании",
         ],
         [
           "Что значат поля",
-          "схема экстрактора: company — «Компания, в которую нанимают; null, если не названа», companyUrl — «Сайт компании или её страница в LinkedIn, если ссылка есть в посте; не ссылка на отклик» (apps/web/src/vacancy/vacancy.ts:56–61). Новый экстрактор оставляет эти описания (П18 плана экстрактора)",
+          "схема экстрактора: company — «Компания, в которую нанимают; null, если не названа», companyUrl — «Сайт компании или её страница в LinkedIn, если ссылка есть в посте; не ссылка на отклик» (packages/extractor/src/vacancy.ts:94–100; в apps/web схемы больше нет). Новый экстрактор оставляет эти описания (П18 плана экстрактора)",
           "company — работодатель, а не агентство; ссылка бывает и сайтом, и страницей linkedin.com/company/…, поэтому ключей два вида (П2)",
         ],
         [
@@ -1318,18 +1379,38 @@
         ],
         [
           "Кто пишет вакансии",
-          "новые таблицы пустые; вакансии пишет saveVacancies, которую создаёт Э4 плана экстрактора (vacancy-extraction.html), её зовут перенос постов и mine коннекторов",
-          "одно место записи — одно место сопоставления (П6); Э2 ждёт Э4 плана экстрактора",
+          "вакансии пишет saveVacancies(db, publicationId, roles) из Э4 плана экстрактора (packages/db/src/vacancy/save-vacancies.ts, коммит 8dd2356): одна вставка всех ролей с upsert по (publication_id, position), транзакцию держит вызывающий. Сейчас её зовёт только перенос постов (apps/web/src/transfer/write.ts:74), и перенос уже пишет в новые таблицы; mine коннекторов будет звать её по плану коннекторов (connectors.html)",
+          "одно место записи — одно место сопоставления (П6); вакансии, записанные переносом до Э2, получают компанию пересчётом Э3",
+        ],
+        [
+          "Исполнитель запросов",
+          "saveVacancies и другие функции записи принимают DbExecutor = Pick<Database, 'select' | 'selectDistinct' | 'insert' | 'update' | 'delete' | 'query'> (packages/db/src/client.ts:13–16): execute в нём нет",
+          "advisory-блокировке ключей (lockKeys) нужен execute — Э1 добавляет его в DbExecutor; транзакция и db его уже умеют",
+        ],
+        [
+          "Связи вакансии",
+          "у vacancies уже есть столбец company (text); связь мест названа places, потому что locations занято столбцом (packages/db/src/vacancy/relations.ts:13–15)",
+          "связь вакансии с companies называется employer, а не company: иначе она столкнётся со столбцом в результате db.query",
+        ],
+        [
+          "Миграции",
+          "последние — 0009_connector_keys и 0010_occupations_sources из Э4 плана экстрактора (packages/db/migrations)",
+          "миграция Э1 — 0011_companies",
+        ],
+        [
+          "Страница компании LinkedIn у авторов",
+          "authors.external_id автора-компании LinkedIn — путь профиля company/acme (packages/db/src/publication/author.ts:20–22)",
+          "ключ linkedin (П2) — в том же виде company/<slug>, поэтому автора-компанию можно будет найти по ключу без нового формата",
         ],
         [
           "Страница /vacancies",
-          "searchVacancies читает legacy_vacancies и legacy_posts (apps/web/src/app/vacancies/search-vacancies.ts:1, 39–41); переключение на новые таблицы — Э1 плана 1",
-          "фильтр Э5 ждёт переключения",
+          "searchVacancies читает legacy_vacancies и legacy_posts (apps/web/src/app/vacancies/search-vacancies.ts:1, 39–41); план экстрактора держит переключение на новые таблицы в «Не делаем» как шаг после своей сверки S6, этапа с переключением нет ни в одном плане",
+          "Э5 сначала переключает searchVacancies на vacancies и publications, legacy-таблицы не трогает",
         ],
         [
           "Зависимости packages/db",
-          "только drizzle-orm и pg (packages/db/package.json); ошибки значением через @job-market/errors уже использует packages/geo (packages/geo/package.json:23)",
-          "Э1 добавляет tldts для доменов, Э4 — @job-market/errors для ошибок слияния",
+          "только drizzle-orm и pg (packages/db/package.json), логгера нет; ошибки значением через @job-market/errors уже использует packages/geo (packages/geo/package.json:23); @job-market/logger зависит только от pino (packages/logger/package.json)",
+          "Э1 добавляет tldts для доменов и @job-market/logger для предупреждения о конфликте ключей (П4), цикла зависимостей нет; Э4 — @job-market/errors для ошибок слияния",
         ],
         [
           "Где лежат скрипты",
@@ -1420,9 +1501,9 @@
           "чинится промптом экстрактора, не сопоставлением (П5)",
         ],
         [
-          "Э2 и Э5 ждут чужие планы",
-          "Э4 плана экстрактора или Э1 плана 1 не готов",
-          "Э1, Э3 и Э4 идут без них; пересчёт Э3 до Э2 сопоставит уже перенесённые вакансии",
+          "После переключения /vacancies показывает только перенесённые вакансии",
+          "на странице меньше вакансий, чем в legacy_vacancies",
+          "сначала перенос постов (vacancies:transfer), затем пересчёт companies:match; legacy-таблицы остаются для сверки",
         ],
       ];
 
@@ -1448,7 +1529,7 @@
       $("pageMocks").innerHTML = `
 <div><div class="mock"><div class="bar"><i></i><i></i><i></i><span class="url">/vacancies?company=6f1c…</span></div><div class="pg">
   <div class="seg" style="margin:0 0 10px"><span>Компания: Яндекс ✕</span></div>
-  <div class="muted small" style="margin-bottom:8px">71 вакансия</div>
+  <div class="muted small" style="margin-bottom:8px">19 вакансий</div>
   <div class="tile"><div class="h">Senior Go Developer</div><div class="muted small"><span style="color: var(--accent)">Яндекс</span> · Москва</div>
   <div class="row"><span>обязательно</span><span class="mono">Go · PostgreSQL</span></div></div>
 </div></div><p class="cap">Фильтр по компании (S8): чип над списком, ✕ снимает фильтр, строка поиска работает внутри фильтра. Чип — Pill, ссылка — Anchor из Mantine.</p></div>
@@ -2194,7 +2275,7 @@
                             mono: true,
                             note: "Три запроса по порядку: ключи, вакансии, компания. Имя B остаётся.",
                           },
-                          { m: "ret", a: 3, b: 2, label: "ключей 2, вакансий 12", note: "" },
+                          { m: "ret", a: 3, b: 2, label: "ключей 2, вакансий 3", note: "" },
                           {
                             m: "ret",
                             a: 2,
@@ -2207,7 +2288,7 @@
                             m: "ret",
                             a: 1,
                             b: 0,
-                            label: "«перенесено ключей 2, вакансий 12»",
+                            label: "«перенесено ключей 2, вакансий 3»",
                             note: "S6.",
                           },
                         ],
@@ -2314,7 +2395,7 @@
           w: 330,
           k: "chg",
           grain:
-            "одна роль, извлечённая из публикации (план 1). Здесь — только столбцы про компанию.",
+            "одна роль, извлечённая из публикации (миграция 0008_data_model). Здесь — только столбцы про компанию.",
           f: [
             ["id", "uuid", "PK", false, "gen_random_uuid()", "Id вакансии.", ""],
             [
@@ -2612,11 +2693,17 @@
         {
           id: "Э1",
           t: "Компании и ключи",
+          status: "готов",
+          progress:
+            "миграция 0011_companies применена к тестовой базе; company-keys.test (15) и match-company.test (8) проходят; коммита нет",
           res: "в базе есть companies, company_keys и vacancies.company_id; matchCompany находит или создаёт компанию по ключам вакансии, проверено на тестовой базе",
           gres: "таблицы и matchCompany",
           g: [0, 0],
           newDirs: ["packages/db/src/company"],
-          ctx: [["tldts", "npm"]],
+          ctx: [
+            ["tldts", "npm"],
+            ["packages/logger/src/logger.ts", "old"],
+          ],
           mods: [
             [
               "packages/db/src/company/company.ts",
@@ -2633,8 +2720,14 @@
             [
               "packages/db/src/company/match-company.ts",
               "new",
-              "lockKeys(tx, keys) — pg_advisory_xact_lock(hashtextextended(kind || ':' || value, 0)) по ключам в порядке сортировки; matchCompany — П3, П4",
-              ["company/company.ts", "company-keys.ts"],
+              "lockKeys(tx, keys) — pg_advisory_xact_lock(hashtextextended(kind || ':' || value, 0)) по ключам в порядке сортировки; matchCompany — П3, П4; конфликт ключа П4 пишет companyLog = log.with({ module: 'company' }) на уровне модуля (AGENTS.md)",
+              ["company/company.ts", "company-keys.ts", "client.ts", "logger.ts"],
+            ],
+            [
+              "packages/db/src/client.ts",
+              "chg",
+              "в DbExecutor добавлен execute: lockKeys берёт advisory-блокировку через tx.execute",
+              [],
             ],
             [
               "packages/db/src/company/index.ts",
@@ -2651,7 +2744,7 @@
             [
               "packages/db/src/vacancy/relations.ts",
               "chg",
-              "связь vacancies.company и companiesRelations: компания → вакансии и ключи",
+              "связь vacancies.employer и companiesRelations: компания → вакансии и ключи. Почему employer: имя company занято столбцом",
               ["company/company.ts", "vacancy/vacancy.ts"],
             ],
             [
@@ -2661,12 +2754,17 @@
               ["company/index.ts"],
             ],
             [
-              "packages/db/migrations/*_companies.sql",
+              "packages/db/migrations/0011_companies.sql",
               "new",
-              "pnpm --filter @job-market/db generate --name companies, номер даёт drizzle-kit: две таблицы, столбец, FK и индексы. Схема меняется, поэтому миграция генерируется, а не пишется вручную",
+              "pnpm --filter @job-market/db generate --name companies, номер даёт drizzle-kit (сейчас — 0011): две таблицы, столбец, FK и индексы. Схема меняется, поэтому миграция генерируется, а не пишется вручную",
               [],
             ],
-            ["packages/db/package.json", "chg", "зависимость tldts", []],
+            [
+              "packages/db/package.json",
+              "chg",
+              "зависимости tldts и @job-market/logger (workspace:*)",
+              [],
+            ],
           ],
           api: [
             [
@@ -2692,12 +2790,14 @@
               ["match-company.ts"],
             ],
           ],
-          note: "Порядок блокировок — сортировка ключей: две транзакции с ключами {a, b} и {b, a} иначе могут взять их навстречу друг другу и попасть в deadlock. tldts берёт список публичных суффиксов из своей версии; обновление пакета может поменять домены редких суффиксов — пересчёт Э3 это исправит.",
+          note: "Порядок блокировок — сортировка ключей: две транзакции с ключами {a, b} и {b, a} иначе могут взять их навстречу друг другу и попасть в deadlock. tldts берёт список публичных суффиксов из своей версии; обновление пакета может поменять домены редких суффиксов — пересчёт Э3 это исправит. Миграция генерируется после коммита 0009_connector_keys и 0010_occupations_sources (Э4 плана экстрактора): если они изменятся позже, свою миграцию и её снимок в migrations/meta удалить и сгенерировать заново, иначе снимки разойдутся.",
         },
         {
           id: "Э2",
           t: "Компания при записи",
-          res: "каждая вакансия, которую пишут перенос постов или mine коннекторов, сразу получает company_id (S1–S4)",
+          status: "готов",
+          progress: "save-vacancies.test дополнен двумя случаями и проходит; коммита нет",
+          res: "каждая вакансия, которую пишет saveVacancies — сейчас перенос постов, после плана коннекторов и mine, — сразу получает company_id (S1–S4)",
           gres: "company_id при записи",
           g: [1, 0],
           ctx: [["packages/db/src/company/match-company.ts", "Э1"]],
@@ -2705,7 +2805,7 @@
             [
               "packages/db/src/vacancy/save-vacancies.ts",
               "chg",
-              "перед upsert каждой роли — matchCompany(tx, { company, companyUrl }), результат — в company_id (П6)",
+              "перед общей вставкой ролей — matchCompany(db, { company, companyUrl }) для каждой роли по порядку, результат — в company_id её строки (П6); companyId исключён из VacancyToSave: компанию задаёт сопоставление, а не вызывающий",
               ["match-company.ts"],
             ],
           ],
@@ -2717,11 +2817,14 @@
               ["save-vacancies.ts"],
             ],
           ],
-          note: "save-vacancies.ts и его тест создаёт Э4 плана экстрактора (vacancy-extraction.html). Этот этап идёт после него.",
+          note: "save-vacancies.ts и его тест создал Э4 плана экстрактора (vacancy-extraction.html), коммит 8dd2356. Повторная запись перезаписывает все столбцы, кроме ключа строки (OVERWRITE), поэтому company_id перезапишется без отдельной правки upsert.",
         },
         {
           id: "Э3",
           t: "Пересчёт компаний",
+          status: "готов",
+          progress:
+            "rematch-companies.test (3) проходит; companies:match проверен на тестовой базе, на рабочей не запускался; коммита нет",
           res: "у всех записанных вакансий есть компания, если у них есть ключ; команда companies:match показывает итог (S5)",
           gres: "company_id у старых вакансий",
           g: [1, 1],
@@ -2733,7 +2836,7 @@
             [
               "packages/db/src/company/rematch-companies.ts",
               "new",
-              "rematchCompanies(db, { batchSize = 500 }) → { processed, changed, created, withoutCompany } — П8; пачка — одна транзакция",
+              "rematchCompanies(db, { batchSize = 500, publicationIds? }) → { processed, changed, created, withoutCompany } — П8; пачка — одна транзакция, блокировки всех ключей пачки берутся в её начале",
               ["match-company.ts"],
             ],
             [
@@ -2763,6 +2866,9 @@
         {
           id: "Э4",
           t: "Слияние компаний",
+          status: "готов",
+          progress:
+            "merge-companies.test (4) проходит; ошибки companies:merge проверены на тестовой базе; коммита нет",
           res: "команда companies:merge сливает две компании: ключи и вакансии переходят к оставшейся (S6, S7)",
           gres: "companies:merge",
           g: [1, 2],
@@ -2774,13 +2880,13 @@
             [
               "packages/db/src/company/errors.ts",
               "new",
-              "SameCompanyError и CompanyNotFoundError через createTaggedError, extends AppError",
+              "реэкспорт SameCompanyError (same-company-error.ts) и CompanyNotFoundError (company-not-found-error.ts): createTaggedError, extends AppError, по классу на файл — правило линтера max-classes-per-file",
               ["errors/src/index.ts"],
             ],
             [
               "packages/db/src/company/merge-companies.ts",
               "new",
-              "mergeCompanies(db, fromId, intoId) → { keys, vacancies } | SameCompanyError | CompanyNotFoundError — П7; блокировки ключей A через lockKeys",
+              "mergeCompanies(db, fromId, intoId) → { keys, vacancies, removed } | SameCompanyError | CompanyNotFoundError — П7; блокировки ключей A через lockKeys",
               ["match-company.ts", "company/errors.ts"],
             ],
             [
@@ -2816,6 +2922,9 @@
         {
           id: "Э5",
           t: "Фильтр по компании",
+          status: "готов",
+          progress:
+            "search-vacancies.test (6) проходит; страница проверена в браузере на тестовой базе: фильтр, поиск внутри компании, неверный id, снятие фильтра; коммита нет",
           res: "на /vacancies можно открыть все вакансии компании кликом по её названию (S8)",
           gres: "/vacancies?company",
           g: [2, 1],
@@ -2824,7 +2933,7 @@
             [
               "apps/web/src/app/vacancies/search-vacancies.ts",
               "chg",
-              "searchVacancies(q, { companyId }): условие company_id и название компании через LEFT JOIN companies; в элементе результата — companyId и companyName",
+              "переключение на vacancies, publications, sources и authors вместо legacy_vacancies и legacy_posts; searchVacancies(q, { companyId, limit }): условие company_id и название компании через LEFT JOIN companies; в элементе результата — companyId и companyName, в результате — компания фильтра или null",
               ["company/company.ts"],
             ],
             [
@@ -2844,11 +2953,11 @@
             [
               "apps/web/src/app/vacancies/search-vacancies.test.ts",
               "chg",
-              "db: две компании по две вакансии, companyId первой → две её вакансии; companyId и q «go» → одна; несуществующий companyId → пусто, компания не найдена; вакансия без company_id → companyName null",
+              "db: тесты переписаны на новые таблицы — пустой запрос, поиск по компании, навыкам и местам, ранжирование; две компании по две вакансии, companyId первой → две её вакансии; companyId и q «go» → одна; несуществующий companyId → пусто, компания не найдена; вакансия без company_id → companyName null",
               ["search-vacancies.ts"],
             ],
           ],
-          note: "Этап пишется по новым таблицам: searchVacancies переключает Э1 плана 1. Вёрстка — Pill, Anchor и Group из Mantine без своего CSS (AGENTS.md).",
+          note: "Этап начинается с переключения searchVacancies с legacy_vacancies и legacy_posts на vacancies и publications (ответ на ❓4); legacy-таблицы не трогаются. Автор публикации бывает не задан: тогда в карточке имя источника без ссылки. Вёрстка — Pill, CloseButton-ссылка, Anchor и Group из Mantine без своего CSS (AGENTS.md): страница серверная, поэтому фильтр снимает ссылка, а не onRemove у Pill.",
         },
       ];
       (function graph() {

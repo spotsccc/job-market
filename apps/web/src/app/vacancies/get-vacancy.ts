@@ -2,6 +2,7 @@ import {
   and,
   asc,
   authors,
+  companies,
   db,
   eq,
   listOccupations,
@@ -15,7 +16,7 @@ import {
 import type { VacancySchemaVersion } from '@job-market/db/values';
 
 import { buildOccupationTree } from './occupation-tree.ts';
-import { VACANCY_COLUMNS, loadPlaces } from './search-vacancies.ts';
+import { UUID, VACANCY_COLUMNS, loadPlaces } from './search-vacancies.ts';
 import type { VacancySearchItem } from './search-vacancies.ts';
 
 /** Другая вакансия той же публикации: ссылка на её страницу. */
@@ -38,8 +39,6 @@ export type VacancyDetails = VacancySearchItem & {
   readonly siblings: readonly SiblingVacancy[];
 };
 
-const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu;
-
 async function findVacancy(id: string): Promise<VacancyDetails | null> {
   const [row] = await db
     .select({
@@ -59,6 +58,7 @@ async function findVacancy(id: string): Promise<VacancyDetails | null> {
     .innerJoin(sources, eq(publications.sourceId, sources.id))
     .innerJoin(platforms, eq(sources.platform, platforms.id))
     .leftJoin(authors, eq(publications.authorId, authors.id))
+    .leftJoin(companies, eq(vacancies.companyId, companies.id))
     .where(eq(vacancies.id, id));
   if (row === undefined) return null;
 

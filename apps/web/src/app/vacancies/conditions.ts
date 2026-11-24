@@ -5,7 +5,6 @@ import {
   eq,
   exists,
   gte,
-  ilike,
   inArray,
   isNotNull,
   isNull,
@@ -97,11 +96,6 @@ const APPLY_CONDITIONS: Readonly<Record<ApplyMethod, SQL>> = {
   dm: sql`(${vacancies.apply} ->> 'directMessage')::boolean`,
 };
 
-/** `%` и `_` в подстроке — буквы, а не шаблон `ILIKE`. */
-function escapeLike(text: string): string {
-  return text.replaceAll(/[\\%_]/gu, (char) => `\\${char}`);
-}
-
 /** Навык есть среди обязательных или «плюсом», без учёта регистра. */
 function hasSkill(skill: string): SQL {
   return sql`exists (select 1 from unnest(${vacancies.skills} || ${vacancies.niceSkills}) as skill(name) where lower(skill.name) = lower(${skill}))`;
@@ -170,9 +164,7 @@ export function filterConditions(
     filters.hiringParties.length === 0
       ? undefined
       : inArray(vacancies.hiringParty, [...filters.hiringParties]),
-    filters.company === ''
-      ? undefined
-      : ilike(vacancies.company, `%${escapeLike(filters.company)}%`),
+    filters.companyId === null ? undefined : eq(vacancies.companyId, filters.companyId),
     ...filters.skills.map((skill) => hasSkill(skill)),
     anyOf(filters.languages, hasLanguage),
     ...salaryConditions(filters),

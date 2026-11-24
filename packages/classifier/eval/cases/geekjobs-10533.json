@@ -1,0 +1,16 @@
+{
+  "id": "geekjobs-10533",
+  "source": "https://t.me/geekjobs/10533",
+  "why": "Вакансия с компанией и форматом работы в русском посте",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**Frontend Vue-разработчик**\nв **Lamoda** — онлайн-платформа по продаже одежды, обуви и аксессуаров, работающая в России и странах СНГ.\n**Удалённая работа (только из РФ).**\n[Описание вакансии](https://job.lamoda.ru/vacancies/moskva/frontend-vue-developer--1946).\nИщет Илья Зинченко, его [пост на LinkedIn](https://lnkd.in/p/dWPpmwze).\n\n**Больше вакансий в Frontend & Node.js:** https://t.me/forfrontend",
+    "postedAt": "2026-11-19T15:27:54.000Z",
+    "author": {
+      "name": "Job in IT&Digital",
+      "url": "https://t.me/geekjobs",
+      "headline": null
+    }
+  },
+  "expected": "vacancy"
+}

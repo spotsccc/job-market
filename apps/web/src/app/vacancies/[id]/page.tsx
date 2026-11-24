@@ -15,6 +15,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 
+import { Company } from '../company.tsx';
 import { getVacancy } from '../get-vacancy.ts';
 import type { VacancyDetails } from '../get-vacancy.ts';
 import { Conditions } from '../vacancy-card.tsx';
@@ -36,12 +37,12 @@ type VacancyPageProps = Readonly<{ params: Promise<Readonly<{ id: string }>> }>;
 export async function generateMetadata({ params }: VacancyPageProps): Promise<Metadata> {
   const vacancy = await getVacancy((await params).id);
   if (vacancy === null || vacancy instanceof Error) return { title: 'Вакансия — job-market' };
-  const company = vacancy.company === null ? '' : ` · ${vacancy.company}`;
+  const name = vacancy.companyName ?? vacancy.company;
+  const company = name === null ? '' : ` · ${name}`;
   return { title: `${vacancy.title}${company} — job-market` };
 }
 
 function Header({ vacancy }: Readonly<{ vacancy: VacancyDetails }>): ReactNode {
-  const { company, companyUrl } = vacancy;
   return (
     <Stack gap="xs">
       <Breadcrumbs>
@@ -50,15 +51,7 @@ function Header({ vacancy }: Readonly<{ vacancy: VacancyDetails }>): ReactNode {
       </Breadcrumbs>
       <Title order={1}>{vacancy.title}</Title>
       <Group gap="xs">
-        {company === null ? null : companyUrl === null ? (
-          <Text size="lg" fw={500}>
-            {company}
-          </Text>
-        ) : (
-          <Anchor href={companyUrl} target="_blank" rel="noreferrer" size="lg" fw={500}>
-            {company}
-          </Anchor>
-        )}
+        <Company vacancy={vacancy} size="lg" />
         {vacancy.hiringParty === 'agency' ? (
           <Badge variant="outline" color="orange">
             агентство

@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-laid-off",
+  "source": "synthetic",
+  "why": "Автора сократили, он ищет работу: в тексте слово «hiring», но нанимают не его",
+  "publication": {
+    "connector": "linkedin",
+    "content": "Yesterday I was impacted by layoffs at Nimbus. If your team is hiring a Data Engineer with Spark, Airflow and dbt experience, I'd love to connect. Open to remote roles in EU timezones.",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Tom Becker",
+      "url": "https://www.linkedin.com/in/tom-becker",
+      "headline": "Data Engineer"
+    }
+  },
+  "expected": "job_seeker"
+}

@@ -50,8 +50,11 @@ export type VacancyFilters = {
   readonly placeMode: PlaceMode;
   readonly employmentTypes: readonly EmploymentType[];
   readonly hiringParties: readonly HiringParty[];
-  /** Подстрока названия компании, без учёта регистра. */
-  readonly company: string;
+  /**
+   * Компания справочника — id из адреса как есть: не uuid или неизвестный id показываются
+   * как «Компания не найдена», а не отбрасываются молча (П9 плана компаний).
+   */
+  readonly companyId: string | null;
   /** Навыки: все выбранные есть среди обязательных или «плюсом», без учёта регистра. */
   readonly skills: readonly string[];
   /** Языки ISO 639-1: вакансия упоминает хотя бы один. */
@@ -83,7 +86,7 @@ export const EMPTY_FILTERS: VacancyFilters = {
   placeMode: 'work',
   employmentTypes: [],
   hiringParties: [],
-  company: '',
+  companyId: null,
   skills: [],
   languages: [],
   withSalary: false,
@@ -162,7 +165,7 @@ export function parseFilters(params: SearchParams): VacancyFilters {
     placeMode: oneOf(PLACE_MODES, placeMode) ? placeMode : 'work',
     employmentTypes: listOf(params, 'employment', EMPLOYMENT_TYPES),
     hiringParties: listOf(params, 'hiring', HIRING_PARTIES),
-    company: single(params, 'company'),
+    companyId: single(params, 'company') === '' ? null : single(params, 'company'),
     skills: list(params, 'skill'),
     languages: list(params, 'language')
       .map((code) => code.toLowerCase())

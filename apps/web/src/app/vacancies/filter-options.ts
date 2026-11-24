@@ -1,4 +1,5 @@
 import {
+  companies,
   db,
   geoCities,
   isNotNull,
@@ -26,6 +27,8 @@ export type FilterOptions = {
   readonly skills: readonly Option[];
   readonly languages: readonly Option[];
   readonly currencies: readonly Option[];
+  /** Компании справочника, у которых есть вакансии. */
+  readonly companies: readonly Option[];
   readonly platforms: readonly Option[];
 };
 
@@ -61,6 +64,14 @@ async function loadLanguages(): Promise<Option[]> {
       label: `${languageNames.of(row.code) ?? row.code} (${row.code})`,
     }))
     .toSorted(byLabel);
+}
+
+async function loadCompanies(): Promise<Option[]> {
+  const rows = await db
+    .selectDistinct({ value: companies.id, label: companies.name })
+    .from(companies)
+    .innerJoin(vacancies, sql`${vacancies.companyId} = ${companies.id}`);
+  return rows.toSorted(byLabel);
 }
 
 async function loadCurrencies(): Promise<Option[]> {
@@ -125,20 +136,23 @@ function placeGroups(cities: readonly Option[]): OptionGroup[] {
 }
 
 async function loadFilterOptionsOnce(): Promise<FilterOptions> {
-  const [occupations, cities, skills, languages, currencies, platformRows] = await Promise.all([
-    listOccupations(db),
-    loadCities(),
-    loadSkills(),
-    loadLanguages(),
-    loadCurrencies(),
-    db.select({ value: platforms.id, label: platforms.name }).from(platforms),
-  ]);
+  const [occupations, cities, skills, languages, currencies, companyOptions, platformRows] =
+    await Promise.all([
+      listOccupations(db),
+      loadCities(),
+      loadSkills(),
+      loadLanguages(),
+      loadCurrencies(),
+      loadCompanies(),
+      db.select({ value: platforms.id, label: platforms.name }).from(platforms),
+    ]);
   return {
     occupations: buildOccupationTree(occupations).nodes,
     places: placeGroups(cities),
     skills,
     languages,
     currencies,
+    companies: companyOptions,
     platforms: platformRows.toSorted(byLabel),
   };
 }

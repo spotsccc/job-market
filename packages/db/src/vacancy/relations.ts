@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 
+import { companies, companyKeys } from '../company/company.ts';
 import { geoCities, geoCountries, geoRegions } from '../geo/geo.ts';
 import { occupations } from '../occupation/occupation.ts';
 import { authors } from '../publication/author.ts';
@@ -9,8 +10,9 @@ import { vacancyLocations } from './vacancy-location.ts';
 import { vacancies } from './vacancy.ts';
 
 /**
- * `db.query.vacancies.findMany({ with: { publication: true, occupation: true, places: true } })`.
- * Места — `places`, а не `locations`: так уже называется столбец вакансии с местами словами.
+ * `db.query.vacancies.findMany({ with: { publication: true, occupation: true, places: true,
+ * employer: true } })`. Места — `places`, а не `locations`: так уже называется столбец вакансии
+ * с местами словами; компания — `employer`, а не `company`, по той же причине.
  * Связи лежат отдельно от таблиц: вакансия и её места ссылаются друг на друга.
  */
 export const vacanciesRelations = relations(vacancies, ({ one, many }) => ({
@@ -23,6 +25,24 @@ export const vacanciesRelations = relations(vacancies, ({ one, many }) => ({
     references: [occupations.id],
   }),
   places: many(vacancyLocations),
+  employer: one(companies, {
+    fields: [vacancies.companyId],
+    references: [companies.id],
+  }),
+}));
+
+/**
+ * Связи компании: `db.query.companies.findMany({ with: { keys: true, vacancies: true } })`.
+ * Здесь, а не в `company.ts`, по той же причине, что связи публикации.
+ */
+export const companiesRelations = relations(companies, ({ many }) => ({
+  keys: many(companyKeys),
+  vacancies: many(vacancies),
+}));
+
+/** `db.query.companyKeys.findMany({ with: { company: true } })`. */
+export const companyKeysRelations = relations(companyKeys, ({ one }) => ({
+  company: one(companies, { fields: [companyKeys.companyId], references: [companies.id] }),
 }));
 
 /** `db.query.vacancyLocations.findMany({ with: { region: true, country: true, city: true } })`. */
