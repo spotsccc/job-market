@@ -18,12 +18,20 @@ export { sources } from './source.ts';
 export type { NewSourceRow, SourceRow } from './source.ts';
 export { contentHash } from './content-hash.ts';
 export {
+  addPublications,
   authorKey,
   findOriginals,
   insertPublication,
   markFailed,
+  saveCursor,
+  setOutcome,
   upsertAuthors,
 } from './write-publication.ts';
-export type { AuthorToSave, PublicationToSave } from './write-publication.ts';
+export type {
+  AuthorToSave,
+  NewPublicationToSave,
+  PublicationOutcome,
+  PublicationToSave,
+} from './write-publication.ts';
 export { replacePublicationLinks } from './write-links.ts';
 export type { LinkToSave } from './write-links.ts';

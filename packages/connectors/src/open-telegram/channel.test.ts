@@ -41,7 +41,7 @@ beforeEach(() => {
 describe('createTelegramChannel', () => {
   test('fetches the preview page with the before cursor and parses it', async () => {
     const html = await readFile(
-      path.join(import.meta.dirname, '..', 'fixtures', 'forproducts.html'),
+      path.join(import.meta.dirname, 'fixtures', 'forproducts.html'),
       'utf8',
     );
     respond = (_request, response) => {

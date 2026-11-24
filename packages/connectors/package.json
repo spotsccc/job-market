@@ -1,11 +1,12 @@
 {
-  "name": "@job-market/channel-telegram",
+  "name": "@job-market/connectors",
   "version": "0.0.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./test-utils": "./src/test-utils.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -13,11 +14,21 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "test": "node --test 'src/**/*.test.ts'"
+    "test": "NODE_ENV=test node --env-file=../../apps/web/.env.test --test 'src/**/*.test.ts'"
   },
   "dependencies": {
+    "@job-market/apify": "workspace:*",
+    "@job-market/classifier": "workspace:*",
+    "@job-market/db": "workspace:*",
+    "@job-market/enricher": "workspace:*",
     "@job-market/errors": "workspace:*",
-    "@spotsccc/error-as-value": "0.16.0"
+    "@job-market/extractor": "workspace:*",
+    "@job-market/geo": "workspace:*",
+    "@job-market/logger": "workspace:*",
+    "@job-market/publication-text": "workspace:*",
+    "@spotsccc/error-as-value": "0.16.0",
+    "ai": "7.0.178",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@job-market/oxfmt-config": "workspace:*",

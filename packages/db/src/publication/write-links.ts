@@ -27,12 +27,18 @@ export async function replacePublicationLinks(
 ): Promise<void> {
   await db.delete(publicationLinks).where(eq(publicationLinks.publicationId, publicationId));
   if (links.length === 0) return;
-  await db.insert(publicationLinks).values(
-    links.map((link, position) => ({
-      ...link,
-      publicationId,
-      position,
-      host: hostOf(link.targetUrl ?? link.url),
-    })),
-  );
+  await db.insert(publicationLinks).values(linkRows(publicationId, links));
+}
+
+/** Строки `publication_links` публикации: номер — индекс ссылки, хост — по `targetUrl` или `url`. */
+export function linkRows(
+  publicationId: string,
+  links: readonly LinkToSave[],
+): NewPublicationLinkRow[] {
+  return links.map((link, position) => ({
+    ...link,
+    publicationId,
+    position,
+    host: hostOf(link.targetUrl ?? link.url),
+  }));
 }

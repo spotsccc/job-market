@@ -4,15 +4,18 @@ import { after, before, beforeEach, describe, test } from 'node:test';
 import { and, eq, like } from 'drizzle-orm';
 
 import { db, getDb } from '../client.ts';
-import { authors, publications, sources } from './index.ts';
+import { authors, publicationLinks, publications, sources } from './index.ts';
 import {
+  addPublications,
   authorKey,
   findOriginals,
   insertPublication,
   markFailed,
+  saveCursor,
+  setOutcome,
   upsertAuthors,
 } from './write-publication.ts';
-import type { PublicationToSave } from './write-publication.ts';
+import type { NewPublicationToSave, PublicationToSave } from './write-publication.ts';
 
 /** Тесты идут в тестовую базу из `apps/web/.env.test`: `pnpm db:up && pnpm db:migrate:test`. */
 
@@ -54,6 +57,26 @@ async function attemptsOf(number: number): Promise<number | undefined> {
       ),
     );
   return row?.attempts;
+}
+
+function newPublication(
+  number: number,
+  links: NewPublicationToSave['links'] = [],
+): NewPublicationToSave {
+  const { status: _status, attempts: _attempts, ...row } = publication(number);
+  return { publication: { ...row, status: 'pending' }, links };
+}
+
+async function linksOf(number: number): Promise<(typeof publicationLinks.$inferSelect)[]> {
+  const [row] = await db
+    .select({ id: publications.id })
+    .from(publications)
+    .where(eq(publications.externalId, `${KEY}/${String(number)}`));
+  return db
+    .select()
+    .from(publicationLinks)
+    .where(eq(publicationLinks.publicationId, row?.id ?? ''))
+    .orderBy(publicationLinks.position);
 }
 
 describe('publication writes', () => {
@@ -180,5 +203,97 @@ describe('publication writes', () => {
         [`${KEY}-hash-12`, vacancy],
       ]),
     );
+  });
+
+  test('addPublications writes only new publications and leaves a failed one as it was', async () => {
+    await markFailed(db, publication(30, { content: 'Старый текст' }), 'model timeout');
+    const read = {
+      url: 'https://www.linkedin.com/jobs/view/1',
+      targetUrl: null,
+      status: 'read',
+      reader: 'linkedin-job',
+      error: null,
+    } as const;
+    const short = {
+      url: 'https://lnkd.in/abc',
+      targetUrl: 'https://www.LinkedIn.com/posts/x',
+      status: 'no_data',
+      reader: 'linkedin-post',
+      error: null,
+    } as const;
+
+    const ids = await addPublications(db, [
+      newPublication(31, [read, short]),
+      newPublication(30, [read]),
+      newPublication(32),
+    ]);
+
+    assert.deepEqual([...ids.keys()].toSorted(), [
+      authorKey('open-telegram', `${KEY}/31`),
+      authorKey('open-telegram', `${KEY}/32`),
+    ]);
+    const [failed] = await db
+      .select()
+      .from(publications)
+      .where(eq(publications.externalId, `${KEY}/30`));
+    assert.equal(failed?.status, 'failed');
+    assert.equal(failed.attempts, 1);
+    assert.equal(failed.lastError, 'model timeout');
+    assert.equal(failed.content, 'Старый текст');
+    assert.deepEqual(await linksOf(30), []);
+    assert.deepEqual(
+      (await linksOf(31)).map((link) => [link.position, link.url, link.host]),
+      [
+        [0, read.url, 'www.linkedin.com'],
+        [1, short.url, 'www.linkedin.com'],
+      ],
+    );
+
+    const again = await addPublications(db, [newPublication(31, [read]), newPublication(32)]);
+
+    assert.equal(again.size, 0);
+    assert.equal((await linksOf(31)).length, 2);
+  });
+
+  test('setOutcome writes the reason for not_vacancy and clears it for a vacancy', async () => {
+    const ids = await addPublications(db, [newPublication(40), newPublication(41)]);
+    const notVacancy = ids.get(authorKey('open-telegram', `${KEY}/40`)) ?? '';
+    const vacancy = ids.get(authorKey('open-telegram', `${KEY}/41`)) ?? '';
+    await db
+      .update(publications)
+      .set({ notVacancyReason: 'not_hiring', note: 'прошлый итог' })
+      .where(eq(publications.id, vacancy));
+
+    await setOutcome(db, notVacancy, { status: 'not_vacancy', reason: 'job_seeker', note: 'Ищет' });
+    await setOutcome(db, vacancy, { status: 'vacancy' });
+
+    const rows = await db
+      .select()
+      .from(publications)
+      .where(like(publications.externalId, `${KEY}/4%`))
+      .orderBy(publications.externalId);
+    assert.deepEqual(
+      rows.map((row) => [row.status, row.notVacancyReason, row.note, row.processedAt !== null]),
+      [
+        ['not_vacancy', 'job_seeker', 'Ищет', true],
+        ['vacancy', null, null, true],
+      ],
+    );
+  });
+
+  test('saveCursor changes only the cursor of the source', async () => {
+    const nextRunAt = new Date('2026-11-21T00:00:00.000Z');
+    await db
+      .update(sources)
+      .set({ consecutiveFailures: 2, nextRunAt, lastError: 'HTTP 503' })
+      .where(eq(sources.id, sourceId));
+
+    await saveCursor(db, sourceId, { cursorId: 10 });
+
+    const [row] = await db.select().from(sources).where(eq(sources.id, sourceId));
+    assert.deepEqual(row?.cursor, { cursorId: 10 });
+    assert.equal(row.consecutiveFailures, 2);
+    assert.deepEqual(row.nextRunAt, nextRunAt);
+    assert.equal(row.lastError, 'HTTP 503');
   });
 });

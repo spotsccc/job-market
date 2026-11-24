@@ -1,5 +1,5 @@
 import { ActorOutputError, createApify } from '@job-market/apify';
-import type { ActorRunError, ApifyRequestError } from '@job-market/apify';
+import type { ActorRunError, ApifyRequestError, RunningRun } from '@job-market/apify';
 
 import { parsePost } from './parse-post.ts';
 import type { LinkedinPost } from './parse-post.ts';
@@ -36,17 +36,20 @@ export type SearchPostsOptions = {
   readonly postedLimit?: PostedLimit | undefined;
   /** `date` — сначала новые. По умолчанию решает актор (релевантность). */
   readonly sortBy?: 'relevance' | 'date' | undefined;
-  /** Сколько секунд ждать окончания запуска. Без него ждём, пока запуск не закончится. */
-  readonly waitSecs?: number;
 };
 
 export type LinkedinChannelError = ApifyRequestError | ActorRunError | ActorOutputError;
 
 export type LinkedinChannel = {
-  /** Запускает поиск постов, ждёт окончания и читает весь датасет запуска. */
-  readonly searchPosts: (
-    options: SearchPostsOptions,
-  ) => Promise<LinkedinChannelError | readonly LinkedinPost[]>;
+  /** Запускает поиск постов и не ждёт его: ответ — id запуска. */
+  readonly startSearch: (options: SearchPostsOptions) => Promise<ApifyRequestError | string>;
+  /**
+   * Ждёт запуск поиска не дольше `waitSecs` и читает его посты. Запуск идёт — `'running'`.
+   */
+  readonly collectSearch: (
+    runId: string,
+    waitSecs?: number,
+  ) => Promise<LinkedinChannelError | RunningRun | readonly LinkedinPost[]>;
 };
 
 function buildInput(options: SearchPostsOptions): Record<string, unknown> {
@@ -86,20 +89,20 @@ export function createLinkedinChannel(options: LinkedinChannelOptions): Linkedin
     ...(options.maxRetries === undefined ? {} : { maxRetries: options.maxRetries }),
   });
 
-  async function searchPosts(
+  async function startSearch(
     searchOptions: SearchPostsOptions,
-  ): Promise<LinkedinChannelError | readonly LinkedinPost[]> {
-    const input = buildInput(searchOptions);
+  ): Promise<ApifyRequestError | string> {
+    return apify.startActor(actorId, buildInput(searchOptions));
+  }
 
-    const run = await apify.runActor(
-      actorId,
-      input,
-      searchOptions.waitSecs === undefined ? {} : { waitSecs: searchOptions.waitSecs },
-    );
-    if (run instanceof Error) return run;
-
+  async function collectSearch(
+    runId: string,
+    waitSecs?: number,
+  ): Promise<LinkedinChannelError | RunningRun | readonly LinkedinPost[]> {
+    const run = await apify.collectRun(runId, waitSecs);
+    if (run === 'running' || run instanceof Error) return run;
     return parsePosts(run.items, run.runId);
   }
 
-  return { searchPosts };
+  return { startSearch, collectSearch };
 }

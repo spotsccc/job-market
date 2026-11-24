@@ -3,9 +3,13 @@ import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import type { DbExecutor } from '../client.ts';
 import type { NewAuthorRow } from './author.ts';
 import { authors } from './author.ts';
+import { publicationLinks } from './publication-link.ts';
 import type { NewPublicationRow } from './publication.ts';
 import { publications } from './publication.ts';
-import type { Connector } from './values.ts';
+import { sources } from './source.ts';
+import type { Connector, NotVacancyReason } from './values.ts';
+import { linkRows } from './write-links.ts';
+import type { LinkToSave } from './write-links.ts';
 
 /**
  * Запись публикаций и их авторов. Функции принимают клиент или транзакцию и не открывают
@@ -141,4 +145,90 @@ export async function findOriginals(
     if (!originals.has(row.contentHash)) originals.set(row.contentHash, row.id);
   }
   return originals;
+}
+
+/** Новая публикация коннектора и ссылки её текста — отчёт енричера по порядку. */
+export type NewPublicationToSave = {
+  readonly publication: Readonly<
+    Pick<
+      NewPublicationRow,
+      | 'sourceId'
+      | 'connector'
+      | 'externalId'
+      | 'url'
+      | 'content'
+      | 'postedAt'
+      | 'payload'
+      | 'contentHash'
+      | 'status'
+      | 'authorId'
+    >
+  >;
+  readonly links: readonly LinkToSave[];
+};
+
+/**
+ * Пишет новые публикации коннектора и их ссылки (П10, П13 плана коннекторов). Публикация с тем
+ * же `(connector, external_id)` пропускается в любом статусе, её ссылки не пишутся: уже
+ * записанная не меняется. Ответ — id новых публикаций по `authorKey(connector, externalId)`.
+ */
+export async function addPublications(
+  db: DbExecutor,
+  rows: readonly NewPublicationToSave[],
+): Promise<ReadonlyMap<string, string>> {
+  if (rows.length === 0) return new Map();
+  const saved = await db
+    .insert(publications)
+    .values(rows.map(({ publication }) => ({ ...publication })))
+    .onConflictDoNothing({ target: [publications.connector, publications.externalId] })
+    .returning({
+      id: publications.id,
+      connector: publications.connector,
+      externalId: publications.externalId,
+    });
+  const ids = new Map(saved.map((row) => [authorKey(row.connector, row.externalId), row.id]));
+  const links = rows.flatMap(({ publication, links: publicationLinksToSave }) => {
+    const id = ids.get(authorKey(publication.connector, publication.externalId));
+    return id === undefined ? [] : linkRows(id, publicationLinksToSave);
+  });
+  if (links.length > 0) await db.insert(publicationLinks).values(links);
+  return ids;
+}
+
+/** Итог разбора публикации: вакансия или не вакансия с причиной и пояснением. */
+export type PublicationOutcome =
+  | { readonly status: 'vacancy' }
+  | {
+      readonly status: 'not_vacancy';
+      readonly reason: NotVacancyReason;
+      readonly note: string;
+    };
+
+/**
+ * Пишет итог разбора (П12 плана коннекторов): статус, причину и пояснение для `not_vacancy`,
+ * `processed_at` — сейчас. У вакансии причина и пояснение стираются.
+ */
+export async function setOutcome(
+  db: DbExecutor,
+  publicationId: string,
+  outcome: PublicationOutcome,
+): Promise<void> {
+  const notVacancy = outcome.status === 'not_vacancy';
+  await db
+    .update(publications)
+    .set({
+      status: outcome.status,
+      notVacancyReason: notVacancy ? outcome.reason : null,
+      note: notVacancy ? outcome.note : null,
+      processedAt: sql`now()`,
+    })
+    .where(eq(publications.id, publicationId));
+}
+
+/**
+ * Пишет курсор источника (П9 плана коннекторов). Остальные столбцы — расписание опроса — пишет
+ * движок.
+ */
+export async function saveCursor(db: DbExecutor, sourceId: string, cursor: unknown): Promise<void> {
+  await db.update(sources).set({ cursor }).where(eq(sources.id, sourceId));
 }

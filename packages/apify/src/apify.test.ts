@@ -6,7 +6,7 @@ import { after, before, beforeEach, describe, test } from 'node:test';
 
 import { ApifyApiError } from 'apify-client';
 
-import { createApify } from './apify.ts';
+import { createApify, isOutOfCredits } from './apify.ts';
 import { ActorRunError } from './errors/actor-run-error.ts';
 import { ApifyRequestError } from './errors/apify-request-error.ts';
 
@@ -184,5 +184,48 @@ describe('createApify', () => {
     }).runActor(ACTOR_ID, {});
 
     assert.ok(result instanceof ApifyRequestError);
+  });
+
+  test('startActor returns the run id without waiting for the run', async () => {
+    const result = await apify().startActor(ACTOR_ID, { job_id: ['1'] });
+
+    assert.equal(result, 'run-1');
+    assert.ok(!recorded.some((r) => r.pathname === '/v2/actor-runs/run-1'));
+  });
+
+  test('collectRun reports a run that is still going after waitSecs', async () => {
+    scenario.runStatus = 'RUNNING';
+
+    const result = await apify().collectRun('run-1', 1);
+
+    assert.equal(result, 'running');
+    assert.ok(!recorded.some((r) => r.pathname.startsWith('/v2/datasets/')));
+  });
+
+  test('collectRun reads the dataset of a finished run', async () => {
+    scenario.items = [{ n: 1 }, { n: 2 }];
+
+    const result = await apify().collectRun('run-1', 60);
+
+    assert.deepEqual(result, { runId: 'run-1', items: [{ n: 1 }, { n: 2 }] });
+  });
+
+  test('collectRun returns ActorRunError for a failed run', async () => {
+    scenario.runStatus = 'FAILED';
+
+    const result = await apify().collectRun('run-1', 60);
+
+    assert.ok(result instanceof ActorRunError);
+  });
+
+  test('isOutOfCredits tells 402 from other API failures', async () => {
+    scenario.startStatus = 402;
+    const outOfCredits = await apify().startActor(ACTOR_ID, {});
+    scenario.startStatus = 404;
+    const notFound = await apify().startActor(ACTOR_ID, {});
+
+    assert.ok(outOfCredits instanceof Error && notFound instanceof Error);
+    assert.equal(isOutOfCredits(outOfCredits), true);
+    assert.equal(isOutOfCredits(notFound), false);
   });
 });

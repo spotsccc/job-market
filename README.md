@@ -22,8 +22,9 @@ pnpm check          # turbo run format:check lint check-types
 | Пакет | Что это |
 | --- | --- |
 | `apps/web` | Next.js 16 (App Router, `src/app`) |
-| `packages/channel-linkedin` | поиск постов LinkedIn через актор Apify |
-| `packages/channel-telegram` | чтение публичных Telegram-каналов через веб-превью `t.me/s/<канал>` |
+| `packages/connectors` | коннекторы источников: `drain` выкачивает публикации в базу, `mine` добывает из публикации вакансии — раздел «Коннекторы» ниже |
+| `packages/apify` | клиент Apify: запуск акторов, ожидание запуска и чтение датасета |
+| `packages/enricher` | дочитывает ссылки LinkedIn в тексте публикации |
 | `packages/classifier` | вакансия ли публикация, и если нет — почему — [README](packages/classifier/README.md) |
 | `packages/extractor` | роли вакансии из текста публикации: профессия, места, навыки, условия — [README](packages/extractor/README.md) |
 | `packages/db` | схема и запросы; запись публикаций и вакансий — [README](packages/db/src/publication/README.md), компании — [README](packages/db/src/company/README.md) |
@@ -41,6 +42,27 @@ pnpm check          # turbo run format:check lint check-types
 - Файлы вне пакетов (README, docs, корневые json) не форматируются и не линтятся.
 - Конфиг-пакеты ссылаются друг на друга относительными путями (`../oxlint-config/base.json`), а не зависимостями — иначе цикл в графе turbo.
 - Новый пакет: `tsconfig.json`, `.oxlintrc.json`, `oxfmt.config.ts` по образцу `packages/logger`, скрипты `check-types`, `lint`, `format`, `format:check`.
+
+## Коннекторы
+
+`packages/connectors` — код, который читает источники вакансий и разбирает их публикации. План — [docs/plans/connectors.html](docs/plans/connectors.html). Коннектора два: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify.
+
+Снаружи у коннектора два метода, их будет звать движок; до него коннекторы зовут только тесты:
+
+- `drain(source, { now, deadline })` — выкачивает новые публикации источника, дочитывает в них ссылки LinkedIn и одной транзакцией пишет авторов, публикации, их ссылки (`publication_links`) и курсор `sources.cursor`. Расписание источника (`next_run_at`, ошибки подряд) не трогает. Итог — `done`, `more` или `failed`; `Error` — только сбой базы.
+- `mine(publication)` — разбирает публикацию в `pending` или `processing` классификатором и экстрактором, сводит места ролей к гео-справочнику и одной транзакцией пишет вакансии и итог разбора. Итог — `vacancy`, `not_vacancy` или `skipped`; `Error` — сбой модели, справочника или базы, статус публикации прежний.
+
+Коннекторы берёт реестр `createConnectors({ telegram, linkedin, models, readers })`: каналы сервисов (`createTelegramChannel`, `createLinkedinChannel`), модели и читатели енричера (`createReaders`) приходят снаружи, тесты подставляют фейки. Для тестов вызывающих `@job-market/connectors/test-utils` даёт `fakeTelegram` и `testConnector`.
+
+Внутри коннектор — каталог `src/<коннектор>` и определение `ConnectorDefinition`:
+
+- `configSchema` и `cursorSchema` — zod-схемы `sources.config` и `sources.cursor`. Курсор, который не проходит схему, — первый опрос на `DEPTH_DAYS` = 30 дней.
+- `parse({ config, cursor, key, since, deadline })` — читает сервис без базы и отвечает публикациями, курсором и `more`. После `deadline` новый запрос не начинает; сбой посреди прохода возвращает прочитанное и `error`.
+- `process(publication, { occupations })` — разбирает публикацию моделями без базы. Коннекторы с обычными постами берут общий `classifyAndExtract`.
+
+Новый коннектор: id в `CONNECTORS` (`packages/db/src/publication/values.ts`) и метка в `CONNECTOR_LABELS` (`packages/publication-text`), каталог с `parse` и схемами, строка в `createConnectors`. `drain` и `mine` писать не нужно — они общие.
+
+Тесты `drain` и `mine` идут в тестовую базу: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/connectors test`.
 
 ## Перенос постов в новую модель
 

@@ -7,7 +7,7 @@ import { parseChannelPage } from './parse-page.ts';
 
 /** Настоящие страницы `t.me/s/<канал>`, скачанные 20.11.2026, без правок руками. */
 async function fixture(name: string): Promise<string> {
-  return readFile(path.join(import.meta.dirname, '..', 'fixtures', `${name}.html`), 'utf8');
+  return readFile(path.join(import.meta.dirname, 'fixtures', `${name}.html`), 'utf8');
 }
 
 describe('parseChannelPage', () => {

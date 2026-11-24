@@ -4,9 +4,10 @@ import { createServer } from 'node:http';
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
-import { ActorOutputError } from '@job-market/apify';
+import { ActorOutputError, ActorRunError } from '@job-market/apify';
 
 import { createLinkedinChannel } from './channel.ts';
+import type { SearchPostsOptions } from './channel.ts';
 
 /** Пример элемента из документации актора, длинные строки укорочены. */
 function postItem(overrides: Record<string, unknown> = {}): Record<string, unknown> {
@@ -49,6 +50,7 @@ type Recorded = { method: string; pathname: string; authorization: string; body:
 /** Что отвечает поддельный Apify в текущем тесте: элементы датасета. */
 type Scenario = {
   items: unknown[];
+  runStatus: string;
 };
 
 const ACTOR_ID = 'harvestapi~linkedin-post-search';
@@ -94,7 +96,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     return;
   }
   if (req.method === 'GET' && pathname === '/v2/actor-runs/run-1') {
-    sendJson(res, 200, { data: run('SUCCEEDED') });
+    sendJson(res, 200, { data: run(scenario.runStatus) });
     return;
   }
   if (req.method === 'GET' && pathname === '/v2/datasets/dataset-1/items') {
@@ -130,7 +132,7 @@ after(() => {
 });
 
 beforeEach(() => {
-  scenario = { items: [] };
+  scenario = { items: [], runStatus: 'SUCCEEDED' };
   recorded.length = 0;
 });
 
@@ -140,11 +142,39 @@ function channel(): ReturnType<typeof createLinkedinChannel> {
 
 const QUERY = { queries: ['hiring react developer'] };
 
+/** Поиск целиком: запуск и посты законченного запуска, как раньше делал `searchPosts`. */
+async function search(
+  options: SearchPostsOptions,
+): ReturnType<ReturnType<typeof createLinkedinChannel>['collectSearch']> {
+  const runId = await channel().startSearch(options);
+  if (runId instanceof Error) return runId;
+  return channel().collectSearch(runId, 60);
+}
+
 describe('createLinkedinChannel', () => {
+  test('startSearch returns the run id and does not wait for the run', async () => {
+    const runId = await channel().startSearch(QUERY);
+
+    assert.equal(runId, 'run-1');
+    assert.ok(!recorded.some((r) => r.pathname === '/v2/actor-runs/run-1'));
+  });
+
+  test('collectSearch reports a search that is still running', async () => {
+    scenario.runStatus = 'RUNNING';
+
+    assert.equal(await channel().collectSearch('run-1', 1), 'running');
+  });
+
+  test('collectSearch returns ActorRunError for a failed search', async () => {
+    scenario.runStatus = 'FAILED';
+
+    assert.ok((await channel().collectSearch('run-1', 1)) instanceof ActorRunError);
+  });
+
   test('runs the post search actor and returns parsed posts', async () => {
     scenario.items = [postItem()];
 
-    const posts = await channel().searchPosts({
+    const posts = await search({
       queries: ['hiring react', 'react remote'],
       maxPosts: 20,
       postedLimit: 'week',
@@ -180,7 +210,7 @@ describe('createLinkedinChannel', () => {
   });
 
   test('defaults maxPosts to 100 and omits unset filters', async () => {
-    await channel().searchPosts(QUERY);
+    await search(QUERY);
 
     const start = recorded.find((r) => r.method === 'POST');
     assert.ok(start);
@@ -192,8 +222,8 @@ describe('createLinkedinChannel', () => {
   });
 
   test('rejects non-positive maxPosts and empty queries before calling Apify', async () => {
-    await assert.rejects(channel().searchPosts({ ...QUERY, maxPosts: 0 }), RangeError);
-    await assert.rejects(channel().searchPosts({ queries: [] }), RangeError);
+    await assert.rejects(search({ ...QUERY, maxPosts: 0 }), RangeError);
+    await assert.rejects(search({ queries: [] }), RangeError);
     assert.equal(recorded.length, 0);
   });
 
@@ -206,9 +236,9 @@ describe('createLinkedinChannel', () => {
       }),
     ];
 
-    const posts = await channel().searchPosts(QUERY);
+    const posts = await search(QUERY);
 
-    assert.ok(!(posts instanceof Error));
+    assert.ok(!(posts instanceof Error) && posts !== 'running');
     const [post] = posts;
     assert.ok(post);
     assert.equal(post.content, '');
@@ -224,14 +254,14 @@ describe('createLinkedinChannel', () => {
   test('skips items that are not posts', async () => {
     scenario.items = [postItem(), { type: 'comment', id: 'c1' }];
 
-    const posts = await channel().searchPosts(QUERY);
+    const posts = await search(QUERY);
 
-    assert.ok(!(posts instanceof Error));
+    assert.ok(!(posts instanceof Error) && posts !== 'running');
     assert.equal(posts.length, 1);
   });
 
   test('returns an empty list for an empty dataset', async () => {
-    const posts = await channel().searchPosts(QUERY);
+    const posts = await search(QUERY);
 
     assert.deepEqual(posts, []);
   });
@@ -239,7 +269,7 @@ describe('createLinkedinChannel', () => {
   test('returns ActorOutputError with the parse failure as cause', async () => {
     scenario.items = [postItem(), postItem({ id: 42 })];
 
-    const result = await channel().searchPosts(QUERY);
+    const result = await search(QUERY);
 
     assert.ok(result instanceof ActorOutputError);
     assert.match(result.message, /Item 1 of run run-1/u);
