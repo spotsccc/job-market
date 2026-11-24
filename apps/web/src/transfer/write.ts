@@ -1,5 +1,12 @@
-import { insertPublication, markFailed, saveVacancies, upsertAuthors } from '@job-market/db';
-import type { Database, PublicationToSave } from '@job-market/db';
+import {
+  insertPublication,
+  markFailed,
+  replacePublicationLinks,
+  saveVacancies,
+  upsertAuthors,
+} from '@job-market/db';
+import type { Database, LinkToSave, PublicationToSave } from '@job-market/db';
+import type { LinkReport } from '@job-market/enricher';
 import { log } from '@job-market/logger';
 
 import { errorText } from './outcome.ts';
@@ -48,8 +55,19 @@ function publicationRow(
   };
 }
 
+/** Ссылка поста для `publication_links` (П8): ошибка — одной строкой, как `last_error`. */
+function linkRow(link: LinkReport): LinkToSave {
+  return {
+    url: link.url,
+    targetUrl: link.target,
+    status: link.status,
+    reader: link.reader,
+    error: link.error === null ? null : errorText(link.error),
+  };
+}
+
 /**
- * Пишет пост одной транзакцией: автор, публикация, вакансии и места (П1, П9, П17). `already` —
+ * Пишет пост одной транзакцией: автор, публикация, её ссылки, вакансии и места (П1, П8, П9, П17). `already` —
  * публикацию записал другой запуск, транзакция откатывается (E6). Сбой базы — исключение.
  */
 async function writePost(
@@ -71,6 +89,11 @@ async function writePost(
           ? await markFailed(tx, base, errorText(outcome.error))
           : await insertPublication(tx, publicationRow(base, outcome));
       if (id === null) throw new Rollback('already_transferred');
+      await replacePublicationLinks(
+        tx,
+        id,
+        item.links.map((link) => linkRow(link)),
+      );
       if (outcome.kind === 'vacancy') await saveVacancies(tx, id, outcome.roles);
       if (dryRun) throw new Rollback('dry_run');
       return 'written' as const;

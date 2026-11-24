@@ -96,7 +96,7 @@ function printSummary(summary: TransferSummary): void {
   for (const { externalId, error } of summary.errors)
     console.log(`  ошибка ${externalId}: ${error}`);
   console.log(
-    `Ссылки: прочитано ${ruNumber(summary.links.read)} · сбоев ${ruNumber(summary.links.failed)}`,
+    `Ссылки: прочитано ${ruNumber(summary.links.read)} · нет данных ${ruNumber(summary.links.no_data)} · не открылись ${ruNumber(summary.links.failed)} · без читателя ${ruNumber(summary.links.unsupported)} · сверх лимита ${ruNumber(summary.links.over_limit)}`,
   );
   const occupations = [...summary.occupations]
     .toSorted(([, a], [, b]) => b - a)

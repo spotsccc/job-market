@@ -1033,11 +1033,117 @@
         <div class="card">
           <h3>Таблицы</h3>
           <p class="small">
-            Не применимо: таблиц не добавляется и не меняется. Все таблицы, в которые пишет перенос,
-            создала миграция <code>0008_data_model</code>; описание столбцов — в
+            План добавляет одну таблицу — <code>publication_links</code> (Э6, миграция
+            <code>0012_publication_links</code>). Остальные таблицы, в которые пишет перенос, создала
+            миграция <code>0008_data_model</code>; описание их столбцов — в
             <code>packages/db/src/publication</code>, <code>occupation</code> и
-            <code>vacancy</code>. Этот план только наполняет их строками.
+            <code>vacancy</code>.
           </p>
+          <p class="small muted">
+            Схема в нотации Crow's Foot. Значок на конце линии говорит, сколько строк этой таблицы
+            может быть у одной строки на другом конце: у публикации ноль или много ссылок, у ссылки
+            ровно одна публикация.
+          </p>
+          <div class="seqlegend" style="margin: 0 0 12px">
+            <span
+              ><svg width="44" height="18">
+                <line
+                  x1="0"
+                  y1="9"
+                  x2="40"
+                  y2="9"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="32"
+                  y1="2"
+                  x2="32"
+                  y2="16"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="26"
+                  y1="2"
+                  x2="26"
+                  y2="16"
+                  class="ln"
+                  stroke-width="1.5"
+                /></svg
+              >ровно один</span
+            ><span
+              ><svg width="44" height="18">
+                <line
+                  x1="0"
+                  y1="9"
+                  x2="40"
+                  y2="9"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="32"
+                  y1="2"
+                  x2="32"
+                  y2="16"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <circle cx="20" cy="9" r="5" class="cf" /></svg
+              >ноль или один</span
+            ><span
+              ><svg width="44" height="18">
+                <line
+                  x1="0"
+                  y1="9"
+                  x2="40"
+                  y2="9"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="40"
+                  y1="1"
+                  x2="27"
+                  y2="9"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="40"
+                  y1="17"
+                  x2="27"
+                  y2="9"
+                  class="ln"
+                  stroke-width="1.5"
+                />
+                <circle cx="18" cy="9" r="5" class="cf" /></svg
+              >ноль или много</span
+            ><span><b class="mono">PK</b> первичный ключ</span
+            ><span
+              ><b class="mono">FK1</b> внешний ключ; столбцы с одним номером
+              ссылаются вместе</span
+            ><span
+              ><b class="mono" style="color: var(--amber)">NULL</b> может быть
+              пустым, без пометки — NOT NULL</span
+            >
+          </div>
+          <figure class="scroll">
+            <div id="er"></div>
+            <figcaption>
+              Новая только <code>publication_links</code>. У <code>publications</code> показан один
+              столбец, на который она ссылается; остальные описаны в
+              <code>packages/db/src/publication/publication.ts</code>.
+            </figcaption>
+          </figure>
+          <h4>Словарь данных</h4>
+          <p class="small muted">
+            Что значит одна строка, столбцы, ограничения и индексы — в том же порядке, что в
+            <code>\d таблица</code> в psql.
+          </p>
+          <div class="tabs" id="fieldTabs"></div>
+          <div id="fields"></div>
           <h4>Откуда берётся каждый столбец</h4>
           <p class="small muted">
             Столбцы, которые заполняет перенос. Остальные получают DEFAULT из схемы или остаются
@@ -1150,6 +1256,14 @@
                 плана 3, а DEFAULT столбца — true
               </td>
             </tr>
+            <tr>
+              <td><code>publication_links</code></td>
+              <td class="small mono">url, target_url, status, reader, error</td>
+              <td class="small">
+                отчёт <code>enrich</code> по каждой ссылке текста поста (П8); position — порядок
+                ссылки, host — по target_url или url
+              </td>
+            </tr>
           </table>
         </div>
       </section>
@@ -1191,7 +1305,8 @@
             <figcaption>
               Клик по этапу — его карточка. Э3 и Э4 независимы и идут параллельно: Э4 нужен от Э2
               только снимок дерева. Перенос Э5 запускается на проде, когда готовы Э3 и Э4; енричер
-              уже в коде (<code>@job-market/enricher</code>). Каждый этап — отдельный коммит,
+              уже в коде (<code>@job-market/enricher</code>). Э6 меняет перенос Э5 и должен быть в
+              коде до запуска переноса на проде. Каждый этап — отдельный коммит,
               который проходит
               <code>pnpm check</code> и <code>pnpm test</code>; правила миграций — в
               <code>AGENTS.md</code>.
@@ -1460,6 +1575,15 @@
               только на сбой самого вызова модели: ответ не по схеме, в том числе без ролей по П5,
               её не вызывает — иначе последние запуски S6 из одних постов без ролей заканчивались бы
               «все вызовы модели упали». Тест — в <code>transfer.test</code>.
+            </li>
+            <li>
+              23 ноября 2026, по решению владельца: ссылка, которая не прочиталась, больше не делает
+              пост failed — он переносится без её раздела (П8). Что енричер сделал с каждой ссылкой
+              поста, пишется в новую таблицу <code>publication_links</code>: по ней собирается
+              статистика, какие читатели добавить и какие сайты не открываются. Енричер раскрывает
+              ссылки lnkd.in, читатель постов узнаёт share-ссылки, на которые они ведут. Добавлены
+              этап Э6, таблица в разделе 4 с ER-схемой и словарём, два риска; изменены П8, риск про
+              Apify, схема переноса и случай П8 в <code>transfer.test</code> Э5.
             </li>
           </ul>
         </div>
@@ -1795,9 +1919,19 @@
           "цена 20 постов × 62 — цена переноса; если она неприемлема, промпт сокращается до коммита Э3",
         ],
         [
-          "Енричер не читает ссылки: актор Apify перестал работать или кончились кредиты — каждый пост со ссылкой становится failed, перенос не заканчивается",
-          "строка «Ссылки LinkedIn» и доля failed в итоге; счёт Apify",
-          "сменить актор в читателе packages/enricher/src/readers (LINKEDIN_JOB_ACTOR_ID, LINKEDIN_POST_ACTOR_ID); failed-посты дочитываются следующими запусками (П6)",
+          "Енричер не читает ссылки: актор Apify перестал работать или кончились кредиты — посты переносятся без разделов, и повтором это уже не исправить (П8). Принятая цена решения владельца",
+          "«не открылись» в строке «Ссылки» итога; publication_links со status failed и reader linkedin-job или linkedin-post; счёт Apify",
+          "остановить перенос, сменить актор в читателе packages/enricher/src/readers (LINKEDIN_JOB_ACTOR_ID, LINKEDIN_POST_ACTOR_ID); посты с failed-ссылками перечитать отдельной задачей по publication_links",
+        ],
+        [
+          "Актор постов не принимает ссылку feed/update/urn:li:share:<id> — тогда падает весь запуск актора, и вместе с share-ссылками не читаются обычные ссылки на посты пачки (Э6)",
+          "один запуск читателя постов на share-ссылке до переноса на проде",
+          "если не принимает — найти форму ссылки, которую актор понимает, или читать share-посты отдельным запуском",
+        ],
+        [
+          "Ссылок lnkd.in в постах много: пачка шлёт до 200 запросов к lnkd.in одновременно, LinkedIn отвечает 429 или 999, и ссылки становятся failed",
+          "publication_links: доля failed с reader short-link",
+          "ограничить число одновременных раскрытий в packages/enricher/src/enrich.ts",
         ],
         [
           "Начальное дерево не покрывает часть вакансий: много root и внутренних узлов",
@@ -2333,8 +2467,8 @@
                     m: "ret",
                     a: 3,
                     b: 2,
-                    label: "тексты с разделами; сбои ссылок",
-                    note: "Сбой чтения — ошибка поста: он пишется failed и читается в следующем запуске; закрытая вакансия — не ошибка (П8).",
+                    label: "тексты с разделами; отчёт по ссылкам",
+                    note: "Ссылка, которая не прочиталась, пост не останавливает; статус каждой ссылки пишется в publication_links вместе с публикацией (П8).",
                   },
                   {
                     m: "sync",
@@ -2530,6 +2664,191 @@
       );
 
       /* =================== rules =================== */
+      /** Столбец: [имя, тип, ключ, NULL, по умолчанию, что это, почему]. */
+      const TABLES = {
+        publications: {
+          x: 20,
+          y: 40,
+          w: 300,
+          cls: "bx",
+          grain: "публикация на площадке; здесь — только столбец, на который ссылается publication_links.",
+          f: [["id", "uuid", "PK", false, "gen_random_uuid()", "Id публикации.", ""]],
+          c: [["PK", "(id)", ""]],
+          ix: [],
+        },
+        publication_links: {
+          x: 400,
+          y: 40,
+          w: 340,
+          grain: "одна ссылка из текста автора публикации и что енричер с ней сделал (П8).",
+          f: [
+            ["publication_id", "uuid", "PK FK", false, "", "Публикация, в тексте которой ссылка.", ""],
+            ["position", "smallint", "PK", false, "", "Номер ссылки в тексте автора, с нуля; повтор той же ссылки номера не получает.", ""],
+            ["url", "text", "", false, "", "Ссылка как в тексте.", ""],
+            ["target_url", "text", "", true, "", "Куда ведёт короткая ссылка lnkd.in; у обычной и не раскрытой — NULL.", "по нему видно, на какой сайт на деле ведут короткие ссылки."],
+            ["host", "text", "", false, "", "Хост target_url, а без него — url, в нижнем регистре.", "статистика по сайтам — GROUP BY по нему, без разбора ссылки в SQL."],
+            ["status", "text", "", false, "", "Что енричер сделал со ссылкой: read, no_data, failed, unsupported, over_limit (П8).", ""],
+            ["reader", "text", "", true, "", "Читатель, который узнал ссылку (linkedin-job, linkedin-post), или short-link — короткая ссылка не раскрылась; NULL — ссылку не узнал никто.", ""],
+            ["error", "text", "", true, "", "Ошибка при failed: сообщение и причина одной строкой.", ""],
+          ],
+          c: [
+            ["PK", "(publication_id, position)", ""],
+            ["FK", "publication_id → publications.id ON DELETE CASCADE", "ссылки удаляются вместе с публикацией"],
+            ["CHECK", "position >= 0", "номер с нуля"],
+            ["CHECK", "status IN ('read', 'no_data', 'failed', 'unsupported', 'over_limit')", "статус — одно из значений LINK_STATUSES"],
+            ["CHECK", "(status = 'failed') = (error IS NOT NULL)", "ошибка есть только у ссылки, которая не открылась"],
+          ],
+          ix: [["publication_links_host_status_index (host, status)", "статистика: какие сайты встречаются и какие не открываются"]],
+        },
+      };
+      (function er() {
+        let b = "";
+        const geo = {};
+        Object.entries(TABLES).forEach(([name, t]) => {
+          const h = 36 + t.f.length * 22;
+          geo[name] = { ...t, h };
+          b +=
+            R(t.x, t.y, t.w, h, t.cls ?? "bx-new", 10) +
+            `<line x1="${t.x}" y1="${t.y + 30}" x2="${t.x + t.w}" y2="${t.y + 30}" class="la" stroke-width="1"/>`;
+          b += T(t.x + 12, t.y + 21, name, {
+            anchor: "start",
+            weight: 700,
+            mono: true,
+            size: 14,
+          });
+          const nameX =
+            t.x + 20 + Math.max(...t.f.map(([, , k]) => k.length * 6.3));
+          const typeX = t.x + t.w - (t.f.some((c) => c[3]) ? 48 : 12);
+          t.f.forEach(([f, type, key, nullable], i) => {
+            const yy = t.y + 50 + i * 22;
+            if (key)
+              b += T(t.x + 10, yy, key, {
+                anchor: "start",
+                cls: "ac",
+                weight: 700,
+                size: 10.5,
+              });
+            b += T(nameX, yy, f, {
+              anchor: "start",
+              mono: true,
+              size: 12.5,
+              weight: key.startsWith("PK") ? 700 : "normal",
+            });
+            b += T(typeX, yy, type, {
+              anchor: "end",
+              cls: "mu",
+              mono: true,
+              size: 11.5,
+            });
+            if (nullable)
+              b += T(t.x + t.w - 10, yy, "NULL", {
+                anchor: "end",
+                cls: "am",
+                weight: 600,
+                size: 10.5,
+              });
+          });
+        });
+        const end = ([x, y], [ux, uy], kind) => {
+          const nx = -uy,
+            ny = ux;
+          const at = (d, s) => [x + ux * d + nx * s, y + uy * d + ny * s];
+          const seg = (p, q) =>
+            `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" class="ln" stroke-width="1.5"/>`;
+          const bar = (d) => seg(at(d, -7), at(d, 7));
+          const ring = (d) => {
+            const [cx, cy] = at(d, 0);
+            return `<circle cx="${cx}" cy="${cy}" r="5" class="cf"/>`;
+          };
+          const foot = seg(at(0, -8), at(13, 0)) + seg(at(0, 8), at(13, 0));
+          return {
+            one: bar(8) + bar(14),
+            zeroOne: bar(8) + ring(20),
+            zeroMany: foot + ring(22),
+          }[kind];
+        };
+        const dir = ([x1, y1], [x2, y2]) => [
+          Math.sign(x2 - x1),
+          Math.sign(y2 - y1),
+        ];
+        const rel = (pts, endA, endB, label) => {
+          b += `<path d="M${pts.map((p) => p.join(",")).join(" L")}" class="ln" stroke-width="1.5"/>`;
+          b += end(pts[0], dir(pts[0], pts[1]), endA);
+          const n = pts.length;
+          b += end(pts[n - 1], dir(pts[n - 1], pts[n - 2]), endB);
+          if (label)
+            b += `<text x="${label[0]}" y="${label[1]}" font-size="12" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="var(--card)" stroke-width="4">${esc(label[2])}</text>`;
+        };
+        rel(
+          [
+            [320, 70],
+            [400, 70],
+          ],
+          "one",
+          "zeroMany",
+          [360, 60, "FK"],
+        );
+        svg("er", 760, 260, b, "Таблица publication_links и её связь с publications в нотации Crow's Foot");
+        const names = Object.keys(TABLES);
+        tabs(
+          "fieldTabs",
+          names.map((n) => [n, "f-" + n]),
+        );
+        const td = (s, cls = "") =>
+          `<td${cls ? ` class="${cls}"` : ""}>${s}</td>`;
+        const table = (head, rows) =>
+          `<table><tr>${head.map((h) => `<th>${h}</th>`).join("")}</tr>${rows.map((r) => `<tr>${r.join("")}</tr>`).join("")}</table>`;
+        $("fields").innerHTML = names
+          .map((n, i) => {
+            const t = TABLES[n];
+            const cols = table(
+              ["Столбец", "Тип", "NULL", "По умолчанию", "Описание"],
+              t.f.map(([name, type, key, nullable, def, what, why]) => [
+                td(
+                  `<code>${esc(name)}</code>${key ? ` <span class="small nowrap" style="color: var(--accent); font-weight: 600">${esc(key)}</span>` : ""}`,
+                ),
+                td(`<code>${esc(type)}</code>`),
+                td(
+                  nullable ? "NULL" : "NOT NULL",
+                  nullable ? "small nowrap null" : "small nowrap muted",
+                ),
+                td(def ? `<code>${esc(def)}</code>` : "", "small"),
+                td(
+                  esc(what) +
+                    (why
+                      ? `<div class="small muted">Почему: ${esc(why)}</div>`
+                      : ""),
+                ),
+              ]),
+            );
+            const cons = table(
+              ["Ограничение", "Условие", "Что значит"],
+              t.c.map(([kind, cond, means]) => [
+                td(`<b>${esc(kind)}</b>`, "small"),
+                td(
+                  /[а-я]/i.test(cond) ? esc(cond) : `<code>${esc(cond)}</code>`,
+                  "small",
+                ),
+                td(esc(means), "small"),
+              ]),
+            );
+            const idx = t.ix.length
+              ? `<h4>Индексы</h4>` +
+                table(
+                  ["Индекс", "Зачем"],
+                  t.ix.map(([ix, why]) => [
+                    td(`<code>${esc(ix)}</code>`, "small"),
+                    td(esc(why), "small"),
+                  ]),
+                )
+              : "";
+            const extra = t.seed
+              ? `<p class="small"><b>Начальные данные</b> (миграция): ${esc(t.seed)}</p>`
+              : "";
+            return `<div id="f-${n}"${i ? " hidden" : ""}><p><b>Одна строка</b> — ${esc(t.grain)}</p><h4>Столбцы</h4>${cols}<h4>Ограничения</h4>${cons}${idx}${extra}</div>`;
+          })
+          .join("");
+      })();
       const RULES = [
         { group: "Перенос" },
         [
@@ -2584,9 +2903,9 @@
         { group: "Ссылки LinkedIn" },
         [
           "П8",
-          "Перед экстрактором перенос передаёт тексты пачки в enrich пакета @job-market/enricher (packages/enricher/src/enrich.ts) и дальше работает с текстом с разделами: его получает экстрактор и он пишется в publications.content; content_hash считается по тексту без разделов (П4). Сбой чтения ссылки — ошибка поста по П6: публикация failed, следующий запуск читает ссылку снова. «Нет данных» — не ошибка: пост переносится по своему тексту. В промпте экстрактора сказано: если пост и вакансия по ссылке противоречат друг другу, верна вакансия — её пишет работодатель.",
+          "Перед экстрактором перенос передаёт тексты пачки в enrich пакета @job-market/enricher (packages/enricher/src/enrich.ts) и дальше работает с текстом с разделами: его получает экстрактор и он пишется в publications.content; content_hash считается по тексту без разделов (П4). Ссылка, которая не прочиталась, пост не останавливает: он идёт в экстрактор без её раздела, повтора нет. Что енричер сделал с каждой ссылкой текста автора, пишется в publication_links той же транзакцией, что публикация: read — раздел есть; no_data — читать нечего (вакансия закрыта, короткая ссылка никуда не ведёт); failed — сбой чтения или раскрытия, с ошибкой; unsupported — ссылку не узнал ни один читатель; over_limit — сверх трёх читаемых или десяти раскрываемых коротких. Повторная запись публикации перезаписывает её ссылки. Итог запуска считает ссылки по статусам. Почему не ошибка поста: из-за посторонней ссылки пост не должен падать, а по publication_links видно, какие читатели добавить и какие сайты не открываются. В промпте экстрактора сказано: если пост и вакансия по ссылке противоречат друг другу, верна вакансия — её пишет работодатель.",
           "поведение",
-          "transfer.ts; extractor/prompt.ts",
+          "transfer/prepare.ts, transfer/write.ts; extractor/prompt.ts",
           "transfer.test, extract.test",
         ],
         { group: "Вакансия" },
@@ -3162,11 +3481,114 @@
             [
               "apps/web/src/transfer/transfer.test.ts",
               "new",
-              "db с MockLanguageModelV4: посты A (две роли), B (текст A в другом канале, позже), C (модель бросила), D (модель вернула пустой список ролей), E (пустой текст) → A: публикация с id A, две вакансии v2 с местами; B: duplicate A, модель для B не вызвана (E7); C: публикация failed с last_error, attempts 1, ошибок 1; D: failed, last_error «Vacancy extraction failed», как C; E: not_vacancy, not_hiring, модель не вызвана. Второй запуск → взят только C, attempts 2; после третьей ошибки C больше не берётся (П1, П6, E5). C упал в пачке 1 → в пачке 2 того же запуска не взят снова. Копия F поста G в одной пачке, на G ошибка → F не записан и взят следующим запуском (П4). dryRun с limit 40 → 40 разных постов. С fakeReader из @job-market/enricher/test-utils: пост H со ссылкой на вакансию → в content публикации раздел вакансии, extract получил текст с разделом, content_hash как у текста без раздела (П8); вакансия закрыта → раздела нет, пост перенесён; запуск актора упал → H failed, следующий запуск читает ссылку снова. dryRun → ни одной новой строки, итог тот же (П7). limit 1 → перенесён один пост, самый старый. Публикация A вставлена между выбором пачки и записью → «уже перенесено», вакансий у A не прибавилось (E6). Все вызовы пачки упали → запуск остановлен после первой пачки (E8)",
+              "db с MockLanguageModelV4: посты A (две роли), B (текст A в другом канале, позже), C (модель бросила), D (модель вернула пустой список ролей), E (пустой текст) → A: публикация с id A, две вакансии v2 с местами; B: duplicate A, модель для B не вызвана (E7); C: публикация failed с last_error, attempts 1, ошибок 1; D: failed, last_error «Vacancy extraction failed», как C; E: not_vacancy, not_hiring, модель не вызвана. Второй запуск → взят только C, attempts 2; после третьей ошибки C больше не берётся (П1, П6, E5). C упал в пачке 1 → в пачке 2 того же запуска не взят снова. Копия F поста G в одной пачке, на G ошибка → F не записан и взят следующим запуском (П4). dryRun с limit 40 → 40 разных постов. С fakeReader из @job-market/enricher/test-utils: пост H со ссылкой на вакансию → в content публикации раздел вакансии, extract получил текст с разделом, content_hash как у текста без раздела (П8); вакансия закрыта → раздела нет, пост перенесён; читатель упал на ссылке поста → пост перенесён без раздела, ссылка failed в publication_links (П8, переписано в Э6). dryRun → ни одной новой строки, итог тот же (П7). limit 1 → перенесён один пост, самый старый. Публикация A вставлена между выбором пачки и записью → «уже перенесено», вакансий у A не прибавилось (E6). Все вызовы пачки упали → запуск остановлен после первой пачки (E8)",
               ["transfer/transfer.ts"],
             ],
           ],
           note: "Модели в тестах — моки; места — справочник тестовой базы. На проде: снимок базы, затем S4 — --dry-run --limit 20 и цена в AI Gateway; затем пачки по 100 (S5), потом без --limit (S6). Итог каждого запуска и сверка — в «Ход работ». Переменные окружения по AGENTS.md: возвращается APIFY_TOKEN, скрипт берёт её вместе с DATABASE_URL и AI_GATEWAY_API_KEY.",
+        },
+        {
+          id: "Э6",
+          t: "Отчёт по ссылкам",
+          status: "реализован",
+          progress: "код и тесты готовы; ещё не запускался на проде",
+          res: "пост, у которого не прочиталась ссылка, переносится без её раздела; что стало с каждой ссылкой поста — в publication_links; ссылки lnkd.in раскрываются и читаются",
+          gres: "publication_links",
+          g: [4, 0],
+          newDirs: [],
+          ctx: [
+            ["packages/enricher/src/readers/linkedin-job.ts", "old"],
+            ["packages/db/src/publication/publication.ts", "old"],
+          ],
+          mods: [
+            [
+              "packages/enricher/src/short-link.ts",
+              "new",
+              "isShortLink — хост lnkd.in; expandShortLink(url) — адрес из Location ответа 3xx без перехода по нему, таймаут 10 с; ответ без редиректа — null; сеть, 429 и 5xx — Error",
+              [],
+            ],
+            [
+              "packages/enricher/src/enrich.ts",
+              "chg",
+              "ответ { text, links } вместо { text, failures }: статус каждой ссылки текста автора (П8); короткие ссылки всех текстов раскрываются одновременно, не больше 10 на текст, раздел подписан короткой ссылкой",
+              ["enricher/src/short-link.ts", "publication/values.ts"],
+            ],
+            [
+              "packages/enricher/src/readers/linkedin-post.ts",
+              "chg",
+              "узнаёт /posts/…-share-<id> и urn:li:share:<id> — туда ведут lnkd.in; id share:<id>; актор получает ссылку feed/update/urn:li:share:<id>, пост узнаётся по post.urn.share_urn",
+              [],
+            ],
+            [
+              "packages/db/src/publication/values.ts",
+              "chg",
+              "LINK_STATUSES: read, no_data, failed, unsupported, over_limit",
+              [],
+            ],
+            [
+              "packages/db/src/publication/publication-link.ts",
+              "new",
+              "таблица publication_links (раздел 4)",
+              ["publication/publication.ts", "publication/values.ts"],
+            ],
+            [
+              "packages/db/src/publication/write-links.ts",
+              "new",
+              "replacePublicationLinks(db, publicationId, links) — удаляет прежние ссылки публикации и вставляет новые по порядку; host — по targetUrl или url",
+              ["publication/publication-link.ts"],
+            ],
+            [
+              "packages/db/migrations/0012_publication_links.sql",
+              "new",
+              "pnpm db:generate --name publication_links",
+              [],
+            ],
+            [
+              "apps/web/src/transfer/prepare.ts",
+              "chg",
+              "сбой ссылки больше не делает пост failed; отчёт enrich — в Prepared.links, итог считает ссылки по статусам",
+              ["enricher/src/enrich.ts"],
+            ],
+            [
+              "apps/web/src/transfer/write.ts",
+              "chg",
+              "в транзакции поста после insertPublication или markFailed — replacePublicationLinks",
+              ["publication/write-links.ts"],
+            ],
+            [
+              "apps/web/scripts/transfer-posts.ts",
+              "chg",
+              "строка итога «Ссылки»: прочитано, нет данных, не открылись, без читателя, сверх лимита",
+              [],
+            ],
+          ],
+          tests: [
+            [
+              "packages/enricher/src/short-link.test.ts",
+              "new",
+              "локальный node:http: 301 с абсолютным Location → адрес без перехода; 302 с /p/next → адрес от короткой ссылки; 301 без Location, 200, 404 → null; 429, 503, закрытый порт → Error; isShortLink: lnkd.in и LNKD.IN — да, linkedin.com и example.com/lnkd.in/x — нет",
+              ["enricher/src/short-link.ts"],
+            ],
+            [
+              "packages/enricher/src/enrich.test.ts",
+              "chg",
+              "unit с fakeReader: профиль → unsupported; пятая вакансия → over_limit; упавший читатель → failed с ошибкой, текст без раздела; закрытая вакансия → no_data; ссылка из раздела в отчёт не входит. Короткие: lnkd.in → вакансия 1 читается один раз на два текста, раздел подписан lnkd.in, target — адрес вакансии; не раскрылась → failed, reader short-link; без редиректа → no_data; на example.com → unsupported с target; 11 коротких → раскрыто 10, одиннадцатая over_limit; повтор с разделом lnkd.in не раскрывает её и считает среди трёх",
+              ["enricher/src/enrich.ts"],
+            ],
+            [
+              "packages/enricher/src/readers/linkedin-post.test.ts",
+              "chg",
+              "parsePostUrl: /posts/…-share-7523022657647177728-soyO/ и urn:li:share:… → share:7523022657647177728; db и fakeApify: share:7525883512286294017 → актор получил feed/update/urn:li:share:7525883512286294017, пост из фикстуры узнан по share_urn",
+              ["enricher/src/readers/linkedin-post.ts"],
+            ],
+            [
+              "apps/web/src/transfer/transfer.test.ts",
+              "chg",
+              "случай П8 из Э5 переписан: читатель упал на ссылке поста → пост vacancy без раздела, ссылка failed с ошибкой; ссылка на example.com → unsupported, host example.com; итог: прочитано 1, не открылись 1, без читателя 1, ошибок 0",
+              ["transfer/prepare.ts", "transfer/write.ts"],
+            ],
+          ],
+          note: "Чтение share-поста актором проверено только на fakeApify: принимает ли apimaestro~linkedin-post-detail ссылку feed/update/urn:li:share:<id> — проверить одним запуском до переноса на проде (риски).",
         },
       ];
       (function graph() {
@@ -3193,6 +3615,7 @@
         edge("Э2", "Э4");
         edge("Э3", "Э5");
         edge("Э4", "Э5");
+        edge("Э5", "Э6");
         STAGES.forEach((s) => {
           const p = pos(s.id);
           b +=
@@ -3217,7 +3640,7 @@
               size: 12,
             }) + "</g>";
         });
-        svg("stagesGraph", 1150, 224, b, "Этапы и зависимости");
+        svg("stagesGraph", 1440, 224, b, "Этапы и зависимости");
       })();
       const MONO = 12.5;
       const monoCtx = document.createElement("canvas").getContext("2d");

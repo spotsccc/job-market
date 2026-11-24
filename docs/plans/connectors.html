@@ -1228,6 +1228,13 @@
               ссылками на <code>packages/enricher</code>, зависимости от него сняты. Из сигнатуры
               drain убран <code>log</code> в options (AGENTS.md).
             </li>
+            <li>
+              23 ноября 2026: <code>enrich</code> отвечает <code>{ text, links }</code> со статусом
+              каждой ссылки вместо <code>{ text, failures }</code>, раскрывает ссылки lnkd.in, а
+              статусы ссылок пишутся в новую таблицу <code>publication_links</code> (Э6
+              <a href="vacancy-extraction.html">плана экстрактора</a>). Изменены факт о енричере и
+              П13: drain тоже пишет ссылки публикации в <code>publication_links</code>.
+            </li>
           </ul>
         </div>
       </section>
@@ -1439,8 +1446,8 @@
         ],
         [
           "Чтение ссылок LinkedIn",
-          "@job-market/enricher (packages/enricher/src): enrich(texts, { readers }) → по каждому тексту { text, failures }; ссылки берутся из текста до разделов, не больше MAX_LINKS_PER_TEXT = 3, ссылка с уже дописанным разделом не читается снова; разделы «--- … по ссылке <url>» — section.ts; в базу и в лог не пишет. createReaders({ apifyToken }) — читатели вакансий и постов; fakeReader — в @job-market/enricher/test-utils",
-          "drain зовёт enrich между parse и записью, повторяет его при сбое и сам пишет сбои в лог (П13); читателей берёт из deps",
+          "@job-market/enricher (packages/enricher/src): enrich(texts, { readers, expandShortLink? }) → по каждому тексту { text, links } — статус каждой ссылки текста автора: read, no_data, failed, unsupported, over_limit; ссылки lnkd.in сначала раскрываются; ссылки берутся из текста до разделов, не больше MAX_LINKS_PER_TEXT = 3, ссылка с уже дописанным разделом не читается снова; разделы «--- … по ссылке <url>» — section.ts; в базу и в лог не пишет. createReaders({ apifyToken }) — читатели вакансий и постов; fakeReader — в @job-market/enricher/test-utils",
+          "drain зовёт enrich между parse и записью, повторяет его при сбое, сам пишет сбои в лог и пишет ссылки в publication_links (П13); читателей берёт из deps",
         ],
         [
           "Схема publications и authors",
@@ -2762,7 +2769,7 @@
         ],
         [
           "П13",
-          "drain дочитывает ссылки LinkedIn до записи. Тексты всех непустых публикаций результата parse drain одной пачкой передаёт в enrich пакета enricher; какие ссылки читаются, как дописываются разделы и что такое сбой — пакет enricher (раздел 2). При сбое drain повторяет enrich (E8). Ссылка, которая не прочиталась и после повторов, остаётся без раздела: публикация пишется с остальными разделами, в лог — предупреждение Linked content fetch failed с видом, id и причиной; итог drain не меняется. Почему при сборе, а не в mine: публикация сразу ложится в базу целиком, ссылки страницы читаются одной пачкой, а process и mine не знают об Apify (решение владельца 23 ноября 2026).",
+          "drain дочитывает ссылки LinkedIn до записи. Тексты всех непустых публикаций результата parse drain одной пачкой передаёт в enrich пакета enricher; какие ссылки читаются, как дописываются разделы и что такое сбой — пакет enricher (раздел 2). При сбое drain повторяет enrich (E8). Ссылка, которая не прочиталась и после повторов, остаётся без раздела: публикация пишется с остальными разделами, в лог — предупреждение Linked content fetch failed с видом, id и причиной; итог drain не меняется. Статус каждой ссылки — отчёт enrich после повторов — drain пишет в publication_links той же транзакцией, что публикацию (replacePublicationLinks, П8 плана экстрактора). Почему при сборе, а не в mine: публикация сразу ложится в базу целиком, ссылки страницы читаются одной пачкой, а process и mine не знают об Apify (решение владельца 23 ноября 2026).",
           "поведение",
           "connectors/src/drain.ts; packages/enricher/src/enrich.ts",
           "drain.test",

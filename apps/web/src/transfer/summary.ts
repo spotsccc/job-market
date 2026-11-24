@@ -1,3 +1,5 @@
+import type { LinkStatus } from '@job-market/db/values';
+
 import type { Written } from './outcome.ts';
 
 export type TransferError = { readonly externalId: string; readonly error: string };
@@ -17,7 +19,8 @@ export type TransferSummary = {
   alreadyTransferred: number;
   /** Копии, оригинал которых упал в этом запуске: ждут следующего (П4). */
   postponed: number;
-  links: { read: number; failed: number };
+  /** Ссылки постов по статусам енричера (П8): сколько прочитано, не открылось, без читателя. */
+  links: Record<LinkStatus, number>;
   /** Вакансии по профессиям. */
   occupations: Map<string, number>;
   places: { resolved: number; partial: number; unresolved: number; anywhere: number };
@@ -35,7 +38,7 @@ export function emptySummary(): TransferSummary {
     errors: [],
     alreadyTransferred: 0,
     postponed: 0,
-    links: { read: 0, failed: 0 },
+    links: { read: 0, no_data: 0, failed: 0, unsupported: 0, over_limit: 0 },
     occupations: new Map(),
     places: { resolved: 0, partial: 0, unresolved: 0, anywhere: 0 },
     stopped: null,

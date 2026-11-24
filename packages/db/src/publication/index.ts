@@ -12,6 +12,8 @@ export {
   sourcePublicationsRelations,
 } from './publication.ts';
 export type { NewPublicationRow, PublicationRow } from './publication.ts';
+export { publicationLinks } from './publication-link.ts';
+export type { NewPublicationLinkRow, PublicationLinkRow } from './publication-link.ts';
 export { sources } from './source.ts';
 export type { NewSourceRow, SourceRow } from './source.ts';
 export { contentHash } from './content-hash.ts';
@@ -23,3 +25,5 @@ export {
   upsertAuthors,
 } from './write-publication.ts';
 export type { AuthorToSave, PublicationToSave } from './write-publication.ts';
+export { replacePublicationLinks } from './write-links.ts';
+export type { LinkToSave } from './write-links.ts';

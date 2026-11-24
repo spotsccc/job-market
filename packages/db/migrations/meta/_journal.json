@@ -85,6 +85,13 @@
       "when": 1795477665713,
       "tag": "0011_companies",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795483664201,
+      "tag": "0012_publication_links",
+      "breakpoints": true
     }
   ]
 }

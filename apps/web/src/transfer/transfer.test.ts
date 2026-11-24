@@ -12,12 +12,13 @@ import {
   inArray,
   legacyPosts,
   like,
+  publicationLinks,
   publications,
   sources,
   vacancies,
   vacancyLocations,
 } from '@job-market/db';
-import type { NewLegacyPostRow, PublicationRow } from '@job-market/db';
+import type { NewLegacyPostRow, PublicationLinkRow, PublicationRow } from '@job-market/db';
 import type { Reader } from '@job-market/enricher';
 import { fakeReader } from '@job-market/enricher/test-utils';
 import { MockLanguageModelV4 } from 'ai/test';
@@ -140,6 +141,23 @@ async function insertPosts(posts: readonly NewLegacyPostRow[]): Promise<string[]
 async function findPublication(id: string): Promise<PublicationRow | undefined> {
   const [row] = await db.select().from(publications).where(eq(publications.id, id));
   return row;
+}
+
+/** Ссылки публикации по порядку, без её id и номера. */
+async function linksOf(
+  id: string,
+): Promise<Pick<PublicationLinkRow, 'url' | 'host' | 'status' | 'reader' | 'error'>[]> {
+  return db
+    .select({
+      url: publicationLinks.url,
+      host: publicationLinks.host,
+      status: publicationLinks.status,
+      reader: publicationLinks.reader,
+      error: publicationLinks.error,
+    })
+    .from(publicationLinks)
+    .where(eq(publicationLinks.publicationId, id))
+    .orderBy(asc(publicationLinks.position));
 }
 
 async function publicationOf(id: string): Promise<PublicationRow> {
@@ -352,38 +370,58 @@ describe('transferPosts', () => {
     assert.equal(await findPublication(newer), undefined);
   });
 
-  test('links are read before the extractor and a reader failure is a post error', async () => {
+  test('links are read before the extractor and a link that failed does not stop the post', async () => {
     const link = 'https://www.linkedin.com/jobs/view/111/';
-    const original = `Ищем фронтендера ${link}`;
-    const [h, closed] = await insertPosts([
+    const original = `Ищем фронтендера ${link} https://example.com/careers`;
+    const [read, failed] = await insertPosts([
       legacyPost(original),
       legacyPost('Ищем бэкендера https://www.linkedin.com/jobs/view/222/'),
     ]);
-    assert.ok(h !== undefined && closed !== undefined);
+    assert.ok(read !== undefined && failed !== undefined);
     const reader = fakeReader({
+      kind: 'linkedin-job',
       match: (url) => /jobs\/view\/(\d+)/u.exec(url)?.[1] ?? null,
       label: 'Вакансия LinkedIn',
       items: { '111': 'Senior Frontend в Acme' },
+    });
+    const broken = fakeReader({
+      kind: 'linkedin-job',
+      match: (url) => /jobs\/view\/(222)/u.exec(url)?.[1] ?? null,
       failCalls: 1,
     });
     const mock = modelMock();
 
-    await run({ model: mock.model, limit: 2, readers: [reader] });
+    const summary = await run({ model: mock.model, limit: 2, readers: [broken, reader] });
 
-    assert.equal((await publicationOf(h)).status, 'failed');
-    assert.equal((await publicationOf(closed)).status, 'failed');
-
-    await run({ model: mock.model, limit: 2, readers: [reader] });
-
-    const ph = await publicationOf(h);
-    assert.equal(ph.status, 'vacancy');
-    assert.match(ph.content, /--- Вакансия LinkedIn по ссылке .+\nSenior Frontend в Acme/u);
-    assert.equal(ph.contentHash, contentHash(original));
+    const pRead = await publicationOf(read);
+    assert.equal(pRead.status, 'vacancy');
+    assert.match(pRead.content, /--- Вакансия LinkedIn по ссылке .+\nSenior Frontend в Acme/u);
+    assert.equal(pRead.contentHash, contentHash(original));
     assert.ok(mock.prompts.some((prompt) => prompt.includes('Senior Frontend в Acme')));
-    // Вакансия закрыта: раздела нет, пост перенесён по своему тексту.
-    const pClosed = await publicationOf(closed);
-    assert.equal(pClosed.status, 'vacancy');
-    assert.doesNotMatch(pClosed.content, /---/u);
+    // Ссылка не прочиталась: пост перенесён по своему тексту, ссылка — failed.
+    const pFailed = await publicationOf(failed);
+    assert.equal(pFailed.status, 'vacancy');
+    assert.doesNotMatch(pFailed.content, /---/u);
+    assert.deepEqual(await linksOf(read), [
+      { url: link, host: 'www.linkedin.com', status: 'read', reader: 'linkedin-job', error: null },
+      {
+        url: 'https://example.com/careers',
+        host: 'example.com',
+        status: 'unsupported',
+        reader: null,
+        error: null,
+      },
+    ]);
+    const failedLinks = await linksOf(failed);
+    assert.deepEqual(
+      failedLinks.map(({ status }) => status),
+      ['failed'],
+    );
+    assert.match(failedLinks.map(({ error }) => error).join(), /Fake reader failed/u);
+    assert.deepEqual(
+      [summary.links.read, summary.links.failed, summary.links.unsupported, summary.errors.length],
+      [1, 1, 1, 0],
+    );
   });
 
   test('a publication written by another run is counted and not duplicated', async () => {

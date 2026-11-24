@@ -81,6 +81,14 @@ describe('parsePostUrl', () => {
       'https://www.linkedin.com/feed/update/urn%3Ali%3Aactivity%3A7302346926123798528/',
       '7302346926123798528',
     ],
+    [
+      'https://www.linkedin.com/posts/%D0%B2%D0%B0%D0%BA%D0%B0%D0%BD%D1%81%D0%B8%D1%8F-share-7523022657647177728-soyO/?utm_source=share',
+      'share:7523022657647177728',
+    ],
+    [
+      'https://www.linkedin.com/feed/update/urn:li:share:7523022657647177728/',
+      'share:7523022657647177728',
+    ],
     ['https://www.linkedin.com/in/jane-doe', null],
     ['https://www.linkedin.com/jobs/view/4479627327/', null],
     ['https://example.com/posts/x-activity-1-a', null],
@@ -147,5 +155,23 @@ describe('createLinkedinPostReader', () => {
     ]);
     assert.ok(!(result instanceof Error));
     assert.deepEqual([...result.keys()], [FIXTURE_ID]);
+  });
+
+  test('asks the actor for a post linked by share and recognizes it by share_urn', async () => {
+    fake.scenario.items = loadFixture('post-detail');
+    const shareId = 'share:7525883512286294017';
+
+    const result = await createLinkedinPostReader(fake.apify).fetch([shareId]);
+
+    assert.deepEqual(fake.runs, [
+      {
+        actorId: LINKEDIN_POST_ACTOR_ID,
+        input: {
+          post_urls: ['https://www.linkedin.com/feed/update/urn:li:share:7525883512286294017'],
+        },
+      },
+    ]);
+    assert.ok(!(result instanceof Error));
+    assert.deepEqual([...result.keys()], [shareId]);
   });
 });

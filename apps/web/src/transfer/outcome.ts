@@ -1,4 +1,5 @@
 import type { LegacyPostRow, VacancyToSave } from '@job-market/db';
+import type { LinkReport } from '@job-market/enricher';
 
 import type { MappedPost } from './map-post.ts';
 
@@ -29,6 +30,8 @@ export type Prepared = {
   readonly content: string;
   /** Хэш текста без разделов (П4). */
   readonly hash: string;
+  /** Что енричер сделал с каждой ссылкой текста (П8): пишется в `publication_links`. */
+  readonly links: readonly LinkReport[];
   outcome: Outcome;
 };
 

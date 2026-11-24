@@ -16,9 +16,6 @@ import type { TransferSummary } from './summary.ts';
 /** Столько вызовов экстрактора идут одновременно. */
 const EXTRACT_CONCURRENCY = 5;
 
-/** Заголовок раздела енричера: по нему считаются прочитанные ссылки. */
-const SECTION_HEADER = /^--- .+? по ссылке \S+$/gmu;
-
 export type PrepareOptions = {
   readonly readers: readonly Reader[];
   readonly model: LanguageModel | undefined;
@@ -47,13 +44,10 @@ async function mapLimit<T, R>(
   });
 }
 
-function sectionCount(text: string): number {
-  return text.match(SECTION_HEADER)?.length ?? 0;
-}
-
 /**
- * Посты пачки с текстом после енричера (П8): сбой чтения ссылки — ошибка поста, «нет
- * данных» — нет. Хэш — по тексту поста без разделов (П4).
+ * Посты пачки с текстом после енричера (П8). Ссылка, которая не прочиталась, поста не
+ * останавливает: он идёт в экстрактор без её раздела, а статус ссылки пишется в
+ * `publication_links`. Хэш — по тексту поста без разделов (П4).
  */
 async function enrichPosts(
   posts: readonly LegacyPostRow[],
@@ -66,23 +60,15 @@ async function enrichPosts(
   );
   return posts.map((post, index) => {
     const enrichment = enriched[index];
-    const content = enrichment?.text ?? post.content;
-    summary.links.read += sectionCount(content) - sectionCount(post.content);
-    summary.links.failed += enrichment?.failures.length ?? 0;
-    const failure = enrichment?.failures[0];
+    const links = enrichment?.links ?? [];
+    for (const link of links) summary.links[link.status] += 1;
     return {
       post,
       mapped: mapPost(post),
-      content,
+      content: enrichment?.text ?? post.content,
       hash: contentHash(post.content),
-      outcome:
-        failure === undefined
-          ? { kind: 'pending' }
-          : {
-              kind: 'failed',
-              error: new Error(`Link ${failure.url} was not read`, { cause: failure.error }),
-              fromModel: false,
-            },
+      links,
+      outcome: { kind: 'pending' },
     };
   });
 }
