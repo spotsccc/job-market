@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-send-cv",
+  "source": "synthetic",
+  "why": "«Присылайте резюме» без названной роли",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "Компания **Финлайн** всегда рада талантливым людям! Если хотите работать в сильной команде финтеха — присылайте резюме на hr@finline.example, мы свяжемся, когда появится подходящая позиция.",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for Products and Projects",
+      "url": "https://t.me/forproducts",
+      "headline": null
+    }
+  },
+  "expected": "no_specific_role"
+}

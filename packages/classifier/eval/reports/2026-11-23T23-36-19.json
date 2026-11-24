@@ -1,0 +1,210 @@
+{
+  "createdAt": "2026-11-23T23:36:19.052Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "summary": {
+    "cases": 20,
+    "errors": 0,
+    "matched": 20,
+    "byVerdict": {
+      "vacancy": {
+        "matched": 8,
+        "total": 8
+      },
+      "not_hiring": {
+        "matched": 4,
+        "total": 4
+      },
+      "job_seeker": {
+        "matched": 4,
+        "total": 4
+      },
+      "no_specific_role": {
+        "matched": 4,
+        "total": 4
+      }
+    },
+    "confusion": []
+  },
+  "cases": [
+    {
+      "id": "forallmedia-4329",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост прямо предлагает две конкретные роли (LinkedIn Engagement Specialist и LinkedIn Content Writer) в компании Workflows.io, что делает его вакансией."
+      },
+      "error": null
+    },
+    {
+      "id": "forallmedia-4334",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост прямо предлагает открытую роль Middle Content Creator в компании Ventora с удалённой работой и требованиями к языку, то есть это конкретная вакансия из канала-агрегатора."
+      },
+      "error": null
+    },
+    {
+      "id": "forproducts-10888",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост от Telegram-канала-агрегатора рекламирует конкретную открытую роль: Delivery Manager (SAP BTP Re-Platforming) в Andersen Lab, удалённая работа в ряде стран Центральной Азии."
+      },
+      "error": null
+    },
+    {
+      "id": "geekjobs-10532",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост канала-агрегатора о конкретных открытых ролях (Software Engineers, Robotics Controls) с указанием компании, стека и способа отклика, поэтому это вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "geekjobs-10533",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост прямо называет конкретную открытую роль: Frontend Vue-разработчик в Lamoda, удалённо из РФ, со ссылкой на описание вакансии."
+      },
+      "error": null
+    },
+    {
+      "id": "linkedin-7525883513603076096",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост открыто ищет конкретную роль Event & Special Projects Manager с описанием обязанностей, требований и контактом для отклика."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-article",
+      "expected": "not_hiring",
+      "answer": {
+        "verdict": "not_hiring",
+        "note": "Пост — советы по прохождению собеседований по system design, а не объявление о найме; конкретной роли или открытой позиции в нём нет."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-congrats",
+      "expected": "not_hiring",
+      "answer": {
+        "verdict": "not_hiring",
+        "note": "Пост — поздравление сотрудника с повышением, а не объявление о вакансии."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-course-ad",
+      "expected": "not_hiring",
+      "answer": {
+        "verdict": "not_hiring",
+        "note": "Пост рекламирует курс обучения Python, а не предлагает конкретную вакансию или работу."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-injection",
+      "expected": "not_hiring",
+      "answer": {
+        "verdict": "not_hiring",
+        "note": "Пост не содержит вакансии: это призыв подписаться на канал с мемами и попытка навязать ответ, а не описание конкретной роли."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-laid-off",
+      "expected": "job_seeker",
+      "answer": {
+        "verdict": "job_seeker",
+        "note": "Автор сам ищет работу после увольнения (\"open to work\"-формат), а не нанимает на роль."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-looking-for-position",
+      "expected": "job_seeker",
+      "answer": {
+        "verdict": "job_seeker",
+        "note": "Автор сама ищет позицию продакт-менеджера и просит рекомендации, поэтому это не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-open-to-work",
+      "expected": "job_seeker",
+      "answer": {
+        "verdict": "job_seeker",
+        "note": "Автор сам ищет работу (#OpenToWork, просит рекомендаций), вакансии от работодателя нет."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-paris",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Пост прямо ищет Product Designer в Париж, что является конкретной открытой ролью."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-platform-developer",
+      "expected": "vacancy",
+      "answer": {
+        "verdict": "vacancy",
+        "note": "Рекрутёр прямо ищет разработчика в команду платформы — названа конкретная роль."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-positions-soon",
+      "expected": "no_specific_role",
+      "answer": {
+        "verdict": "no_specific_role",
+        "note": "Пост сообщает о будущем найме и открытии офиса, но не называет ни одной конкретной роли — только «подробности позже»."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-resume",
+      "expected": "job_seeker",
+      "answer": {
+        "verdict": "job_seeker",
+        "note": "Автор сам ищет работу: публикует резюме и зарплатные ожидания, а не предлагает вакансию."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-send-cv",
+      "expected": "no_specific_role",
+      "answer": {
+        "verdict": "no_specific_role",
+        "note": "Пост говорит о готовности нанимать, но конкретной открытой роли не называет — предлагается просто прислать резюме на будущее."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-talent-pool",
+      "expected": "no_specific_role",
+      "answer": {
+        "verdict": "no_specific_role",
+        "note": "Пост про талант-пул без открытых ролей: компания прямо пишет, что вакансий сейчас нет, и предлагает оставить контакты на будущее."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-we-are-growing",
+      "expected": "no_specific_role",
+      "answer": {
+        "verdict": "no_specific_role",
+        "note": "Пост говорит о найме и росте команды, но конкретной роли не называет — только обещание открыть позиции в будущем."
+      },
+      "error": null
+    }
+  ]
+}

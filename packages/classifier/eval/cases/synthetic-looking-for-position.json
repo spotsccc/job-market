@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-looking-for-position",
+  "source": "synthetic",
+  "why": "«Ищу позицию» на русском в LinkedIn",
+  "publication": {
+    "connector": "linkedin",
+    "content": "Друзья, ищу позицию продакт-менеджера в B2B SaaS. За плечами 4 года в финтехе, запуск двух продуктов с нуля. Буду благодарна за рекомендации и репост!",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Мария Соколова",
+      "url": "https://www.linkedin.com/in/maria-sokolova",
+      "headline": "Product Manager"
+    }
+  },
+  "expected": "job_seeker"
+}

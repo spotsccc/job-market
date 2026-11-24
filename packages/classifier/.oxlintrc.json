@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": ["./node_modules/@job-market/oxlint-config/base.json"],
+  "overrides": [
+    {
+      "files": ["eval/**/*.ts"],
+      "rules": {
+        "typescript/prefer-readonly-parameter-types": "off"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-resume",
+  "source": "synthetic",
+  "why": "Резюме кандидата в канале: в тексте должность, но ищет работу автор",
+  "publication": {
+    "connector": "open-telegram",
+    "content": "**#резюме Senior QA Engineer**\nОпыт 7 лет: ручное и автоматизированное тестирование, Python, Playwright, CI.\nИщу удалёнку, рассматриваю и релокацию в Европу.\nЗарплатные ожидания — от 4000 $.\nКонтакт: @qa_maria",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Job for QA",
+      "url": "https://t.me/forqa",
+      "headline": null
+    }
+  },
+  "expected": "job_seeker"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "synthetic-paris",
+  "source": "synthetic",
+  "why": "Короткий пост рекрутёра в LinkedIn",
+  "publication": {
+    "connector": "linkedin",
+    "content": "We're hiring a Product Designer to join our team in Paris! Hybrid, 3 days a week in the office. DM me if interested.",
+    "postedAt": "2026-11-20T10:00:00.000Z",
+    "author": {
+      "name": "Claire Martin",
+      "url": "https://www.linkedin.com/in/claire-martin",
+      "headline": "Head of Design at Lumen"
+    }
+  },
+  "expected": "vacancy"
+}
