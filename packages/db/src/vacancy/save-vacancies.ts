@@ -17,12 +17,13 @@ export type PlaceToSave = Readonly<Omit<NewVacancyLocationRow, 'vacancyId' | 'po
 /**
  * Роль для записи: строка `vacancies` без публикации и номера — номер роли это её индекс в
  * списке — и её места. `locations` пишет тот, кто сводил места к справочнику: там и «откуда
- * угодно», которого нет среди мест (П16, П17).
+ * угодно», которого нет среди мест (П16, П17). Компанию (`companyId`) задаёт сопоставление по
+ * `company` и `companyUrl`, а не вызывающий (П6 плана компаний).
  */
 export type VacancyToSave = ReadonlyArrays<
   Omit<
     NewVacancyRow,
-    'id' | 'publicationId' | 'position' | 'createdAt' | 'updatedAt' | 'searchVector'
+    'id' | 'publicationId' | 'position' | 'companyId' | 'createdAt' | 'updatedAt' | 'searchVector'
   >
 > & { readonly places: readonly PlaceToSave[] };
 

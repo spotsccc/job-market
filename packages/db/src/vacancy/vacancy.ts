@@ -15,6 +15,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
+import { companies } from '../company/company.ts';
 import { occupations } from '../occupation/occupation.ts';
 import { publications } from '../publication/publication.ts';
 import {
@@ -86,6 +87,11 @@ export const vacancies = pgTable(
     /** Сайт компании или её страница. */
     companyUrl: text(),
     hiringParty: text({ enum: HIRING_PARTIES }).notNull(),
+    /**
+     * Компания из справочника: её находит сопоставление по `company` и `companyUrl` (П3).
+     * `null` — у вакансии нет ни одного ключа компании.
+     */
+    companyId: uuid().references(() => companies.id, { onDelete: 'restrict' }),
     /**
      * Самый конкретный узел дерева профессий, который подтверждает текст; `root` — отнести
      * никуда не удалось. `null` — у строки версии `1`.
@@ -162,6 +168,8 @@ export const vacancies = pgTable(
     index('vacancies_search_vector_index').using('gin', table.searchVector),
     // Фильтр по поддереву профессий и пересчёт по узлу.
     index('vacancies_occupation_id_index').on(table.occupationId),
+    // Вакансии компании: фильтр и слияние.
+    index('vacancies_company_id_index').on(table.companyId),
   ],
 );
 

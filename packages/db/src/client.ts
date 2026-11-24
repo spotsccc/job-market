@@ -8,11 +8,11 @@ export type Database = NodePgDatabase<typeof schema> & { $client: Pool };
 
 /**
  * Клиент или транзакция: функции записи принимают то, что им дали, а границу транзакции
- * держит вызывающий.
+ * держит вызывающий. `execute` — для сырого SQL вроде advisory-блокировок.
  */
 export type DbExecutor = Pick<
   Database,
-  'select' | 'selectDistinct' | 'insert' | 'update' | 'delete' | 'query'
+  'select' | 'selectDistinct' | 'insert' | 'update' | 'delete' | 'query' | 'execute'
 >;
 
 /**

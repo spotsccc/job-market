@@ -78,6 +78,13 @@
       "when": 1795475410227,
       "tag": "0010_occupations_sources",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795477665713,
+      "tag": "0011_companies",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,8 @@
  * Таблицы, типы строк и связи — и связи публикаций и профессий, которые ведут к вакансиям.
  */
 export {
+  companiesRelations,
+  companyKeysRelations,
   occupationsRelations,
   publicationsRelations,
   vacanciesRelations,
