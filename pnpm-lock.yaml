@@ -222,9 +222,15 @@ importers:
 
   packages/db:
     dependencies:
+      '@job-market/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@job-market/logger':
         specifier: workspace:*
         version: link:../logger
+      '@spotsccc/error-as-value':
+        specifier: 0.16.0
+        version: 0.16.0
       drizzle-orm:
         specifier: 0.45.4
         version: 0.45.4(@opentelemetry/api@1.10.0)(@types/pg@8.23.1)(pg@8.23.1)

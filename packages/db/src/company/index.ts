@@ -10,3 +10,6 @@ export { lockKeys, matchCompany } from './match-company.ts';
 export type { CompanyInput } from './match-company.ts';
 export { rematchCompanies } from './rematch-companies.ts';
 export type { RematchOptions, RematchSummary } from './rematch-companies.ts';
+export { CompanyNotFoundError, SameCompanyError } from './errors.ts';
+export { mergeCompanies } from './merge-companies.ts';
+export type { MergeSummary } from './merge-companies.ts';
