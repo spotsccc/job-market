@@ -92,14 +92,37 @@ function Apply({ vacancy }: Readonly<{ vacancy: VacancySearchItem }>): ReactNode
   );
 }
 
+/**
+ * Компания и места строкой. Компания из справочника — ссылка на все её вакансии, без неё —
+ * текст как в вакансии (П9 плана компаний).
+ */
+function Place({ vacancy }: Readonly<{ vacancy: VacancySearchItem }>): ReactNode {
+  const locations = vacancy.locations.join(', ');
+  const company =
+    vacancy.companyId === null ? (
+      vacancy.company
+    ) : (
+      <Anchor href={`/vacancies?company=${vacancy.companyId}`} inherit>
+        {vacancy.companyName ?? vacancy.company}
+      </Anchor>
+    );
+  if (company === null && locations === '') return null;
+  return (
+    <Text c="dimmed">
+      {company}
+      {company !== null && locations !== '' ? ' · ' : null}
+      {locations}
+    </Text>
+  );
+}
+
 export function VacancyCard({ vacancy }: Readonly<{ vacancy: VacancySearchItem }>): ReactNode {
-  const place = [vacancy.company, vacancy.locations.join(', ')].filter(Boolean).join(' · ');
   return (
     <Card withBorder padding="lg" component="article">
       <Stack gap="sm">
         <Stack gap={0}>
           <Title order={3}>{vacancy.title}</Title>
-          {place === '' ? null : <Text c="dimmed">{place}</Text>}
+          <Place vacancy={vacancy} />
         </Stack>
         <Conditions vacancy={vacancy} />
         {vacancy.salaryRaw === null ? null : <Text fw={500}>{vacancy.salaryRaw}</Text>}
@@ -115,9 +138,13 @@ export function VacancyCard({ vacancy }: Readonly<{ vacancy: VacancySearchItem }
         )}
         <Apply vacancy={vacancy} />
         <Text size="sm" c="dimmed">
-          <Anchor href={vacancy.authorUrl} target="_blank" rel="noreferrer" inherit>
-            {vacancy.authorName}
-          </Anchor>
+          {vacancy.authorUrl === null ? (
+            vacancy.authorName
+          ) : (
+            <Anchor href={vacancy.authorUrl} target="_blank" rel="noreferrer" inherit>
+              {vacancy.authorName}
+            </Anchor>
+          )}
           {' · '}
           {dateFormat.format(new Date(vacancy.postedAt))}
           {' · '}
