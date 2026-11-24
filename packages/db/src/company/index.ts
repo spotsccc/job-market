@@ -8,3 +8,5 @@ export { keyOfUrl, keysOf, normalizeName, NOT_COMPANY_HOSTS } from './company-ke
 export type { CompanyKey } from './company-keys.ts';
 export { lockKeys, matchCompany } from './match-company.ts';
 export type { CompanyInput } from './match-company.ts';
+export { rematchCompanies } from './rematch-companies.ts';
+export type { RematchOptions, RematchSummary } from './rematch-companies.ts';
