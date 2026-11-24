@@ -58,8 +58,9 @@ const results = await runAll(cases);
 const summary = score(
   results.map(({ evalCase, answer }) => ({
     id: evalCase.id,
+    group: evalCase.group,
     expected: evalCase.expected,
-    actual: answer instanceof Error ? answer : answer.verdict,
+    actual: answer instanceof Error ? answer : answer.kind,
   })),
 );
 
@@ -69,13 +70,13 @@ for (const { evalCase, answer } of results) {
 console.log(
   `\nСлучаев ${String(summary.cases)} · ошибок ${String(summary.errors)} · совпало ${percent(summary.matched, summary.cases)}`,
 );
-for (const [verdict, { matched, total }] of Object.entries(summary.byVerdict)) {
-  console.log(`  ${verdict.padEnd(17)} ${String(matched)}/${String(total)}`);
+for (const [group, { matched, total }] of Object.entries(summary.byGroup)) {
+  console.log(`  ${group.padEnd(17)} ${String(matched)}/${String(total)}`);
 }
 if (summary.confusion.length > 0) {
   console.log('\nНесовпадения');
-  for (const { expected, actual, ids } of summary.confusion) {
-    console.log(`  ${expected} → ${actual}: ${ids.join(', ')}`);
+  for (const { group, actual, ids } of summary.confusion) {
+    console.log(`  ${group} → ${actual}: ${ids.join(', ')}`);
   }
 }
 
@@ -90,6 +91,7 @@ const report = {
   summary,
   cases: results.map(({ evalCase, answer }) => ({
     id: evalCase.id,
+    group: evalCase.group,
     expected: evalCase.expected,
     answer: answer instanceof Error ? null : answer,
     error: answer instanceof Error ? errorMessage(answer) : null,

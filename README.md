@@ -120,7 +120,7 @@ pnpm --filter @job-market/extractor eval --compare eval/reports/<отчёт>.jso
 
 ### Набор проверки классификатора
 
-20 размеченных публикаций в `packages/classifier/eval/cases`: 8 вакансий и по 4 на каждую причину «не вакансия» — `job_seeker`, `no_specific_role`, `not_hiring` ([README](packages/classifier/README.md)). Прогон зовёт настоящую модель (20 вызовов), поэтому в `pnpm test` не входит:
+20 размеченных публикаций в `packages/classifier/eval/cases`: 7 вакансий и не меньше 4 на каждый вид «не вакансии» — `job_seeker`, `no_specific_role`, `not_hiring` в поле `group` случая ([README](packages/classifier/README.md)). Прогон зовёт настоящую модель (20 вызовов), поэтому в `pnpm test` не входит:
 
 ```bash
 pnpm --filter @job-market/classifier eval

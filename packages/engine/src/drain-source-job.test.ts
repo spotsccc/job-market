@@ -164,8 +164,7 @@ describe('handleDrainSourceJob', () => {
       .select({ status: publications.status })
       .from(publications)
       .where(eq(publications.sourceId, source.id));
-    assert.equal(statuses.filter((row) => row.status === 'pending').length, 9);
-    assert.equal(statuses.filter((row) => row.status === 'empty').length, 1);
+    assert.equal(statuses.filter((row) => row.status === 'pending').length, 10);
   });
 
   test('a failed drain counts the failure, pauses the source and queues nothing', async () => {

@@ -69,8 +69,8 @@ describe('drain of a Telegram channel', () => {
     assert.deepEqual(result, { status: 'done', inserted: 10, cursor: { cursorId: 10 } });
     const rows = await source.publications();
     assert.equal(rows.length, 10);
-    assert.equal(rows.filter((row) => row.status === 'pending').length, 9);
-    assert.equal((await source.publication(`${channel}/5`)).status, 'empty');
+    // Пост из одних эмодзи тоже ждёт разбора: пустоту определяет классификатор.
+    assert.ok(rows.every((row) => row.status === 'pending'));
     const channelAuthors = await db.select().from(authors).where(eq(authors.externalId, channel));
     assert.equal(channelAuthors.length, 1);
     assert.ok(

@@ -29,16 +29,16 @@ const failing = (cause: Error): MockLanguageModelV4 =>
   });
 
 describe('classifyAndExtract', () => {
-  test('a job seeker is not a vacancy and the extractor is not called', async () => {
+  test('a post the classifier rejects is trash and the extractor is not called', async () => {
     const extractor = mockModel({ vacancies: [] });
     const process = classifyAndExtract({
-      classifier: mockModel({ verdict: 'job_seeker', note: 'Ищет работу' }),
+      classifier: mockModel({ verdict: 'not_vacancy', note: 'Ищет работу' }),
       extractor,
     });
 
     const outcome = await process(publication, { occupations: TREE });
 
-    assert.deepEqual(outcome, { kind: 'not_vacancy', reason: 'job_seeker', note: 'Ищет работу' });
+    assert.deepEqual(outcome, { kind: 'not_vacancy', reason: 'trash', note: 'Ищет работу' });
     assert.equal(extractor.doGenerateCalls.length, 0);
   });
 
@@ -50,7 +50,7 @@ describe('classifyAndExtract', () => {
       ],
     });
     const process = classifyAndExtract({
-      classifier: mockModel({ verdict: 'vacancy', note: 'Нанимают' }),
+      classifier: mockModel({ verdict: 'vacancy', note: '' }),
       extractor,
     });
 
@@ -63,6 +63,18 @@ describe('classifyAndExtract', () => {
       ['Senior Frontend', 'Junior Frontend'],
     );
     assert.match(JSON.stringify(extractor.doGenerateCalls[0]?.prompt), /it › frontend/u);
+  });
+
+  test('a post without letters is empty and neither model is called', async () => {
+    const classifier = mockModel({ verdict: 'vacancy', note: '' });
+    const extractor = mockModel({ vacancies: [] });
+    const process = classifyAndExtract({ classifier, extractor });
+
+    const outcome = await process({ ...publication, content: '🔥🔥🔥' }, { occupations: TREE });
+
+    assert.deepEqual(outcome, { kind: 'not_vacancy', reason: 'empty' });
+    assert.equal(classifier.doGenerateCalls.length, 0);
+    assert.equal(extractor.doGenerateCalls.length, 0);
   });
 
   test('a classifier timeout is an Error and the extractor is not called', async () => {
@@ -80,7 +92,7 @@ describe('classifyAndExtract', () => {
 
   test('an extractor failure is an Error', async () => {
     const process = classifyAndExtract({
-      classifier: mockModel({ verdict: 'vacancy', note: 'Нанимают' }),
+      classifier: mockModel({ verdict: 'vacancy', note: '' }),
       extractor: failing(new Error('Gateway unavailable')),
     });
 

@@ -11,7 +11,6 @@ import type { AuthorToSave, LinkToSave, NewPublicationToSave } from '@job-market
 import { enrich } from '@job-market/enricher';
 import type { Enrichment, LinkReport, Reader } from '@job-market/enricher';
 import { log } from '@job-market/logger';
-import { skipReason } from '@job-market/publication-text';
 
 import { DEPTH_DAYS } from './contract.ts';
 import type {
@@ -100,8 +99,8 @@ function authorRow(connector: Connector, publication: ParsedPublication): Author
 
 /**
  * Тексты публикаций с разделами по ссылкам LinkedIn и отчёт по ссылкам (П13): по индексу
- * публикации. Пустые публикации в `enrich` не идут. Ссылка, которая не прочиталась и после
- * повторов, — предупреждение в лог; итог `drain` она не меняет.
+ * публикации. Ссылка, которая не прочиталась и после повторов, — предупреждение в лог; итог
+ * `drain` она не меняет.
  */
 async function readLinks(
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
@@ -109,20 +108,15 @@ async function readLinks(
   readers: readonly Reader[],
   deadline: number,
 ): Promise<ReadonlyMap<number, Enrichment>> {
-  // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
-  const indexes = publications.flatMap((publication, index) =>
-    skipReason(publication.content) === undefined ? [index] : [],
-  );
-  if (indexes.length === 0) return new Map();
+  if (publications.length === 0) return new Map();
   const results = await enrichWithRetries(
-    indexes.map((index) => publications[index]?.content ?? ''),
+    // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
+    publications.map((publication) => publication.content),
     readers,
     deadline,
   );
   const enriched = new Map<number, Enrichment>();
-  for (const [position, index] of indexes.entries()) {
-    const result = results[position];
-    if (result === undefined) continue;
+  for (const [index, result] of results.entries()) {
     enriched.set(index, result);
     for (const link of result.links) {
       if (link.status !== 'failed') continue;
@@ -165,7 +159,7 @@ function publicationRow(
       contentHash: contentHash(publication.content),
       postedAt: publication.publishedAt ?? context.now,
       payload: publication.payload ?? null,
-      status: skipReason(publication.content) === undefined ? 'pending' : 'empty',
+      status: 'pending',
       authorId,
     },
     links: (enrichment?.links ?? []).map((link) => linkRow(link)),

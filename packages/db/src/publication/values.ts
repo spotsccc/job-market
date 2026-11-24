@@ -14,9 +14,8 @@ export type Connector = (typeof CONNECTORS)[number];
 /**
  * Где публикация в разборе:
  * - `pending` — ждёт разбора, `processing` — разбирается;
- * - `vacancy`, `not_vacancy` — итог классификатора;
+ * - `vacancy`, `not_vacancy` — итог разбора; почему не вакансия — в `not_vacancy_reason`;
  * - `duplicate` — копия уже разобранной публикации с тем же текстом;
- * - `empty` — текста нет, разбирать нечего;
  * - `failed` — разбор упал, ошибка в `last_error`.
  */
 export const PUBLICATION_STATUSES = [
@@ -25,7 +24,6 @@ export const PUBLICATION_STATUSES = [
   'vacancy',
   'not_vacancy',
   'duplicate',
-  'empty',
   'failed',
 ] as const;
 
@@ -43,10 +41,11 @@ export const LINK_STATUSES = ['read', 'no_data', 'failed', 'unsupported', 'over_
 export type LinkStatus = (typeof LINK_STATUSES)[number];
 
 /**
- * Почему пост не вакансия. Это обычный результат, а не ошибка.
- * - `job_seeker` — автор ищет работу сам: «open to work», резюме;
- * - `no_specific_role` — про найм, но без конкретной роли: «мы растём», «скоро откроем позиции»;
- * - `not_hiring` — не про найм: статья, мнение, новость, реклама.
+ * Почему публикация не вакансия. Это обычный результат, а не ошибка. По причинам видно, какие
+ * источники приносят пустое и мусор.
+ * - `empty` — в тексте нет ни одной буквы: картинка без подписи, одни эмодзи; модель не звалась;
+ * - `trash` — текст есть, но это не вакансия: резюме, «мы растём», статья, реклама. Что именно —
+ *   в `note`.
  */
-export const NOT_VACANCY_REASONS = ['job_seeker', 'no_specific_role', 'not_hiring'] as const;
+export const NOT_VACANCY_REASONS = ['empty', 'trash'] as const;
 export type NotVacancyReason = (typeof NOT_VACANCY_REASONS)[number];

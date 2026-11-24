@@ -9,7 +9,7 @@ export type Outcome =
   | { readonly kind: 'pending' }
   | { readonly kind: 'vacancy'; readonly roles: readonly VacancyToSave[] }
   /** Пустой текст: модель не зовётся (П5). */
-  | { readonly kind: 'not_vacancy'; readonly reason: 'not_hiring'; readonly note: string }
+  | { readonly kind: 'not_vacancy'; readonly reason: 'empty' }
   | { readonly kind: 'duplicate'; readonly originalId: string }
   /** Копия ждёт оригинал из этой пачки (П4, E7). */
   | { readonly kind: 'follower'; readonly leaderId: string }

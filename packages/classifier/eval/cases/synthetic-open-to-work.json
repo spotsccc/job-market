@@ -12,5 +12,6 @@
       "headline": "Frontend Developer | React | TypeScript"
     }
   },
-  "expected": "job_seeker"
+  "group": "job_seeker",
+  "expected": "not_vacancy"
 }

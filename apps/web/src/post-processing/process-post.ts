@@ -1,5 +1,5 @@
 import type { NewLegacyPostRow, NewLegacyVacancyRow, PostSource } from '@job-market/db';
-import type { Connector, NotVacancyReason } from '@job-market/db/values';
+import type { Connector } from '@job-market/db/values';
 import { extract } from '@job-market/extractor';
 import type { ExtractedRole, OccupationNode } from '@job-market/extractor';
 import { isAnywhere } from '@job-market/geo';
@@ -22,7 +22,7 @@ const MODEL_CALL_TIMEOUT_MS = 60_000;
  * как выход и в разы удорожают вызов.
  */
 const REASONING = 'none';
-import type { PostClassification } from './schemas.ts';
+import type { PostClassification, PostNotVacancyReason } from './schemas.ts';
 
 /** Пост в виде строки таблицы `legacy_posts`, без полей, которые заполняет база. */
 export type Post = Readonly<Omit<NewLegacyPostRow, 'id' | 'createdAt'>>;
@@ -50,7 +50,7 @@ export type ProcessedPost =
   | {
       /** Пост не вакансия — это обычный результат, а не ошибка. */
       readonly kind: 'not_vacancy';
-      readonly reason: NotVacancyReason;
+      readonly reason: PostNotVacancyReason;
       readonly note: string;
     };
 

@@ -4,9 +4,9 @@ import type { PublicationForModel } from '@job-market/publication-text';
 import { generateText, Output } from 'ai';
 import type { LanguageModel } from 'ai';
 
-import { classificationSchema } from './classification.ts';
+import { modelAnswerSchema } from './classification.ts';
 import type { Classification } from './classification.ts';
-import { ClassificationError, NothingToClassifyError } from './errors/index.ts';
+import { ClassificationError } from './errors/index.ts';
 import { CLASSIFIER_INSTRUCTIONS } from './prompt.ts';
 
 /**
@@ -37,17 +37,18 @@ export type ClassifyOptions = {
 };
 
 /**
- * Решает, вакансия ли публикация, и если нет — почему (П1). Публикацию без букв не разбирает
- * и модель не зовёт (П2). Сбой провайдера, таймаут или ответ не по схеме — `ClassificationError` (П3).
+ * Решает, вакансия ли публикация (П1). Публикация без единой буквы — `not_vacancy` с причиной
+ * `empty` сразу, без модели (П2). Сбой провайдера, таймаут или ответ не по схеме —
+ * `ClassificationError` (П3).
  */
 export async function classify(
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
   publication: PublicationForModel,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- модель AI SDK — объект провайдера, readonly его не сделать
   options: ClassifyOptions = {},
-): Promise<Classification | NothingToClassifyError | ClassificationError> {
-  const reason = skipReason(publication.content);
-  if (reason !== undefined) return new NothingToClassifyError({ reason });
+): Promise<Classification | ClassificationError> {
+  if (skipReason(publication.content) !== undefined)
+    return { kind: 'not_vacancy', reason: 'empty' };
 
   const result = await generateText({
     model: options.model ?? defaultClassifierModel,
@@ -55,8 +56,10 @@ export async function classify(
     reasoning: REASONING,
     instructions: CLASSIFIER_INSTRUCTIONS,
     prompt: formatPublication(publication),
-    output: Output.object({ schema: classificationSchema }),
+    output: Output.object({ schema: modelAnswerSchema }),
   }).catch((cause: unknown) => new ClassificationError({ cause }));
   if (result instanceof Error) return result;
-  return result.output;
+  const { verdict, note } = result.output;
+  if (verdict === 'vacancy') return { kind: 'vacancy' };
+  return { kind: 'not_vacancy', reason: 'trash', note };
 }

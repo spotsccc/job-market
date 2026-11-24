@@ -12,5 +12,6 @@
       "headline": null
     }
   },
-  "expected": "not_hiring"
+  "group": "not_hiring",
+  "expected": "not_vacancy"
 }

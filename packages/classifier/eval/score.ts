@@ -1,10 +1,12 @@
-import type { Verdict } from '../src/index.ts';
+import type { ModelVerdict } from '../src/classification.ts';
+import type { CaseGroup } from './cases.ts';
 
-/** Итог одного случая: ожидаемый вердикт и ответ classify — вердикт или ошибка. */
+/** Итог одного случая: вид случая, ожидаемый вердикт и ответ classify — вердикт или ошибка. */
 export type CaseOutcome = {
   readonly id: string;
-  readonly expected: Verdict;
-  readonly actual: Verdict | Readonly<Error>;
+  readonly group: CaseGroup;
+  readonly expected: ModelVerdict;
+  readonly actual: ModelVerdict | Readonly<Error>;
 };
 
 export type Score = {
@@ -12,25 +14,25 @@ export type Score = {
   /** Случаи, где classify вернул ошибку: в совпадения не идут. */
   readonly errors: number;
   readonly matched: number;
-  /** По ожидаемому вердикту; случай с ошибкой считается в `total`, но не в `matched`. */
-  readonly byVerdict: Readonly<Partial<Record<Verdict, { matched: number; total: number }>>>;
-  /** Несовпадения «ждали → получили» с id случаев. Ошибки сюда не входят. */
+  /** По виду случая; случай с ошибкой считается в `total`, но не в `matched`. */
+  readonly byGroup: Readonly<Partial<Record<CaseGroup, { matched: number; total: number }>>>;
+  /** Несовпадения «вид случая → что ответили» с id случаев. Ошибки сюда не входят. */
   readonly confusion: readonly {
-    readonly expected: Verdict;
-    readonly actual: Verdict;
+    readonly group: CaseGroup;
+    readonly actual: ModelVerdict;
     readonly ids: readonly string[];
   }[];
 };
 
 /** Доля совпавших вердиктов — одна метрика набора. */
 export function score(outcomes: readonly CaseOutcome[]): Score {
-  const byVerdict: Partial<Record<Verdict, { matched: number; total: number }>> = {};
-  const confusion = new Map<string, { expected: Verdict; actual: Verdict; ids: string[] }>();
+  const byGroup: Partial<Record<CaseGroup, { matched: number; total: number }>> = {};
+  const confusion = new Map<string, { group: CaseGroup; actual: ModelVerdict; ids: string[] }>();
   let errors = 0;
   let matched = 0;
-  for (const { id, expected, actual } of outcomes) {
-    const bucket = byVerdict[expected] ?? { matched: 0, total: 0 };
-    byVerdict[expected] = bucket;
+  for (const { id, group, expected, actual } of outcomes) {
+    const bucket = byGroup[group] ?? { matched: 0, total: 0 };
+    byGroup[group] = bucket;
     bucket.total += 1;
     if (typeof actual !== 'string') {
       errors += 1;
@@ -38,11 +40,11 @@ export function score(outcomes: readonly CaseOutcome[]): Score {
       matched += 1;
       bucket.matched += 1;
     } else {
-      const key = `${expected}→${actual}`;
-      const pair = confusion.get(key) ?? { expected, actual, ids: [] };
+      const key = `${group}→${actual}`;
+      const pair = confusion.get(key) ?? { group, actual, ids: [] };
       pair.ids.push(id);
       confusion.set(key, pair);
     }
   }
-  return { cases: outcomes.length, errors, matched, byVerdict, confusion: [...confusion.values()] };
+  return { cases: outcomes.length, errors, matched, byGroup, confusion: [...confusion.values()] };
 }

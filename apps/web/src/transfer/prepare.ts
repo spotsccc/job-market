@@ -94,7 +94,7 @@ async function settleWithoutModel(
     const original = originals.get(item.hash) ?? runOriginals.get(item.hash);
     const leader = leaders.get(item.hash);
     if (item.post.content.trim() === '') {
-      item.outcome = { kind: 'not_vacancy', reason: 'not_hiring', note: 'пост без текста' };
+      item.outcome = { kind: 'not_vacancy', reason: 'empty' };
     } else if (original !== undefined) {
       item.outcome = { kind: 'duplicate', originalId: original };
     } else if (leader === undefined) {

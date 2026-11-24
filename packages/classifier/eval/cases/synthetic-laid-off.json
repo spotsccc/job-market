@@ -12,5 +12,6 @@
       "headline": "Data Engineer"
     }
   },
-  "expected": "job_seeker"
+  "group": "job_seeker",
+  "expected": "not_vacancy"
 }

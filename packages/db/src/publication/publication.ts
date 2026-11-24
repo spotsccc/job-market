@@ -40,7 +40,7 @@ export const publications = pgTable(
     externalId: text().notNull(),
     url: text().notNull(),
     /**
-     * Текст в Markdown со ссылками. Пустая строка — текста нет. Если в тексте есть ссылки
+     * Текст в Markdown со ссылками. Пустая строка — текста нет: разбор запишет `empty`. Если в тексте есть ссылки
      * на LinkedIn, в конце — разделы с прочитанным по ним.
      */
     content: text().notNull(),
@@ -60,7 +60,7 @@ export const publications = pgTable(
     /** Ошибка последнего неудачного разбора. */
     lastError: text(),
     notVacancyReason: text({ enum: NOT_VACANCY_REASONS }),
-    /** Пояснение классификатора, почему не вакансия. */
+    /** Пояснение, почему не вакансия; у причины `empty` его нет. */
     note: text(),
     /** Публикация с тем же текстом, которая разобрана вместо этой. */
     duplicateOfId: uuid().references((): AnyPgColumn => publications.id, {
@@ -88,7 +88,7 @@ export const publications = pgTable(
     unique('publications_connector_external_id_unique').on(table.connector, table.externalId),
     check(
       'publications_status_check',
-      sql`"status" IN ('pending', 'processing', 'vacancy', 'not_vacancy', 'duplicate', 'empty', 'failed')`,
+      sql`"status" IN ('pending', 'processing', 'vacancy', 'not_vacancy', 'duplicate', 'failed')`,
     ),
     // Поиск копии по тексту.
     index('publications_content_hash_index').on(table.contentHash),

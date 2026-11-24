@@ -66,11 +66,13 @@ async function write(
           await setOutcome(tx, publicationId, { status: 'vacancy' });
           return null;
         }
-        await setOutcome(tx, publicationId, {
-          status: 'not_vacancy',
-          reason: outcome.reason,
-          note: outcome.note,
-        });
+        await setOutcome(
+          tx,
+          publicationId,
+          outcome.reason === 'empty'
+            ? { status: 'not_vacancy', reason: 'empty' }
+            : { status: 'not_vacancy', reason: 'trash', note: outcome.note },
+        );
         return null;
       })
       .catch(

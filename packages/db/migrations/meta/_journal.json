@@ -92,6 +92,13 @@
       "when": 1795483664201,
       "tag": "0012_publication_links",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795539300733,
+      "tag": "0013_not_vacancy_reasons",
+      "breakpoints": true
     }
   ]
 }

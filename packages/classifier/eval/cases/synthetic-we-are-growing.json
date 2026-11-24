@@ -12,5 +12,6 @@
       "headline": "CEO at Acme"
     }
   },
-  "expected": "no_specific_role"
+  "group": "no_specific_role",
+  "expected": "not_vacancy"
 }

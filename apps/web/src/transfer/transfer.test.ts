@@ -263,7 +263,7 @@ describe('transferPosts', () => {
     assert.equal(pd.status, 'failed');
     assert.match(pd.lastError ?? '', /Vacancy extraction failed/u);
     const pe = await publicationOf(e);
-    assert.deepEqual([pe.status, pe.notVacancyReason], ['not_vacancy', 'not_hiring']);
+    assert.deepEqual([pe.status, pe.notVacancyReason, pe.note], ['not_vacancy', 'empty', null]);
 
     // Модель не видит копию и пустой пост (П4, П5, E7).
     assert.equal(mock.prompts.length, 3);

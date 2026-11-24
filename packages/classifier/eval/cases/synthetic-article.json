@@ -12,5 +12,6 @@
       "headline": "Engineering Manager at Globex"
     }
   },
-  "expected": "not_hiring"
+  "group": "not_hiring",
+  "expected": "not_vacancy"
 }

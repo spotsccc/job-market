@@ -50,7 +50,7 @@ function publicationRow(
     lastError: null,
     status: outcome.kind,
     notVacancyReason: outcome.kind === 'not_vacancy' ? outcome.reason : null,
-    note: outcome.kind === 'not_vacancy' ? outcome.note : null,
+    note: null,
     duplicateOfId: outcome.kind === 'duplicate' ? outcome.originalId : null,
   };
 }

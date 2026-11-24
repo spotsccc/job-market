@@ -156,12 +156,11 @@ describe('mine', () => {
     assert.ok(tree.some((node) => node.id === 'root'));
   });
 
-  test('a job seeker in processing is not a vacancy and the reference is not asked', async () => {
+  test('trash in processing is not a vacancy and the reference is not asked', async () => {
     const publication = await addPublication(1, 'processing');
     let located = false;
     const connector = testConnector('open-telegram', {
-      process: () =>
-        Promise.resolve({ kind: 'not_vacancy', reason: 'job_seeker', note: 'Ищет работу' }),
+      process: () => Promise.resolve({ kind: 'not_vacancy', reason: 'trash', note: 'Ищет работу' }),
       locate: () => {
         located = true;
         return Promise.resolve([]);
@@ -173,13 +172,29 @@ describe('mine', () => {
     assert.deepEqual(result, { status: 'not_vacancy', vacancies: 0 });
     const saved = await row(publication.id);
     assert.equal(saved.status, 'not_vacancy');
-    assert.equal(saved.notVacancyReason, 'job_seeker');
+    assert.equal(saved.notVacancyReason, 'trash');
     assert.equal(saved.note, 'Ищет работу');
     assert.equal((await vacanciesOf(publication.id)).length, 0);
     assert.equal(located, false);
   });
 
-  test('a publication that is empty or parsed already is skipped without models', async () => {
+  test('an empty publication is written as not_vacancy with the reason and no note', async () => {
+    const publication = await addPublication(1);
+    const connector = testConnector('open-telegram', {
+      process: () => Promise.resolve({ kind: 'not_vacancy', reason: 'empty' }),
+    });
+
+    const result = await connector.mine(publication);
+
+    assert.deepEqual(result, { status: 'not_vacancy', vacancies: 0 });
+    const saved = await row(publication.id);
+    assert.deepEqual(
+      [saved.status, saved.notVacancyReason, saved.note],
+      ['not_vacancy', 'empty', null],
+    );
+  });
+
+  test('a publication that is parsed already is skipped without models', async () => {
     let calls = 0;
     const connector = testConnector('open-telegram', {
       process: () => {
@@ -188,10 +203,10 @@ describe('mine', () => {
       },
     });
 
-    const empty = await connector.mine(await addPublication(1, 'empty'));
+    const duplicate = await connector.mine(await addPublication(1, 'duplicate'));
     const parsed = await connector.mine(await addPublication(2, 'vacancy'));
 
-    assert.deepEqual(empty, { status: 'skipped', vacancies: 0 });
+    assert.deepEqual(duplicate, { status: 'skipped', vacancies: 0 });
     assert.deepEqual(parsed, { status: 'skipped', vacancies: 0 });
     assert.equal(calls, 0);
   });

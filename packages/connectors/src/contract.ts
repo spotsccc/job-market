@@ -1,8 +1,4 @@
-import type {
-  Connector as ConnectorId,
-  NotVacancyReason,
-  PUBLICATION_STATUSES,
-} from '@job-market/db/values';
+import type { Connector as ConnectorId, PUBLICATION_STATUSES } from '@job-market/db/values';
 import type { ExtractedRole, OccupationNode } from '@job-market/extractor';
 import type { PublicationForModel } from '@job-market/publication-text';
 import type { z } from 'zod';
@@ -67,10 +63,14 @@ export type Parser<Config, Cursor> = (
   input: ParseInput<Config, Cursor>,
 ) => Promise<Error | ParseResult<Cursor>>;
 
-/** Итог разбора публикации (П3). Роли — с местами словами текста, к справочнику их сводит `mine`. */
+/**
+ * Итог разбора публикации (П3). Роли — с местами словами текста, к справочнику их сводит `mine`.
+ * `empty` — в тексте нет ни одной буквы; `trash` — не вакансия, почему — в `note`.
+ */
 export type ProcessOutcome =
   | { readonly kind: 'vacancy'; readonly roles: readonly ExtractedRole[] }
-  | { readonly kind: 'not_vacancy'; readonly reason: NotVacancyReason; readonly note: string };
+  | { readonly kind: 'not_vacancy'; readonly reason: 'empty' }
+  | { readonly kind: 'not_vacancy'; readonly reason: 'trash'; readonly note: string };
 
 export type ProcessOptions = {
   /** Дерево профессий: его читает `mine`, `process` остаётся без базы (П3). */

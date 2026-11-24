@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, inArray, like } from 'drizzle-orm';
 
 import { db, getDb } from '../client.ts';
 import { authors, publicationLinks, publications, sources } from './index.ts';
@@ -255,30 +255,30 @@ describe('publication writes', () => {
     assert.equal((await linksOf(31)).length, 2);
   });
 
-  test('setOutcome writes the reason for not_vacancy and clears it for a vacancy', async () => {
-    const ids = await addPublications(db, [newPublication(40), newPublication(41)]);
-    const notVacancy = ids.get(authorKey('open-telegram', `${KEY}/40`)) ?? '';
-    const vacancy = ids.get(authorKey('open-telegram', `${KEY}/41`)) ?? '';
+  test('setOutcome keeps the note only for trash and clears reason and note of a vacancy', async () => {
+    const rowsToAdd = [newPublication(40), newPublication(41), newPublication(42)];
+    const ids = await addPublications(db, rowsToAdd);
+    const id = (n: number): string =>
+      ids.get(authorKey('open-telegram', `${KEY}/${String(n)}`)) ?? '';
+    const [trash, vacancy, empty] = [id(40), id(41), id(42)];
     await db
       .update(publications)
-      .set({ notVacancyReason: 'not_hiring', note: 'прошлый итог' })
-      .where(eq(publications.id, vacancy));
+      .set({ notVacancyReason: 'trash', note: 'прошлый итог' })
+      .where(inArray(publications.id, [vacancy, empty]));
 
-    await setOutcome(db, notVacancy, { status: 'not_vacancy', reason: 'job_seeker', note: 'Ищет' });
+    await setOutcome(db, trash, { status: 'not_vacancy', reason: 'trash', note: 'Ищет' });
     await setOutcome(db, vacancy, { status: 'vacancy' });
+    await setOutcome(db, empty, { status: 'not_vacancy', reason: 'empty' });
 
     const rows = await db
       .select()
       .from(publications)
-      .where(like(publications.externalId, `${KEY}/4%`))
-      .orderBy(publications.externalId);
-    assert.deepEqual(
-      rows.map((row) => [row.status, row.notVacancyReason, row.note, row.processedAt !== null]),
-      [
-        ['not_vacancy', 'job_seeker', 'Ищет', true],
-        ['vacancy', null, null, true],
-      ],
-    );
+      .where(inArray(publications.id, [...ids.values()]));
+    const byId = new Map(rows.map((row) => [row.id, [row.status, row.notVacancyReason, row.note]]));
+    assert.deepEqual(byId.get(trash), ['not_vacancy', 'trash', 'Ищет']);
+    assert.deepEqual(byId.get(vacancy), ['vacancy', null, null]);
+    assert.deepEqual(byId.get(empty), ['not_vacancy', 'empty', null]);
+    assert.ok(rows.every((row) => row.processedAt !== null));
   });
 
   test('saveCursor changes only the cursor of the source', async () => {

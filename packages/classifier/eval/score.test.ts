@@ -3,22 +3,27 @@ import { test } from 'node:test';
 
 import { score } from './score.ts';
 
-test('counts matches by expected verdict, keeps errors and mismatches apart', () => {
+test('counts matches by case group, keeps errors and mismatches apart', () => {
   const result = score([
-    { id: 'a', expected: 'vacancy', actual: 'vacancy' },
-    { id: 'b', expected: 'no_specific_role', actual: 'vacancy' },
-    { id: 'c', expected: 'job_seeker', actual: new Error('Classification failed') },
+    { id: 'a', group: 'vacancy', expected: 'vacancy', actual: 'vacancy' },
+    { id: 'b', group: 'no_specific_role', expected: 'not_vacancy', actual: 'vacancy' },
+    {
+      id: 'c',
+      group: 'job_seeker',
+      expected: 'not_vacancy',
+      actual: new Error('Classification failed'),
+    },
   ]);
 
   assert.equal(result.cases, 3);
   assert.equal(result.errors, 1);
   assert.equal(result.matched, 1);
-  assert.deepEqual(result.byVerdict, {
+  assert.deepEqual(result.byGroup, {
     vacancy: { matched: 1, total: 1 },
     no_specific_role: { matched: 0, total: 1 },
     job_seeker: { matched: 0, total: 1 },
   });
   assert.deepEqual(result.confusion, [
-    { expected: 'no_specific_role', actual: 'vacancy', ids: ['b'] },
+    { group: 'no_specific_role', actual: 'vacancy', ids: ['b'] },
   ]);
 });

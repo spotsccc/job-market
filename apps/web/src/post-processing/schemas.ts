@@ -1,4 +1,3 @@
-import { NOT_VACANCY_REASONS } from '@job-market/db/values';
 import { z } from 'zod';
 
 /**
@@ -6,8 +5,15 @@ import { z } from 'zod';
  * корень — объект, без `min`/`max`/`transform`, вместо `oneOf` — плоский `enum`.
  */
 
+/**
+ * Причины «не вакансия» старого разбора. У публикаций причин теперь две (`empty` и `trash`,
+ * `NOT_VACANCY_REASONS` базы), а этот разбор удаляется после сверки переноса и остаётся как был.
+ */
+export const POST_NOT_VACANCY_REASONS = ['job_seeker', 'no_specific_role', 'not_hiring'] as const;
+export type PostNotVacancyReason = (typeof POST_NOT_VACANCY_REASONS)[number];
+
 /** Вердикт классификатора: `vacancy` или причина, почему пост не вакансия. */
-export const POST_VERDICTS = ['vacancy', ...NOT_VACANCY_REASONS] as const;
+export const POST_VERDICTS = ['vacancy', ...POST_NOT_VACANCY_REASONS] as const;
 
 export const postClassificationSchema = z.strictObject({
   verdict: z

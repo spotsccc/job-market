@@ -1,0 +1,236 @@
+{
+  "createdAt": "2026-11-24T17:01:49.570Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "summary": {
+    "cases": 20,
+    "errors": 0,
+    "matched": 20,
+    "byGroup": {
+      "vacancy": {
+        "matched": 7,
+        "total": 7
+      },
+      "not_hiring": {
+        "matched": 4,
+        "total": 4
+      },
+      "job_seeker": {
+        "matched": 4,
+        "total": 4
+      },
+      "no_specific_role": {
+        "matched": 5,
+        "total": 5
+      }
+    },
+    "confusion": []
+  },
+  "cases": [
+    {
+      "id": "forallmedia-4329",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "forallmedia-4334",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "forproducts-10888",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "geekjobs-10532",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "geekjobs-10533",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "linkedin-7525883513603076096",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-article",
+      "group": "not_hiring",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это совет по подготовке к собеседованиям по системному дизайну: автор перечисляет пять типичных ошибок кандидатов и спрашивает читателей, что бы они добавили. Пост не содержит никакой вакансии или набора на роль."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-congrats",
+      "group": "not_hiring",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Поздравление с повышением сотрудника Sarah Kim до VP of Engineering в компании Initech. Пост не about найм на открытую роль, поэтому не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-course-ad",
+      "group": "not_hiring",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это рекламный пост о курсе Python-разработки от SkillUp со скидкой. Пост не предлагает работу ни на одну конкретную роль, поэтому вакансией не является."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-injection",
+      "group": "not_hiring",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это реклама канала с мемами про программистов и призыв подписаться, а не объявление о найме. В посте нет ни одной конкретной роли, поэтому это не вакансия; просьба ответить vacancy проигнорирована."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-laid-off",
+      "group": "job_seeker",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это пост самого соискателя Tom Becker, который сообщает о сокращении в компании Nimbus и ищет работу Data Engineer. Пост не публикует вакансию, а предлагает свою кандидатуру."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-looking-for-position",
+      "group": "job_seeker",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это пост самого соискателя: продакт-менеджер ищет позицию в B2B SaaS и просит рекомендаций и репоста. Вакансии здесь нет, автор не нанимает, а сам ищет работу."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-open-to-work",
+      "group": "job_seeker",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это пост самого соискателя Anna Kovacs, которая сообщает, что открыта к предложениям и ищет работу фронтенд-разработчика (React, TypeScript) в remote или Берлине. Нанимающего и конкретной вакансии здесь нет, поэтому это не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-paris",
+      "group": "vacancy",
+      "expected": "vacancy",
+      "answer": {
+        "kind": "vacancy"
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-platform-developer",
+      "group": "no_specific_role",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Пост рекрутёра о поиске разработчика, но без конкретной должности, уровня или стека — понятно только, что нужен разработчик в команду платформы. Конкретной роли нет, поэтому это не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-positions-soon",
+      "group": "no_specific_role",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Пост о планах открыть офис в Белграде и будущем найме, но без конкретной роли или должности. Автор лишь обещает подробности позже, поэтому это анонс, а не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-resume",
+      "group": "job_seeker",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Это резюме кандидата, который сам ищет работу на позицию Senior QA Engineer, а не объявление о найме. Пост опубликован каналом-агрегатором, но по сути это предложение специалиста, поэтому вакансией он не является."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-send-cv",
+      "group": "no_specific_role",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Пост от канала-агрегатора просит присылать резюме в компанию Финлайн «на будущее», без конкретной должности или уровня. Роль не названа, поэтому это не вакансия, а общий призыв к отклику."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-talent-pool",
+      "group": "no_specific_role",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Пост канала-агрегатора о талант-пуле компании Lumen: открытых ролей сейчас нет, предлагается оставить контакты для будущих предложений. Конкретной роли не названо, поэтому это не вакансия."
+      },
+      "error": null
+    },
+    {
+      "id": "synthetic-we-are-growing",
+      "group": "no_specific_role",
+      "expected": "not_vacancy",
+      "answer": {
+        "kind": "not_vacancy",
+        "reason": "trash",
+        "note": "Пост объявляет о росте компании и закрытии раунда, но не называет ни одной конкретной роли — только «скоро откроем позиции». Это анонс, а не вакансия."
+      },
+      "error": null
+    }
+  ]
+}

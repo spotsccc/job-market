@@ -5,7 +5,7 @@ import type { PublicationForModel } from '@job-market/publication-text';
 import { MockLanguageModelV4 } from 'ai/test';
 
 import { classify } from './classify.ts';
-import { ClassificationError, NothingToClassifyError } from './errors/index.ts';
+import { ClassificationError } from './errors/index.ts';
 
 /** Модель, которая отвечает JSON текстом, как провайдер при structured outputs. */
 function mockModel(output: unknown): MockLanguageModelV4 {
@@ -38,36 +38,37 @@ function publication(overrides: Partial<PublicationForModel> = {}): PublicationF
 }
 
 describe('classify', () => {
-  test('returns the vacancy verdict with its note and asks for no reasoning', async () => {
-    const model = mockModel({ verdict: 'vacancy', note: 'Нанимают фронтендера' });
+  test('a vacancy carries no note, and the model is asked for no reasoning', async () => {
+    const model = mockModel({ verdict: 'vacancy', note: '' });
 
     const result = await classify(publication(), { model });
 
-    assert.deepEqual(result, { verdict: 'vacancy', note: 'Нанимают фронтендера' });
+    assert.deepEqual(result, { kind: 'vacancy' });
     const [call] = model.doGenerateCalls;
     assert.ok(call);
     assert.equal(call.reasoning, 'none');
     assert.match(JSON.stringify(call.prompt), /Senior Frontend/u);
   });
 
-  test('returns a not-vacancy reason with its note', async () => {
-    const model = mockModel({ verdict: 'job_seeker', note: 'Автор ищет работу' });
+  test('a post the model rejects is trash with the note of the model', async () => {
+    const model = mockModel({ verdict: 'not_vacancy', note: 'Автор ищет работу' });
 
     const result = await classify(
       publication({ connector: 'linkedin', content: 'Open to work as a frontend developer' }),
       { model },
     );
 
-    assert.deepEqual(result, { verdict: 'job_seeker', note: 'Автор ищет работу' });
+    assert.deepEqual(result, { kind: 'not_vacancy', reason: 'trash', note: 'Автор ищет работу' });
   });
 
-  test('refuses a text without letters and does not call the model', async () => {
+  test('a text without letters is empty and the model is not called', async () => {
     const model = mockModel({ verdict: 'vacancy', note: '' });
 
-    const result = await classify(publication({ content: '  \n' }), { model });
+    const blank = await classify(publication({ content: '  \n' }), { model });
+    const emoji = await classify(publication({ content: '🔥🔥🔥 2026' }), { model });
 
-    assert.ok(result instanceof NothingToClassifyError);
-    assert.equal(result.reason, 'empty');
+    assert.deepEqual(blank, { kind: 'not_vacancy', reason: 'empty' });
+    assert.deepEqual(emoji, { kind: 'not_vacancy', reason: 'empty' });
     assert.equal(model.doGenerateCalls.length, 0);
   });
 

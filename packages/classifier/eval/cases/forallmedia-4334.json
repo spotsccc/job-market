@@ -12,5 +12,6 @@
       "headline": null
     }
   },
+  "group": "vacancy",
   "expected": "vacancy"
 }

@@ -8,7 +8,7 @@ import type { NewPublicationRow } from './publication.ts';
 import { publications } from './publication.ts';
 import { sources } from './source.ts';
 import type { NewSourceRow, SourceRow } from './source.ts';
-import type { Connector, NotVacancyReason } from './values.ts';
+import type { Connector } from './values.ts';
 import { linkRows } from './write-links.ts';
 import type { LinkToSave } from './write-links.ts';
 
@@ -196,31 +196,30 @@ export async function addPublications(
   return ids;
 }
 
-/** Итог разбора публикации: вакансия или не вакансия с причиной и пояснением. */
+/**
+ * Итог разбора публикации: вакансия или не вакансия с причиной. Пояснение есть только у
+ * `trash`: пустой публикации объяснять нечего.
+ */
 export type PublicationOutcome =
   | { readonly status: 'vacancy' }
-  | {
-      readonly status: 'not_vacancy';
-      readonly reason: NotVacancyReason;
-      readonly note: string;
-    };
+  | { readonly status: 'not_vacancy'; readonly reason: 'empty' }
+  | { readonly status: 'not_vacancy'; readonly reason: 'trash'; readonly note: string };
 
 /**
- * Пишет итог разбора (П12 плана коннекторов): статус, причину и пояснение для `not_vacancy`,
- * `processed_at` — сейчас. У вакансии причина и пояснение стираются.
+ * Пишет итог разбора (П12 плана коннекторов): статус, причину для `not_vacancy` и пояснение для
+ * `trash`, `processed_at` — сейчас. У вакансии причина и пояснение стираются.
  */
 export async function setOutcome(
   db: DbExecutor,
   publicationId: string,
   outcome: PublicationOutcome,
 ): Promise<void> {
-  const notVacancy = outcome.status === 'not_vacancy';
   await db
     .update(publications)
     .set({
       status: outcome.status,
-      notVacancyReason: notVacancy ? outcome.reason : null,
-      note: notVacancy ? outcome.note : null,
+      notVacancyReason: outcome.status === 'not_vacancy' ? outcome.reason : null,
+      note: outcome.status === 'not_vacancy' && outcome.reason === 'trash' ? outcome.note : null,
       processedAt: sql`now()`,
     })
     .where(eq(publications.id, publicationId));
