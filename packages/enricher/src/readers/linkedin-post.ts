@@ -1,5 +1,5 @@
 import { ActorOutputError } from '@job-market/apify';
-import type { ActorRunError, Apify, ApifyRequestError } from '@job-market/apify';
+import type { ActorRun, ActorRunError, Apify, ApifyRequestError } from '@job-market/apify';
 import { and, authors, db, eq, inArray, publications } from '@job-market/db';
 import { log } from '@job-market/logger';
 import { z } from 'zod';
@@ -55,6 +55,17 @@ const PostItemSchema = z.object({
 });
 
 type PostItem = z.infer<typeof PostItemSchema>;
+
+/**
+ * Пост, который актор не смог прочитать, приходит не постом, а таким элементом:
+ * `{ message: 'No post found or wrong input', errorDetails, input }`. Это сбой одного
+ * поста, а не всего запуска.
+ */
+const ErrorItemSchema = z.object({
+  message: z.string(),
+  errorDetails: z.string().nullish(),
+  input: z.string(),
+});
 
 type PostAuthor = { readonly name: string | null; readonly url: string | null };
 
@@ -125,6 +136,43 @@ function requestedId(post: PostItem['post'], wanted: readonly string[]): string 
 }
 
 /**
+ * Тела постов из ответа актора по запрошенным id. Элемент-сбой актора оставляет свой пост
+ * без данных; элемент неизвестной формы — ошибка всего запуска.
+ */
+function postsFromRun(
+  run: ActorRun,
+  wanted: readonly string[],
+): ActorOutputError | Map<string, string> {
+  const bodies = new Map<string, string>();
+  for (const [index, item] of run.items.entries()) {
+    const parsed = PostItemSchema.safeParse(item);
+    if (!parsed.success) {
+      const failed = ErrorItemSchema.safeParse(item);
+      if (!failed.success) {
+        return new ActorOutputError({ index, runId: run.runId, cause: parsed.error });
+      }
+      // Пост остаётся без данных, остальные посты запуска читаются.
+      moduleLog.warn('Actor could not read a LinkedIn post', {
+        runId: run.runId,
+        input: failed.data.input,
+        message: failed.data.message,
+        errorDetails: failed.data.errorDetails,
+      });
+      continue;
+    }
+    const { post, author } = parsed.data;
+    const id = requestedId(post, wanted);
+    if (id === null) continue;
+    const body = postBody(
+      { name: author?.name ?? null, url: author?.profile_url ?? null },
+      post.text ?? '',
+    );
+    if (body !== null) bodies.set(id, body);
+  }
+  return bodies;
+}
+
+/**
  * Читатель постов LinkedIn: сначала посты, которые уже есть в базе, остальные — одним
  * запуском актора.
  */
@@ -158,20 +206,9 @@ export function createLinkedinPostReader(apify: Apify): Reader {
     );
     if (run instanceof Error) return run;
 
-    for (const [index, item] of run.items.entries()) {
-      const parsed = PostItemSchema.safeParse(item);
-      if (!parsed.success) {
-        return new ActorOutputError({ index, runId: run.runId, cause: parsed.error });
-      }
-      const { post, author } = parsed.data;
-      const id = requestedId(post, rest);
-      if (id === null) continue;
-      const body = postBody(
-        { name: author?.name ?? null, url: author?.profile_url ?? null },
-        post.text ?? '',
-      );
-      if (body !== null) bodies.set(id, body);
-    }
+    const read = postsFromRun(run, rest);
+    if (read instanceof Error) return read;
+    for (const [id, body] of read) bodies.set(id, body);
     return bodies;
   }
 

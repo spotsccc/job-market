@@ -157,6 +157,24 @@ describe('createLinkedinPostReader', () => {
     assert.deepEqual([...result.keys()], [FIXTURE_ID]);
   });
 
+  test('reads the other posts when the actor fails one of them', async () => {
+    // Так актор ответил в run 6ReKiivoPTYea2k5y на пост, который не смог прочитать.
+    const missing = 'share:7518125194314571776';
+    fake.scenario.items = [
+      {
+        message: 'No post found or wrong input',
+        errorDetails: 'error, try again later',
+        input: 'https://www.linkedin.com/feed/update/urn:li:share:7518125194314571776',
+      },
+      ...loadFixture('post-detail'),
+    ];
+
+    const result = await createLinkedinPostReader(fake.apify).fetch([missing, FIXTURE_ID]);
+
+    assert.ok(!(result instanceof Error));
+    assert.deepEqual([...result.keys()], [FIXTURE_ID]);
+  });
+
   test('asks the actor for a post linked by share and recognizes it by share_urn', async () => {
     fake.scenario.items = loadFixture('post-detail');
     const shareId = 'share:7525883512286294017';
