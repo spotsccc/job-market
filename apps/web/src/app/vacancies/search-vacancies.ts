@@ -85,17 +85,20 @@ export type VacancySearchResult = {
   readonly total: number;
   /**
    * Компания фильтра; `null` — фильтра нет или компании с таким id нет. Во втором случае
-   * `items` пуст (П9 плана компаний).
+   * `items` пуст (П9, packages/db/src/company/README.md).
    */
   readonly company: CompanyFilter | null;
 };
 
-/** Компания фильтра (П9 плана компаний). */
+/** Компания фильтра (П9, packages/db/src/company/README.md). */
 export type CompanyFilter = { readonly id: string; readonly name: string };
 
 export const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu;
 
-/** Компания фильтра по id. Не uuid — компании точно нет, а Postgres на таком id бросил бы ошибку (E8). */
+/**
+ * Компания фильтра по id. Не uuid — компании точно нет, а Postgres на таком id бросил бы ошибку
+ * (E8, packages/db/src/company/README.md).
+ */
 async function findCompany(id: string): Promise<CompanyFilter | null> {
   if (!UUID.test(id)) return null;
   const [row] = await db

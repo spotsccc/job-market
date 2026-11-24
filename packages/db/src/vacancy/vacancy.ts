@@ -88,7 +88,8 @@ export const vacancies = pgTable(
     companyUrl: text(),
     hiringParty: text({ enum: HIRING_PARTIES }).notNull(),
     /**
-     * Компания из справочника: её находит сопоставление по `company` и `companyUrl` (П3).
+     * Компания из справочника: её находит сопоставление по `company` и `companyUrl` (П3,
+     * packages/db/src/company/README.md).
      * `null` — у вакансии нет ни одного ключа компании.
      */
     companyId: uuid().references(() => companies.id, { onDelete: 'restrict' }),

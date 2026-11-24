@@ -24,6 +24,9 @@ pnpm check          # turbo run format:check lint check-types
 | `apps/web` | Next.js 16 (App Router, `src/app`) |
 | `packages/channel-linkedin` | поиск постов LinkedIn через актор Apify |
 | `packages/channel-telegram` | чтение публичных Telegram-каналов через веб-превью `t.me/s/<канал>` |
+| `packages/classifier` | вакансия ли публикация, и если нет — почему — [README](packages/classifier/README.md) |
+| `packages/extractor` | роли вакансии из текста публикации: профессия, места, навыки, условия — [README](packages/extractor/README.md) |
+| `packages/db` | схема и запросы; запись публикаций и вакансий — [README](packages/db/src/publication/README.md), компании — [README](packages/db/src/company/README.md) |
 | `packages/geo` | гео-справочник: страны, регионы найма и города из GeoNames; разбор и поиск мест — [README](packages/geo/README.md) |
 | `packages/errors` | общие ошибки на `@spotsccc/error-as-value`: базовая `AppError` (`extendable: true`), остальные — `createTaggedError({ ..., extends: AppError })` |
 | `packages/typescript-config` | общие tsconfig: `base.json`, `node.json`, `nextjs.json` |
@@ -41,16 +44,16 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Перенос постов в новую модель
 
-Посты `legacy_posts` переносятся в новую модель (`publications`, `authors`, `vacancies`, `vacancy_locations`) через новый экстрактор `@job-market/extractor` — [план](docs/plans/vacancy-extraction.html). Скрипт идёт с машины владельца: перенос дольше, чем живёт функция Vercel.
+Посты `legacy_posts` переносятся в новую модель (`publications`, `authors`, `vacancies`, `vacancy_locations`) через новый экстрактор `@job-market/extractor` — [README переноса](apps/web/src/transfer/README.md), [README экстрактора](packages/extractor/README.md). Скрипт идёт с машины владельца: перенос дольше, чем живёт функция Vercel.
 
 Нужны `DATABASE_URL`, `AI_GATEWAY_API_KEY` и `APIFY_TOKEN` (читатели ссылок LinkedIn). Без `NODE_ENV` переменные берутся из `apps/web/.env.local`, с `NODE_ENV=production` — только из окружения, как у `pnpm db:migrate`. Перед переносом на проде — снимок базы.
 
 ```bash
-# S4: пробный запуск — модель вызывается, но каждая транзакция откатывается
+# пробный запуск — модель вызывается, но каждая транзакция откатывается
 NODE_ENV=production DATABASE_URL=… AI_GATEWAY_API_KEY=… APIFY_TOKEN=… pnpm --filter @job-market/web vacancies:transfer --dry-run --limit 20
-# S5: сотня постов
+# сотня постов
 NODE_ENV=production … pnpm --filter @job-market/web vacancies:transfer --limit 100
-# S6: все оставшиеся; повторный запуск печатает «Постов 0»
+# все оставшиеся; повторный запуск печатает «Постов 0»
 NODE_ENV=production … pnpm --filter @job-market/web vacancies:transfer
 ```
 
@@ -78,7 +81,7 @@ pnpm --filter @job-market/extractor eval --compare eval/reports/<отчёт>.jso
 
 ### Набор проверки классификатора
 
-20 размеченных публикаций в `packages/classifier/eval/cases`: 8 вакансий и по 4 на каждую причину «не вакансия» — `job_seeker`, `no_specific_role`, `not_hiring` ([план](docs/plans/classifier.html)). Прогон зовёт настоящую модель (20 вызовов), поэтому в `pnpm test` не входит:
+20 размеченных публикаций в `packages/classifier/eval/cases`: 8 вакансий и по 4 на каждую причину «не вакансия» — `job_seeker`, `no_specific_role`, `not_hiring` ([README](packages/classifier/README.md)). Прогон зовёт настоящую модель (20 вызовов), поэтому в `pnpm test` не входит:
 
 ```bash
 pnpm --filter @job-market/classifier eval

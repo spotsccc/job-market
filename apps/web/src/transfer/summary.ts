@@ -4,7 +4,7 @@ import type { Written } from './outcome.ts';
 
 export type TransferError = { readonly externalId: string; readonly error: string };
 
-/** Итог запуска (S4–S6). Его копит запуск по ходу пачек. */
+/** Итог запуска, который печатает скрипт переноса. Его копит запуск по ходу пачек. */
 export type TransferSummary = {
   /** Постов взято в запуск. */
   posts: number;
@@ -15,7 +15,7 @@ export type TransferSummary = {
   /** Посты без текста: `not_vacancy` без вызова модели (П5). */
   notVacancy: number;
   errors: TransferError[];
-  /** Публикацию уже записал другой запуск (E6). */
+  /** Публикацию уже записал другой запуск (E6, packages/db/src/publication/README.md). */
   alreadyTransferred: number;
   /** Копии, оригинал которых упал в этом запуске: ждут следующего (П4). */
   postponed: number;

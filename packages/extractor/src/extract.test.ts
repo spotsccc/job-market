@@ -37,7 +37,7 @@ const TREE: readonly OccupationNode[] = [
   node('it', 'root', 'Софт и инфраструктура.'),
 ];
 
-/** Текст сценария S1 плана vacancy-extraction. */
+/** Типичная вакансия: стек, опыт, места найма и офиса, язык и зарплата. */
 const publication: PublicationForModel = {
   connector: 'open-telegram',
   content:

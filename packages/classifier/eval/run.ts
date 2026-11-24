@@ -1,5 +1,5 @@
 /**
- * Прогон набора проверки классификатора настоящей моделью (Э2 плана classifier):
+ * Прогон набора проверки классификатора настоящей моделью:
  * `pnpm --filter @job-market/classifier eval`.
  *
  * Ключ — `AI_GATEWAY_API_KEY` из окружения или `apps/web/.env.local`. Отчёт пишется в `eval/reports/`.

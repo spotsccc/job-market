@@ -13,8 +13,8 @@ import type { TransferSummary } from './summary.ts';
 import { writeBatch } from './write.ts';
 
 /**
- * Перенос постов `legacy_posts` в новую модель через новый экстрактор (Э5 плана
- * vacancy-extraction, П1–П8). Это единственный код, который читает старую модель и пишет новую.
+ * Перенос постов `legacy_posts` в новую модель через новый экстрактор (П1–П8). Это
+ * единственный код, который читает старую модель и пишет новую.
  */
 export type { TransferError, TransferSummary } from './summary.ts';
 

@@ -22,7 +22,7 @@ export type Score = {
   }[];
 };
 
-/** Доля совпавших вердиктов — одна метрика набора (S5). */
+/** Доля совпавших вердиктов — одна метрика набора. */
 export function score(outcomes: readonly CaseOutcome[]): Score {
   const byVerdict: Partial<Record<Verdict, { matched: number; total: number }>> = {};
   const confusion = new Map<string, { expected: Verdict; actual: Verdict; ids: string[] }>();

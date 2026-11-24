@@ -43,7 +43,10 @@ function withoutCompany(params: SearchParams): string {
   return query === '' ? '/vacancies' : `/vacancies?${query}`;
 }
 
-/** Чип фильтра компании (П9 плана компаний): название или «не найдена» и ссылка снятия. */
+/**
+ * Чип фильтра компании (П9, packages/db/src/company/README.md): название или «не найдена» и ссылка
+ * снятия.
+ */
 function CompanyChip({
   name,
   removeHref,

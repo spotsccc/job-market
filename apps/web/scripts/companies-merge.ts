@@ -1,5 +1,5 @@
 /**
- * Слияние дублей компаний (Э4 плана companies):
+ * Слияние дублей компаний (П7, packages/db/src/company/README.md):
  * `pnpm --filter @job-market/web companies:merge --from <id> --into <id>`. Ключи и вакансии
  * `--from` переходят к `--into`, компания `--from` удаляется. Ошибка — код выхода 1.
  */

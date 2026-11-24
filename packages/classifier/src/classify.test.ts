@@ -22,7 +22,7 @@ function mockModel(output: unknown): MockLanguageModelV4 {
   });
 }
 
-/** Текст сценария S1 плана классификатора. */
+/** Типичная вакансия: одна роль, стек и формат работы. */
 function publication(overrides: Partial<PublicationForModel> = {}): PublicationForModel {
   return {
     connector: 'open-telegram',

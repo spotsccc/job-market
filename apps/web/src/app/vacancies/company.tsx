@@ -14,7 +14,7 @@ export function hostname(url: string): string {
 
 /**
  * Компания: из справочника — ссылка на все её вакансии, без него — текст как в вакансии
- * (П9 плана компаний); рядом — ссылка на сайт компании, если он есть.
+ * (П9, packages/db/src/company/README.md); рядом — ссылка на сайт компании, если он есть.
  */
 export function Company({
   vacancy,

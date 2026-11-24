@@ -28,7 +28,7 @@ export type Prepared = {
   readonly mapped: MappedPost;
   /** Текст с разделами по ссылкам (П8). */
   readonly content: string;
-  /** Хэш текста без разделов (П4). */
+  /** Хэш текста без разделов (П8). */
   readonly hash: string;
   /** Что енричер сделал с каждой ссылкой текста (П8): пишется в `publication_links`. */
   readonly links: readonly LinkReport[];

@@ -19,7 +19,10 @@ export type LocatedPlaces = {
   readonly places: readonly PlaceToSave[];
   /** Среди мест найма есть «откуда угодно». */
   readonly isRemoteFromAnywhere: boolean;
-  /** `raw` мест по порядку, включая «откуда угодно»: по ним ищет `/vacancies` (П17). */
+  /**
+   * `raw` мест по порядку, включая «откуда угодно»: по ним ищет `/vacancies` (П17,
+   * packages/db/src/publication/README.md).
+   */
   readonly locations: readonly string[];
 };
 
@@ -38,7 +41,8 @@ function outcome(place: PlaceWords, resolved: ResolvedPlace): Outcome {
   if (found.kind === 'anywhere')
     return role === 'hiring' ? { kind: 'anywhere' } : { kind: 'dropped' };
   if (found.kind === 'region') {
-    // partial в базе бывает только у страны: регион по менее точному полю — resolved (П16).
+    // partial в базе бывает только у страны: регион по менее точному полю — resolved
+    // (П16, packages/extractor/README.md).
     return { kind: 'row', row: { role, raw, resolution: 'resolved', regionCode: found.code } };
   }
   if (found.kind === 'country') {
@@ -73,9 +77,10 @@ function locateRole(
 }
 
 /**
- * Сводит места всех ролей пачки к справочнику одним вызовом `resolvePlaces` (П16). Ответ —
- * по роли в том же порядке: строки мест, «откуда угодно» и `locations`. Нераспознанное место —
- * не ошибка, а строка с `not_found` или `ambiguous`; `GeoQueryError` — только сбой базы.
+ * Сводит места всех ролей пачки к справочнику одним вызовом `resolvePlaces` (П16,
+ * packages/extractor/README.md). Ответ — по роли в том же порядке: строки мест, «откуда
+ * угодно» и `locations`. Нераспознанное место — не ошибка, а строка с `not_found` или
+ * `ambiguous`; `GeoQueryError` — только сбой базы.
  */
 export async function locateVacancies(
   db: GeoDb,

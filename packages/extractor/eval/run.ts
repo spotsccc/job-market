@@ -1,5 +1,5 @@
 /**
- * Прогон набора проверки настоящей моделью (Э2 плана vacancy-extraction):
+ * Прогон набора проверки настоящей моделью:
  *
  * `pnpm --filter @job-market/extractor eval` — все случаи;
  * `… eval --case geekjobs-10533 --case synthetic-paris` — только эти;

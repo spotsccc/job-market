@@ -47,7 +47,8 @@ async function mapLimit<T, R>(
 /**
  * Посты пачки с текстом после енричера (П8). Ссылка, которая не прочиталась, поста не
  * останавливает: он идёт в экстрактор без её раздела, а статус ссылки пишется в
- * `publication_links`. Хэш — по тексту поста без разделов (П4).
+ * `publication_links`. Хэш — по тексту поста без разделов (П8; П4,
+ * packages/db/src/publication/README.md).
  */
 async function enrichPosts(
   posts: readonly LegacyPostRow[],
@@ -159,7 +160,10 @@ function toVacancy(role: ExtractedRole, located: LocatedPlaces): VacancyToSave {
   };
 }
 
-/** Места всех ролей пачки — одним вызовом справочника; его сбой — ошибка всех постов (П6, П16). */
+/**
+ * Места всех ролей пачки — одним вызовом справочника; его сбой — ошибка всех постов (П6; П16,
+ * packages/extractor/README.md).
+ */
 async function locateRoles(db: DbExecutor, found: readonly Found[]): Promise<void> {
   const located = await locateVacancies(
     db,
@@ -185,7 +189,8 @@ async function locateRoles(db: DbExecutor, found: readonly Found[]): Promise<voi
 
 /**
  * Итог каждого поста пачки до записи: текст с разделами (П8), пустой текст и копии без
- * модели (П4, П5), экстрактор и справочник (П6, П16). В базу ничего не пишет.
+ * модели (П4, П5), экстрактор и справочник (П6; П16, packages/extractor/README.md). В базу
+ * ничего не пишет.
  */
 export async function prepareBatch(
   db: DbExecutor,

@@ -56,7 +56,7 @@ export type ProcessedPost =
 
 /**
  * Дерево из одного корня: старой модели профессия не нужна, а экстрактор без дерева не
- * работает. Этот разбор и `legacy_vacancies` удаляются после сверки S6 плана vacancy-extraction.
+ * работает. Этот разбор и `legacy_vacancies` удаляются после сверки переноса постов.
  */
 const LEGACY_TREE: readonly OccupationNode[] = [
   { id: 'root', parentId: null, name: 'Без профессии', description: 'Профессия не нужна.' },

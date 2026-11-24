@@ -52,7 +52,7 @@ export type VacancyFilters = {
   readonly hiringParties: readonly HiringParty[];
   /**
    * Компания справочника — id из адреса как есть: не uuid или неизвестный id показываются
-   * как «Компания не найдена», а не отбрасываются молча (П9 плана компаний).
+   * как «Компания не найдена», а не отбрасываются молча (П9, packages/db/src/company/README.md).
    */
   readonly companyId: string | null;
   /** Навыки: все выбранные есть среди обязательных или «плюсом», без учёта регистра. */

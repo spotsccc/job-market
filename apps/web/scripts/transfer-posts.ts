@@ -1,5 +1,5 @@
 /**
- * Перенос постов `legacy_posts` в новую модель (Э5 плана vacancy-extraction):
+ * Перенос постов `legacy_posts` в новую модель (правила — `src/transfer/README.md`):
  *
  * `pnpm --filter @job-market/web vacancies:transfer --dry-run --limit 20` — пробный запуск;
  * `… vacancies:transfer --limit 100` — сотня постов; без `--limit` — все оставшиеся.
@@ -109,7 +109,7 @@ function printSummary(summary: TransferSummary): void {
   if (summary.stopped !== null) console.log(`Запуск остановлен: ${summary.stopped}`);
 }
 
-/** Сверка S6: публикации против постов, вакансии по версии схемы. */
+/** Сверка после переноса: публикации против постов, вакансии по версии схемы. */
 async function printReconciliation(db: Database): Promise<void> {
   const statuses = await db
     .select({ status: publications.status, value: count() })
