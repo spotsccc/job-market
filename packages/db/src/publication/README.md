@@ -22,6 +22,7 @@
 | `markFailed(db, row, error)`                                                  | публикация, разбор которой упал: `failed`, `last_error`, `attempts` + 1; `null` — как у `insertPublication` (П6)     |
 | `replacePublicationLinks(db, publicationId, links)`, `LinkToSave`             | ссылки текста публикации: прежние удаляются, новые пишутся по порядку, хост — по `targetUrl`, а без него — по `url`  |
 | `saveVacancies(db, publicationId, roles)`, `VacancyToSave`, `PlaceToSave`     | роли публикации и их места (П9, П17); компанию каждой роли ищет сама (П6, `packages/db/src/company/README.md`)       |
+| `getSource(db, id)`, `updateSourceSchedule(db, id, schedule)`, `SourceSchedule` | источник для движка (`undefined` — строки нет) и запись полей его расписания: пишет только переданные поля, `null` — как NULL, ничего не решает. Сбой базы — `Error` значением, а не исключение |
 
 Ссылки одной публикации пишутся целиком: повторная запись перезаписывает их, как и вакансии.
 

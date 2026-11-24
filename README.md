@@ -22,6 +22,7 @@ pnpm check          # turbo run format:check lint check-types
 | Пакет | Что это |
 | --- | --- |
 | `apps/web` | Next.js 16 (App Router, `src/app`) |
+| `packages/engine` | движок опроса: обработчик задания «опроси источник» — раздел «Движок» ниже |
 | `packages/connectors` | коннекторы источников: `drain` выкачивает публикации в базу, `mine` добывает из публикации вакансии — раздел «Коннекторы» ниже |
 | `packages/apify` | клиент Apify: запуск акторов, ожидание запуска и чтение датасета |
 | `packages/enricher` | дочитывает ссылки LinkedIn в тексте публикации |
@@ -47,7 +48,7 @@ pnpm check          # turbo run format:check lint check-types
 
 `packages/connectors` — код, который читает источники вакансий и разбирает их публикации. План — [docs/plans/connectors.html](docs/plans/connectors.html). Коннектора два: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify.
 
-Снаружи у коннектора два метода, их будет звать движок; до него коннекторы зовут только тесты:
+Снаружи у коннектора два метода: `drain` зовёт движок (раздел «Движок»), `mine` — пока только тесты:
 
 - `drain(source, { now, deadline })` — выкачивает новые публикации источника, дочитывает в них ссылки LinkedIn и одной транзакцией пишет авторов, публикации, их ссылки (`publication_links`) и курсор `sources.cursor`. Расписание источника (`next_run_at`, ошибки подряд) не трогает. Итог — `done`, `more` или `failed`; `Error` — только сбой базы.
 - `mine(publication)` — разбирает публикацию в `pending` или `processing` классификатором и экстрактором, сводит места ролей к гео-справочнику и одной транзакцией пишет вакансии и итог разбора. Итог — `vacancy`, `not_vacancy` или `skipped`; `Error` — сбой модели, справочника или базы, статус публикации прежний.
@@ -63,6 +64,22 @@ pnpm check          # turbo run format:check lint check-types
 Новый коннектор: id в `CONNECTORS` (`packages/db/src/publication/values.ts`) и метка в `CONNECTOR_LABELS` (`packages/publication-text`), каталог с `parse` и схемами, строка в `createConnectors`. `drain` и `mine` писать не нужно — они общие.
 
 Тесты `drain` и `mine` идут в тестовую базу: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/connectors test`.
+
+## Движок
+
+`packages/engine` — движок опроса источников. План — [docs/plans/drain-source-job.html](docs/plans/drain-source-job.html). Пока в нём один обработчик; tick, который раздаёт задания по расписанию, добавит план [docs/plans/engine.html](docs/plans/engine.html), а очередь Vercel Queues и её потребителя — план подключения очереди.
+
+`handleDrainSourceJob({ sourceId, connectors, queue, now, deadline })` — обработчик задания «опроси источник» из очереди; вызов может прийти повторно. Он читает источник заново, зовёт `drain` его коннектора из реестра `createConnectors`, пишет расписание источника и при необходимости кладёт продолжение в очередь. Итог — `done`, `requeued`, `failed` или `skipped` (источника нет, он выключен или его коннектора нет в реестре) и `inserted` из `drain`. `Error` — сбой базы или отправки продолжения: такое задание повторяет очередь. Сбой сервиса — `failed`, а не `Error`: у него своя пауза.
+
+Публикации и курсор пишет `drain`, расписание решает движок, а пишет `@job-market/db`: чистая `scheduleAfterDrain(source, result, now)` переводит итог `drain` в поля источника, `updateSourceSchedule(db, id, schedule)` пишет их и ничего не решает. Отдельной транзакцией после `drain`:
+
+- `done` — `consecutive_failures` = 0, `last_error` = NULL, `last_success_at` = now; `next_run_at` уже сдвинул tick.
+- `failed` — `consecutive_failures` + 1, `last_error` — текст ошибки, `next_run_at` = now + min(`interval_minutes` · 2^ошибок, 24 ч). Источник не выключается, продолжения нет.
+- `more` — проход не закончен: пишется только `last_fetched_at`, а в очередь идёт продолжение через 60 с с ключом `sourceId:sha256(курсора)` — повтор того же продолжения очередь отбросит.
+
+`last_fetched_at` = now пишется при любом итоге. Очередь — интерфейс `JobQueue` (`enqueue(jobs)` → `Error` или ничего); в тестах движка — `memoryJobQueue({ failOnBatch? })` из `src/memory-job-queue.test-utils.ts`.
+
+Тесты: `schedule.test` проверяет ветки расписания без базы, `drain-source-job.test` — связку на тестовой базе с `open-telegram` на поддельном t.me: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/engine test`.
 
 ## Перенос постов в новую модель
 
