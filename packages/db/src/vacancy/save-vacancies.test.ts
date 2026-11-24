@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
-import { asc, eq, inArray } from 'drizzle-orm';
+import { asc, eq, inArray, like } from 'drizzle-orm';
 
 import { db, getDb } from '../client.ts';
+import { companies, companyKeys } from '../company/company.ts';
 import { publications, sources } from '../publication/index.ts';
 import { saveVacancies } from './save-vacancies.ts';
 import type { PlaceToSave, VacancyToSave } from './save-vacancies.ts';
@@ -55,9 +56,23 @@ async function savedPlaces(vacancyIds: readonly string[]): Promise<string[]> {
   return rows.map((row) => `${String(row.position)} ${row.raw}`);
 }
 
+async function companyNameOf(position: number): Promise<string | null | undefined> {
+  const [row] = await db
+    .select({ name: companies.name })
+    .from(vacancies)
+    .leftJoin(companies, eq(companies.id, vacancies.companyId))
+    .where(eq(vacancies.publicationId, publicationId))
+    .orderBy(asc(vacancies.position))
+    .offset(position)
+    .limit(1);
+  return row?.name;
+}
+
 async function removeTestRows(): Promise<void> {
   await db.delete(publications).where(eq(publications.externalId, `${KEY}/1`));
   await db.delete(sources).where(eq(sources.key, KEY));
+  await db.delete(companyKeys).where(like(companyKeys.value, `%${KEY}%`));
+  await db.delete(companies).where(like(companies.name, `%${KEY}%`));
 }
 
 describe('saveVacancies', () => {
@@ -142,5 +157,28 @@ describe('saveVacancies', () => {
     assert.deepEqual(await savedPlaces([vacancy.id]), []);
     const [row] = await db.select().from(vacancies).where(eq(vacancies.id, vacancy.id));
     assert.deepEqual(row?.locations, []);
+  });
+
+  test('a role gets the company of its name, a role without keys gets none', async () => {
+    await saveVacancies(db, publicationId, [
+      { ...role('Frontend'), company: `Acme ${KEY}` },
+      role('QA'),
+    ]);
+
+    assert.equal(await companyNameOf(0), `Acme ${KEY}`);
+    assert.equal(await companyNameOf(1), null);
+  });
+
+  test('a second write of a role matches its company again', async () => {
+    await saveVacancies(db, publicationId, [{ ...role('Frontend'), company: `Acme ${KEY}` }]);
+
+    await saveVacancies(db, publicationId, [{ ...role('Frontend'), company: `Globex ${KEY}` }]);
+
+    assert.equal(await companyNameOf(0), `Globex ${KEY}`);
+    const acme = await db
+      .select()
+      .from(companies)
+      .where(eq(companies.name, `Acme ${KEY}`));
+    assert.equal(acme.length, 1);
   });
 });
