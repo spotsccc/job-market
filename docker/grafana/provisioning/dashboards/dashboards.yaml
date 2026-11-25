@@ -1,0 +1,9 @@
+# Дашборды из packages/dashboards/dist: их пишет `pnpm --filter @job-market/dashboards build`.
+apiVersion: 1
+providers:
+  - name: job-market
+    type: file
+    allowUiUpdates: false
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards

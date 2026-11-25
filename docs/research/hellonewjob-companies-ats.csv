@@ -1,0 +1,401 @@
+company,career_url,ats,tier,api_probe,probe_status,jobs_found,source
+Miro,https://miro.com/careers/open-positions/,custom/unknown,custom,,,,both
+Semrush,https://careers.semrush.com/en/jobs/,workday,public_api,https://semrush.wd5.myworkdayjobs.com/wday/cxs/semrush/semrushcareers/jobs,ok,7,both
+Wrike,https://www.wrike.com/jobs/,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/wrike/jobs,ok,64,both
+Acronis,https://www.acronis.com/en-us/careers/,workday,public_api,https://acronis.wd502.myworkdayjobs.com/wday/cxs/acronis/acronis_careers/jobs,ok,44,both
+Jetbrains,https://www.jetbrains.com/careers/jobs/,custom/unknown,custom,,,,both
+inDrive,https://indrive.com/en/career/,custom/unknown,custom,,,,both
+Picsart,https://picsart.com/jobs/vacancies,fetch_failed,fetch_failed,,,,both
+MYTONA,https://mytona.com/career,custom/unknown,custom,,,,both
+JettyCloud,https://www.jettycloud.com/vacancies,custom/unknown,custom,,,,both
+Social Discovery Group,https://socialdiscoverygroup.com/vacancies,breezy,public_api,https://social-discovery-ventures.breezy.hr/json,ok,34,both
+Mapbox,https://www.mapbox.com/careers#jobs,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/Mapbox,ok,42,both
+goTRG,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=AA674B442E9B6A1284BD7F78CB0C3E73,paycom,other_ats,,,,hellonewjob
+Grammarly,https://www.grammarly.com/jobs/openings,custom/unknown,custom,,,,both
+Exactpro,https://careers.exactpro.com/careers?location=Array,custom/unknown,custom,,,,both
+Spryker,https://spryker.com/jobs-postings/,fetch_failed,fetch_failed,,,,hellonewjob
+Impress,https://jobs.smile2impress.com/,linkedin,aggregator,,,,both
+Exinity,https://group.exinity.com/careers,custom/unknown,custom,,,,both
+BrainRocket,https://www.brainrocket.com/careers#all,custom/unknown,custom,,,,both
+Altium,https://careers.altium.com/ru/,fetch_failed,fetch_failed,,,,both
+Devexperts,https://careers.devexperts.com/vacancies/,custom/unknown,custom,,,,both
+Joom,https://www.joom-group.com/en/vacancies,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/joom,ok,23,both
+Novakid,https://hr.novakidschool.com/,recruitee,public_api,https://careers-analytics.recruitee.com/api/offers/,fail:000,,both
+TradingView,https://www.tradingview.com/careers/,teamtailor,public_api,https://www.tradingview.com/jobs.rss,fail:404,,both
+Careerist,https://www.careerist.com/jobs,fetch_failed,fetch_failed,,,,both
+Vivid Money,https://careers.vivid.money/#vacancies,personio,public_api,https://vivid.jobs.personio.de/xml,ok,18,both
+WayRay,https://wayray.com/culture/#jobs,greenhouse,public_api,,,,both
+Flo Health,https://flo.health/careers-listing,custom/unknown,custom,,,,both
+Osome,https://careers.osome.com/#jobs,teamtailor,public_api,https://careers.osome.com/jobs.rss,ok,12,both
+BitFury,https://boards.greenhouse.io/bitfury,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/bitfury/jobs,fail:404,,hellonewjob
+Lokalise,https://lokalise.com/job,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/lokalise/jobs,ok,4,both
+Sumsub,https://sumsub.com/careers/all/,teamtailor,public_api,https://careers.sumsub.com/jobs.rss,ok,33,both
+Tonik,https://tonikbank.com/,custom/unknown,custom,,,,both
+Rapyd,https://www.rapyd.net/company/careers-search/,comeet,other_ats,,,,both
+Beamery,https://careers.beamery.com/jobs/?department=&location=#results,fetch_failed,fetch_failed,,,,both
+GAMETEQ,https://tbilisi.headhunter.ge/employer/9235034,hh,aggregator,https://api.hh.ru/vacancies?employer_id=9235034&per_page=1,fail:403,,both
+Virtuozzo,https://apply.workable.com/virtuozzo/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/virtuozzo,ok,0,both
+Glera Games,https://glera-games.com/jobs/,custom/unknown,custom,,,,both
+Easybrain,https://easybrain.com/careers,custom/unknown,custom,,,,both
+tinyBuild GAMES,https://www.tinybuild.com/jobs,custom/unknown,custom,,,,both
+People AI,https://people.ai/about-us/careers/,fetch_failed,fetch_failed,,,,both
+Nexters,https://nexters.com/en/about/alljobs,custom/unknown,custom,,,,both
+BigID,https://bigid.com/company/careers/#job_board,fetch_failed,fetch_failed,,,,both
+Quadcode,https://jobs.quadcode.com/jobs,lever,public_api,https://api.lever.co/v0/postings/quadcode?mode=json,fail:404,,both
+F5 NGINX,https://ffive.wd5.myworkdayjobs.com/NGINX,workday,public_api,https://ffive.wd5.myworkdayjobs.com/wday/cxs/ffive/NGINX/jobs,fail:403,,hellonewjob
+Unlimint,https://www.unlimint.com/careers/,fetch_failed,fetch_failed,,,,hellonewjob
+Symfa,https://symfa.com/,custom/unknown,custom,,,,hellonewjob
+ZiMAD,https://zimad.com/careers/,custom/unknown,custom,,,,both
+SoftGamings,https://www.softgamings.com/careers/,custom/unknown,custom,,,,both
+Gaijin Entertainment,https://gaijinent.com/job,custom/unknown,custom,,,,both
+Mediacube,https://mediacube.io/en-AR/vacancies,custom/unknown,custom,,,,both
+Wheely,https://wheely.com/en/careers,custom/unknown,custom,,,,both
+Crypton Studio,https://crypton.studio/en/career,linkedin,aggregator,,,,both
+Artec 3D,https://careers.artec3d.com/#positions,custom/unknown,custom,,,,both
+Soft2Bet,https://www.soft2bet.com/career,fetch_failed,fetch_failed,,,,hellonewjob
+Plesk,https://www.plesk.com/careers/,custom/unknown,custom,,,,both
+AdTech Holding,https://adtechholding.com/#careers,linkedin,aggregator,,,,both
+Xsolla,https://xsolla.com/careers/vacancies,lever,public_api,https://api.lever.co/v0/postings/xsolla?mode=json,ok,188,both
+Movavi,https://job.movavi.ru/,custom/unknown,custom,,,,both
+Toloka,https://toloka.ai/careers/,custom/unknown,custom,,,,both
+At-Bay,https://www.at-bay.com/about/careers/#jobs,custom/unknown,custom,,,,both
+Kolesa Group,https://kolesa.group/career/job,custom/unknown,custom,,,,hellonewjob
+Altoros,https://www.altoroslabs.com/,linkedin,aggregator,,,,both
+Gurtam,https://gurtam.com/en/jobs,custom/unknown,custom,,,,both
+ManyChat,https://manychat.com/careers,fetch_failed,fetch_failed,,,,both
+QuickNode,https://boards.greenhouse.io/quiknodeinc,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/quicknode,ok,2,both
+ClickHouse,https://clickhouse.com/company/careers,custom/unknown,custom,,,,both
+Accel Club,https://accelclub.notion.site/Accel-Club-Job-Board,custom/unknown,custom,,,,both
+OneSoil,https://onesoil.ai/en/careers,fetch_failed,fetch_failed,,,,hellonewjob
+3Commas,https://careers.3commas.io/,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/3commas,ok,1,both
+Prisma Labs,https://prismalabs.notion.site/Careers-at-Prisma-Labs-eb709e36aba8405c8c189fad1c226389,notion,notion,,,,both
+Finom,https://finom.jobs.personio.de/,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/finom/jobs,ok,20,both
+Improvado,https://jobs.lever.co/improvadoio,lever,public_api,https://api.lever.co/v0/postings/improvadoio?mode=json,fail:404,,hellonewjob
+CodeSignal,https://boards.greenhouse.io/codesignal,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/codesignal/jobs,fail:404,,hellonewjob
+Kodland,https://kodlandcareer.notion.site/kodlandcareer/Jobs-at-Kodland-32dbf4cd9577449bab2a6945f89c47ba,notion,notion,,,,both
+Legionfarm,https://jobs.lever.co/legion-farm,lever,public_api,https://api.lever.co/v0/postings/legion-farm?mode=json,fail:404,,hellonewjob
+Profi,https://apply.workable.com/profi/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/profi,ok,0,both
+Scentbird,https://scentbird.breezy.hr/,breezy,public_api,https://scentbird.breezy.hr/json,fail:404,,hellonewjob
+Krisp,https://krisp.ai/careers/#job_listings,custom/unknown,custom,,,,both
+Immigram,https://immigram.io/careers#positions,notion,notion,,,,both
+SuperAnnotate,https://www.superannotate.com/careers,lever,public_api,https://api.lever.co/v0/postings/superannotate?mode=json,ok,3,both
+Temporal,https://jobs.lever.co/temporal/,lever,public_api,https://api.lever.co/v0/postings/temporal?mode=json,fail:404,,hellonewjob
+Palta,https://boards.greenhouse.io/paltaltd,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/paltaltd/jobs,fail:404,,hellonewjob
+Outschool,https://boards.greenhouse.io/outschool,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/outschool/jobs,fail:404,,hellonewjob
+ZeroAvia,https://apply.workable.com/zeroavia/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/zeroavia,ok,12,both
+Salmon,https://salmon.ph/job-board,ashby,public_api,,,,both
+WeLoveNoCode,https://welovenocode.notion.site/Open-Positions-in-Welovenocode-public-4aaf2271b6404be39a92893ccdc58b0d,notion,notion,,,,both
+Compass Pathways,https://compasspathways.com/join-us/#careers,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/compasspathways/jobs,ok,42,both
+HumanSignal (ex Heartex),https://heartex.com/careers#openings,fetch_failed,fetch_failed,,,,both
+Welltory,https://welltory.com/,notion,notion,,,,both
+ANNA Money,https://anna.money/careers/,custom/unknown,custom,,,,both
+Plata Card (ex Different Technologies),https://platacard.mx/en/,fetch_failed,fetch_failed,,,,both
+Ahrefs,https://ahrefs.com/jobs,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/ahrefsjobs/jobs,ok,12,both
+Sila Nanotechnologies,https://www.silanano.com/careers,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/silananotechnologies/jobs,ok,31,both
+Rarible,https://jobs.lever.co/Rarible,lever,public_api,https://api.lever.co/v0/postings/Rarible?mode=json,fail:404,,hellonewjob
+HomeBuddy,https://www.homebuddy.com/careers,custom/unknown,custom,,,,both
+Teleport,https://goteleport.com/careers/,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/goteleport,ok,26,both
+CoinsPaid,https://jobs.eu.lever.co/coinspaid/,lever,public_api,https://api.eu.lever.co/v0/postings/coinspaid?mode=json,ok,33,both
+Universal Hydrogen,https://hydrogen.aero/careers/,linkedin,aggregator,,,,both
+ElectroNeek,https://electroneek.com/careers/,custom/unknown,custom,,,,both
+PVG Indonesia,https://pvg.co.id/job,custom/unknown,custom,,,,both
+Tabby,https://tabby.ai/en-AE/careers,custom/unknown,custom,,,,both
+Endel,https://endel.io/jobs,linkedin,aggregator,,,,both
+Prodly,https://boards.greenhouse.io/prodlyjobs,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/prodlyjobs/jobs,ok,0,both
+Zededa,https://zededa.com/company/careers/,rippling,public_api,https://api.rippling.com/platform/api/ats/v1/board/zededa/jobs,ok,1,both
+Space307,https://space307.team/,custom/unknown,custom,,,,both
+Oxygen,https://oxygen.us/company/careers/,yc,aggregator,,,,both
+VOLKA GAMES,https://jobs.lever.co/volka,lever,public_api,https://api.lever.co/v0/postings/volka?mode=json,fail:404,,hellonewjob
+Chattermill,https://boards.greenhouse.io/chattermill/,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/chattermill,ok,1,both
+Find My Kids,https://findmykids.org/,linkedin,aggregator,,,,both
+Zesty,https://zesty.co/careers/,comeet,other_ats,,,,both
+Mighty Buildings,https://www.mightybuildings.com/careers#joblist,fetch_failed,fetch_failed,,,,hellonewjob
+YallaHub,https://yallahub.ae/,fetch_failed,fetch_failed,,,,hellonewjob
+Lyka,https://lyka.com.au/careers,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/lyka,ok,19,both
+EBAC,https://ebac.gupy.io/,custom/unknown,custom,,,,both
+HQSoftware,https://hqsoftwarelab.com/,custom/unknown,custom,,,,hellonewjob
+SVMD,https://svmd.io/,linkedin,aggregator,,,,both
+Smartcat,https://www.smartcat.com/career/,custom/unknown,custom,,,,both
+FunCorp,https://funcorp.dev/?unit=ifunny#vacancies,custom/unknown,custom,,,,both
+P2P Validator,https://p2porg.global.huntflow.io/,huntflow,other_ats,,,,hellonewjob
+HypeAuditor,https://hypeauditor.com/about/company/,custom/unknown,custom,,,,hellonewjob
+PitchMe.co,https://pitchme.co/,linkedin,aggregator,,,,both
+Pagoda (ex NEAR Protocol),https://www.pagoda.co/careers,fetch_failed,fetch_failed,,,,hellonewjob
+Ultimate Guitar (Muse Group),https://mu.se/careers,comeet,other_ats,,,,hellonewjob
+Intento,https://intento.recruitee.com/#section-187103,recruitee,public_api,https://careers-analytics.recruitee.com/api/offers/,fail:000,,both
+QuantumSoft,https://www.quantumsoft.pro/,custom/unknown,custom,,,,hellonewjob
+Sensorium,https://sensoriumxr.com/careers,linkedin,aggregator,,,,both
+Velvetech,https://www.velvetech.com/careers/,huntflow,other_ats,,,,hellonewjob
+CloudLinux,https://www.cloudlinux.com/about-us-company-jobs/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/cloudlinux-1,ok,34,both
+Destinus,https://destinus.ch/careers/,fetch_failed,fetch_failed,,,,hellonewjob
+FORMEL Skin,https://formelskin.jobs.personio.de/,personio,public_api,https://formelskin.jobs.personio.de/xml,fail:404,,hellonewjob
+Synder,https://synder.com/careers/,bamboohr,public_api,https://synder.bamboohr.com/careers/list,ok,0,both
+Chainstack,https://chainstack.bamboohr.com/jobs/,bamboohr,public_api,https://chainstack.bamboohr.com/careers/list,ok,6,both
+Nebius,https://nebius.breezy.hr/,breezy,public_api,https://nebius.breezy.hr/json,fail:404,,hellonewjob
+Fireart Studio,https://fireart.studio/careers/#vacancies,custom/unknown,custom,,,,both
+Centro (Ortnec),https://www.centro.team/cyprus-office,custom/unknown,custom,,,,both
+Prequel,https://www.ycombinator.com/companies/prequel/jobs,huntflow,other_ats,,,,both
+Ultima.School,https://ultima.school/,linkedin,aggregator,,,,both
+Renderforest,https://www.renderforest.com/careers,custom/unknown,custom,,,,both
+Truv,https://jobs.lever.co/truv,lever,public_api,https://api.lever.co/v0/postings/truv?mode=json,ok,9,both
+ZeptoLab,https://careers.zeptolab.com/join-us/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/zeptolab,ok,1,both
+Altenar,https://altenar.com/career/,bamboohr,public_api,https://altenar.bamboohr.com/careers/list,ok,12,both
+Educate Online,https://career.educate-online.org/jobs,custom/unknown,custom,,,,hellonewjob
+Replika,https://www.ycombinator.com/companies/replika/jobs,teamtailor,public_api,https://careers.replika.com/jobs.rss,ok,10,both
+Àlber Blanc CAPITAL,https://alberblanc.com/careers,custom/unknown,custom,,,,hellonewjob
+TripleTen (ex Practicum),https://www.comeet.com/jobs/practicum/98.008,comeet,other_ats,,,,both
+OneMarketData,https://www.onetick.com/careers,bamboohr,public_api,https://onemarketdata.bamboohr.com/careers/list,fail:401,,both
+Сonundrum,https://conundrum.ai/careers,fetch_failed,fetch_failed,,,,hellonewjob
+SOAX,https://soax.com/career,custom/unknown,custom,,,,both
+1inch Network,https://cryptocurrencyjobs.co/startups/1inch-network/,custom/unknown,custom,,,,both
+Mbanq,https://www.mbanq.com/careers/,fetch_failed,fetch_failed,,,,hellonewjob
+OUTSIDE DIGITAL (ex Kodix),https://outside.digital/career,custom/unknown,custom,,,,both
+Hyperskill,https://hi.hyperskill.org/careers,fetch_failed,fetch_failed,,,,both
+Choise.com,https://wellfound.com/company/choise-dot-com,wellfound,aggregator,,,,both
+FaceApp,https://www.faceapp.com/careers/,custom/unknown,custom,,,,both
+Nova Credit,https://jobs.lever.co/neednova,lever,public_api,https://api.lever.co/v0/postings/neednova?mode=json,fail:404,,hellonewjob
+Behavox,https://www.behavox.com/about/jobs/,fetch_failed,fetch_failed,,,,both
+Nylas,https://ats.comparably.com/api/v1/gh/nylas,other_board,aggregator,,,,hellonewjob
+Beacon,https://www.beacon.com/careers,custom/unknown,custom,,,,hellonewjob
+Retail Rocket,https://retailrocket.pt/career/,fetch_failed,fetch_failed,,,,hellonewjob
+Toughbyte,https://www.toughbyte.com/clients/toughbyte-1,fetch_failed,fetch_failed,,,,hellonewjob
+Voximplant,https://www.voximplant.com/careers,custom/unknown,custom,,,,hellonewjob
+Elephant Games,https://elephant-games.com/career/,custom/unknown,custom,,,,hellonewjob
+XTX Markets,https://www.xtxmarkets.com/#careers,custom/unknown,custom,,,,both
+MySky,https://mysky.com/about,custom/unknown,custom,,,,hellonewjob
+CM Games,https://cm.games/people#vacancies,peopleforce,public_api,https://cmgames.peopleforce.io/careers.json,ok,json,hellonewjob
+Wintermute,https://jobs.lever.co/wintermute-trading,lever,public_api,https://api.lever.co/v0/postings/wintermute-trading?mode=json,fail:000,,hellonewjob
+First Line Software,https://careers.firstlinesoftware.com/career/vacancies,custom/unknown,custom,,,,hellonewjob
+Odysseus Data Services,https://odysseusinc.com/,fetch_failed,fetch_failed,,,,hellonewjob
+ZION Development,https://devzion.com/careers/,hh,aggregator,https://api.hh.ru/vacancies?employer_id=5398683&per_page=1,fail:403,,both
+Wallarm,https://wallarm.recruitee.com/our-open-positions,recruitee,public_api,https://wallarm.recruitee.com/api/offers/,fail:000,,both
+Planner 5D,https://planner5d.multiscreensite.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Protofire,https://protofire.io/careers,custom/unknown,custom,,,,hellonewjob
+Yukon Group,https://yukongroup.eu/careers/,custom/unknown,custom,,,,hellonewjob
+AppFollow,https://jobs.lever.co/appfollow,lever,public_api,https://api.lever.co/v0/postings/appfollow?mode=json,ok,0,both
+SpatialChat,https://www.spatial.chat/,linkedin,aggregator,,,,both
+Neon,https://neon.tech/careers,fetch_failed,fetch_failed,,,,both
+Cattle Care,https://www.cattle-care.com/,linkedin,aggregator,,,,both
+Collectly,https://jobs.lever.co/CollectlyInc.,lever,public_api,https://api.lever.co/v0/postings/CollectlyInc.?mode=json,fail:404,,hellonewjob
+Skipp,https://www.skipp.dev/talent,custom/unknown,custom,,,,both
+Luminai,https://www.luminai.com/careers,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/luminai,ok,15,both
+B9,https://bnine.com/careers/,linkedin,aggregator,,,,both
+Narrative BI,https://narrativebi.notion.site/Work-at-Narrative-BI-2724d8946b7c4835916446cb57263117,notion,notion,,,,both
+Optic,https://www.optic.xyz/,linkedin,aggregator,,,,both
+110 Industries,https://bonddaria.notion.site/110-Industries-is-hiring-03eca12a1d1a47988bb13c3d5afc53fc,linkedin,aggregator,,,,both
+Adapty,https://adapty.io/jobs/,custom/unknown,custom,,,,both
+Fluence Labs,https://fluence.one/join.html,fetch_failed,fetch_failed,,,,hellonewjob
+Softr,https://www.softr.io/jobs,custom/unknown,custom,,,,both
+Lunchclub,https://jobs.lever.co/lunchclub,lever,public_api,https://api.lever.co/v0/postings/lunchclub?mode=json,fail:404,,hellonewjob
+GPU AUDIO,https://www.gpu.audio/jobs,fetch_failed,fetch_failed,,,,both
+Qonversion,https://angel.co/company/qonversion/jobs,wellfound,aggregator,,,,both
+Zerion,https://jobs.lever.co/zerion,lever,public_api,https://api.lever.co/v0/postings/zerion?mode=json,ok,1,both
+Veryfi,https://www.ycombinator.com/companies/veryfi-inc/jobs,yc,aggregator,,,,both
+Evolwe AI,https://evolwe.ai/join-the-team/,custom/unknown,custom,,,,both
+ZenPulsar,https://zenpulsar.com/#Careers,linkedin,aggregator,,,,both
+Hypemasters,https://apply.workable.com/hypemasters/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/hypemasters,ok,0,both
+Wizart,https://wizart.ai/careers#positions,custom/unknown,custom,,,,both
+Gavity,https://gaviti.com/careers/,custom/unknown,custom,,,,hellonewjob
+Podcastle,https://podcastle.ai/careers,fetch_failed,fetch_failed,,,,both
+Toldy,https://www.toldy.com/,custom/unknown,custom,,,,hellonewjob
+nGrow,https://www.ngrow.ai/jobs,custom/unknown,custom,,,,both
+Neatsy,https://neatsy.notion.site/neatsy/Careers-at-Neatsy-d100c73967b44a7292da17b2daf6b27d,notion,notion,,,,both
+Crystal Blockchain,https://crystalblockchain.com/careers/,linkedin,aggregator,,,,both
+Pixellu,https://careers.pixellu.com/,linkedin,aggregator,,,,both
+Sanas,https://www.sanas.ai/careers,rippling,public_api,https://api.rippling.com/platform/api/ats/v1/board/sanas/jobs,ok,8,hellonewjob
+Kewazo,https://www.kewazo.com/career-at-kewazo,fetch_failed,fetch_failed,,,,hellonewjob
+InTone,https://intone.io/,linkedin,aggregator,,,,both
+Monolith,https://www.getmonolith.com/,linkedin,aggregator,,,,both
+Inworld AI,https://www.inworld.ai/careers#job-openings,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/inworld-ai,ok,16,both
+Readymag,https://readymag.com/readymag/we-are-hiring/,fetch_failed,fetch_failed,,,,hellonewjob
+Yoffix,https://yoffix.com/,join,other_ats,https://join.com/companies/yoffix,ok,next_data,both
+Cube Dev,https://cube.dev/careers,fetch_failed,fetch_failed,,,,both
+AMMA,https://amma.family/,custom/unknown,custom,,,,hellonewjob
+Maroo,https://www.ycombinator.com/companies/maroo/jobs,yc,aggregator,,,,both
+Superdao,https://jobs.superdao.co/,fetch_failed,fetch_failed,,,,hellonewjob
+SegmentStream,https://segmentstream.com/careers,fetch_failed,fetch_failed,,,,both
+Telegram,https://telegram.org/jobs,telegram,aggregator,,,,both
+Buddy.ai,https://buddy.ai/,wellfound,aggregator,,,,both
+Coding Invaders,https://codinginvaders.com/,linkedin,aggregator,,,,both
+Revealbot,https://revealbot.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Zero,https://zerosystems.com/about/careers/,fetch_failed,fetch_failed,,,,hellonewjob
+Tripsider (YouTravel.me),https://ytme.atlassian.net/wiki/spaces/TM/overview,custom/unknown,custom,,,,both
+Enki,https://angel.co/company/enki/jobs,linkedin,aggregator,,,,both
+Eschatology Entertainment,https://eschatology-entertainment.com/,peopleforce,public_api,https://ee.peopleforce.io/careers.json,ok,json,both
+Conte.ai&Postoplan,https://postoplan.contenive.com/,linkedin,aggregator,,,,both
+Brickit,https://brickit.app/,linkedin,aggregator,,,,both
+Fibery,https://fibery.io/blog/we-are-hiring/,fetch_failed,fetch_failed,,,,both
+Workclass,https://workclass.co/,linkedin,aggregator,,,,both
+Haut.AI,https://haut.ai/#wearehiring,custom/unknown,custom,,,,both
+Headframe,https://headframe.io/,linkedin,aggregator,,,,both
+Mad Curve,https://madcurve.com/,linkedin,aggregator,,,,both
+IVM Markets,https://www.ivmmarkets.com/,custom/unknown,custom,,,,hellonewjob
+Kadmos,https://www.kadmos.io/career/job-list,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/kadmos2/jobs,fail:404,,both
+Monite,https://monite.notion.site/Careers-Monite-9ad0d34fcd0e4ec5ba1017aab6df686f,notion,notion,,,,both
+Colife,https://colife.ae/,custom/unknown,custom,,,,hellonewjob
+Right Balance,https://rightbalance.io/join,custom/unknown,custom,,,,both
+Moeco,https://www.moeco.io/,wellfound,aggregator,,,,both
+Termius,https://jobs.lever.co/Termius/,lever,public_api,https://api.lever.co/v0/postings/Termius?mode=json,ok,2,both
+IntellectoKids,https://career.intellectokids.com/roles,custom/unknown,custom,,,,both
+i-BrainTech,https://www.i-brain.tech/careers,custom/unknown,custom,,,,both
+Farel,https://www.ycombinator.com/companies/farel,yc,aggregator,,,,both
+Bonrepublic,https://www.bonrepublic.com/,join,other_ats,https://join.com/companies/bonrepublic,ok,next_data,both
+Helio Games,https://heliogames.com/careers,custom/unknown,custom,,,,both
+Hexens,https://hexens.io/careers,linkedin,aggregator,,,,both
+EWA Learn Languages,https://appewa.bamboohr.com/careers,bamboohr,public_api,https://appewa.bamboohr.com/careers/list,ok,0,both
+DataMilk,https://boards.greenhouse.io/datamilkwebsite,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/datamilkwebsite/jobs,fail:404,,hellonewjob
+HAPIC,https://hapic.com/,linkedin,aggregator,,,,both
+Whizz,https://getwhizz.com/,linkedin,aggregator,,,,both
+Gero,https://gero.ai/about#careers,custom/unknown,custom,,,,both
+Asodesk,https://ru.asodesk.com/careers#rec548392573,custom/unknown,custom,,,,both
+Rebels.ai,https://rebels.ai/,custom/unknown,custom,,,,hellonewjob
+Penenza,https://penenza.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Dashly,https://www.dashly.io/,linkedin,aggregator,,,,both
+WINDY APP,https://windy.app/,linkedin,aggregator,,,,both
+Elatra,https://elatra.io/,custom/unknown,custom,,,,hellonewjob
+Arival Bank,https://arival.com/careers/,fetch_failed,fetch_failed,,,,both
+Nil Foundation,https://nil.foundation/careers/,custom/unknown,custom,,,,both
+FJOR,https://www.fjor.health/,fetch_failed,fetch_failed,,,,hellonewjob
+Datafold,https://www.datafold.com/careers,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/datafold,ok,2,both
+Finverity,https://finverity.com/,custom/unknown,custom,,,,hellonewjob
+Click-Ins,https://www.click-ins.com/,custom/unknown,custom,,,,hellonewjob
+Chrono.tech,https://chrono.tech/,custom/unknown,custom,,,,hellonewjob
+Coinrule,https://wellfound.com/company/coinrule/jobs,wellfound,aggregator,,,,hellonewjob
+Activeloop,https://activeloop.notion.site/Careers-Activeloop-9dad048520b6452e8954830d61250c5a,notion,notion,,,,hellonewjob
+Fintuity,https://fintuity.com/hiring/,linkedin,aggregator,,,,both
+iDWELL,https://www.idwell.com/,custom/unknown,custom,,,,hellonewjob
+Synthesized,https://www.synthesized.io/careers,teamtailor,public_api,https://synthesized.teamtailor.com/jobs.rss,ok,0,both
+Tomi.ai,https://tomi.ai/careers/,fetch_failed,fetch_failed,,,,both
+ZERO10,https://zero10.notion.site/ZERO10-JOBS-01b95b15ea114748a4e40fe87b767cb2,notion,notion,,,,both
+Handl.ai,https://www.handl.ai/,linkedin,aggregator,,,,both
+iFarm,https://www.ifarm.fi/careers#open_vacancy,wellfound,aggregator,,,,both
+ShapesXR,https://www.shapesxr.com/,custom/unknown,custom,,,,hellonewjob
+Uitrial,https://uitrial.com/careers,fetch_failed,fetch_failed,,,,hellonewjob
+eesee,https://about.eesee.io/,fetch_failed,fetch_failed,,,,hellonewjob
+Oneday,https://www.oneday.co.uk/,linkedin,aggregator,,,,both
+Chatfuel,https://careers.chatfuel.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Geex Arts,https://geexarts.notion.site/Careers-9f236198489c4bee9291875b7116c383,notion,notion,,,,both
+Jet Admin,https://www.jetadmin.io/,fetch_failed,fetch_failed,,,,both
+LIFEMOST,https://most-team.notion.site/LIFEMOST-HIRES-33da8841c5de4fab922ec9a3b7343789,notion,notion,,,,both
+Loóna,https://loonaapp.notion.site/Work-at-Lo-na-fa2a632a634b4bf5967843897e3d09ec,notion,notion,,,,hellonewjob
+Locals.org,https://locals.crew.work/jobs,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/bratte,ok,1,both
+Inca Digital,https://inca.digital/careers/#roles,greenhouse,public_api,,,,both
+SPARKLO,https://www.sparklo.com/company#Vacancies,custom/unknown,custom,,,,both
+Human,https://joinhuman.notion.site/Jobs-at-Human-ec4552bee5f64b4cb12491b0d84ac1c8,linkedin,aggregator,,,,both
+Soula,https://soula.care/,custom/unknown,custom,,,,hellonewjob
+Brask,https://brask.notion.site/Join-Brask-ai-e1f9dd23043741c2922a6546c5369602,notion,notion,,,,hellonewjob
+MetaPax,https://metapax.io/,fetch_failed,fetch_failed,,,,hellonewjob
+Evil Martians,https://evilmartians.com/,custom/unknown,custom,,,,both
+Finery Markets,https://finerymarkets.com/careers.html,custom/unknown,custom,,,,both
+SIDESTREAM,https://join.com/companies/sidestream,join,other_ats,https://join.com/companies/sidestream,ok,next_data,both
+Docet TI,https://www.docet.ai/#rec526532260,fetch_failed,fetch_failed,,,,hellonewjob
+Frame,https://www.frame.so/,fetch_failed,fetch_failed,,,,hellonewjob
+Renova,https://renova.world/,custom/unknown,custom,,,,hellonewjob
+Intent.ai,https://intent.ai/careers.html,custom/unknown,custom,,,,hellonewjob
+Eqvilent,https://www.eqvilent.com/careers,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/eqvilentjobs/jobs,ok,27,both
+Instories,https://instories.app/,hh,aggregator,https://api.hh.ru/vacancies?employer_id=4069546&per_page=1,fail:403,,both
+Sprintty,https://sprintty.com/,custom/unknown,custom,,,,hellonewjob
+Slash,https://discoteam.notion.site/Slash-com-is-looking-for-talent-2f01d6fc05394fe68e15cbea00e5b902,notion,notion,,,,hellonewjob
+Order of Meta,https://www.orderofmeta.com/jobs,custom/unknown,custom,,,,hellonewjob
+Gameram,https://gameram.com/,linkedin,aggregator,,,,both
+1ex Trading Board,https://1ex.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Abe Health,https://abe-health.com/,fetch_failed,fetch_failed,,,,hellonewjob
+Flipper Devices,https://flipperdevices.com/jobs,custom/unknown,custom,,,,both
+Marine Digital,https://marine-digital.com/,wellfound,aggregator,,,,both
+CyberNet AI,https://www.cyber-net.ai/,custom/unknown,custom,,,,hellonewjob
+AMEGA Group,https://www.amegacorp.com/,custom/unknown,custom,,,,hellonewjob
+Münzen,https://munzen.io/career,fetch_failed,fetch_failed,,,,hellonewjob
+CodeDunes Solutions,https://codedunes.com/,custom/unknown,custom,,,,hellonewjob
+Realiste,https://realiste.ai/eng/careers,fetch_failed,fetch_failed,,,,hellonewjob
+XPANCEO,https://www.xpanceo.com/t,linkedin,aggregator,,,,both
+Apron,https://apply.workable.com/apron/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/apron,ok,0,both
+Polyn Technology,https://polyn.ai/,custom/unknown,custom,,,,hellonewjob
+AppMagic,https://appmagic.rocks/,hh,aggregator,https://api.hh.ru/vacancies?employer_id=2562833&per_page=1,fail:403,,both
+RoasUp,https://roasup.com/,custom/unknown,custom,,,,hellonewjob
+IZDAT Venture Studio,https://izdat.com/,custom/unknown,custom,,,,hellonewjob
+Original Games,https://originalgames.io/careers,custom/unknown,custom,,,,hellonewjob
+Monetha,https://www.monetha.io/careers/,custom/unknown,custom,,,,both
+DigiFabster,https://digifabster.com/careers/,custom/unknown,custom,,,,hellonewjob
+Hire5.co,https://career.hire5.co/2/,teamtailor,public_api,https://jobs.hire5.co/jobs.rss,ok,6,both
+Aspect App,https://aspect-health.com/,linkedin,aggregator,,,,both
+HUMANS,https://x.humans.work/,linkedin,aggregator,,,,both
+Mirror,https://mirrorxyz.notion.site/Work-at-Mirror-cdcfea2fd38540688ec73d5df8e0f826,notion,notion,,,,both
+Meander (ex Vektor AI),https://meander-hq.notion.site/Meander-Careers-549753aef2dd44d3911e9c6be2911106,notion,notion,,,,both
+Laoshi,https://laoshi.io/careers/,custom/unknown,custom,,,,both
+MigRun,https://www.migrun.tech/jobs,custom/unknown,custom,,,,both
+not8,https://www.not8.co/,linkedin,aggregator,,,,both
+Babylon Voice,https://wellfound.com/company/manan-ai/jobs,wellfound,aggregator,,,,hellonewjob
+Saola,https://joinsaola.notion.site/joinsaola/Head-of-Development-for-ChrisAI-Integration-4df041fc4a984bbc8faed92f8e0d5a0a,notion,notion,,,,hellonewjob
+Magic Square,https://career.magicsquare.io/#jobs,join,other_ats,https://join.com/companies/magicsquare,ok,next_data,hellonewjob
+eCarsTrade,https://ecarstrade.com/,custom/unknown,custom,,,,hellonewjob
+Green Growth,https://greengrowth.tech/,linkedin,aggregator,,,,both
+Skich,https://skich.notion.site/Careers-0957d6a578324c0fb17f72afd08b10f5,notion,notion,,,,hellonewjob
+Anymaster,https://mixed-porter-ecb.notion.site/Jobs-at-Anymaster-05c778cd95fa4132bbdc617d1c7802fe,notion,notion,,,,both
+Exactly.ai (Durer Ai),https://wellfound.com/company/durer-ai/jobs,custom/unknown,custom,,,,both
+Para (ex tingz),https://para.co/,linkedin,aggregator,,,,both
+House of Pitch,https://houseofpitch.app/,fetch_failed,fetch_failed,,,,hellonewjob
+StakeWise,https://wellfound.com/company/stakewise/jobs,wellfound,aggregator,,,,both
+Intently,https://jobs.lever.co/intently-ai,lever,public_api,https://api.lever.co/v0/postings/intently-ai?mode=json,fail:404,,hellonewjob
+Pria (Longevica),https://www.pria.care/,fetch_failed,fetch_failed,,,,hellonewjob
+Tenyks,https://tenyks.notion.site/The-Tenyks-Challenge-Awaits-you-a19a2bbc169a453c840500b748ae91b8,notion,notion,,,,hellonewjob
+Cooper Pet Care,https://cooperpetcare.com/careers/,recruitee,public_api,https://justrussel.recruitee.com/api/offers/,fail:000,,both
+Headroom Inc.,https://join.team/headroom,fetch_failed,fetch_failed,,,,hellonewjob
+OXORIO,https://oxorioteam.notion.site/Careers-da7d5b13b81b495b9a8b3eaacdd424ab,notion,notion,,,,both
+Level Up Basketball,https://www.levelupbasket.com/,custom/unknown,custom,,,,hellonewjob
+OHMYSYNT,https://ohmysynt.io/,linkedin,aggregator,,,,both
+Eightify,https://eightify.app/,linkedin,aggregator,,,,both
+Ex-human,https://exh.ai/,linkedin,aggregator,,,,both
+Machinet.net,https://www.machinet.net/careers,linkedin,aggregator,,,,both
+DataGrid Solutions,https://datagrid.solutions/,custom/unknown,custom,,,,hellonewjob
+GreenO,https://greeno.ag/,custom/unknown,custom,,,,hellonewjob
+SpiritMe,https://spiritme.tech/,linkedin,aggregator,,,,both
+Hi no code,https://hinocode.com/,custom/unknown,custom,,,,hellonewjob
+Jetdocs,https://jetdocs.io/contact-us/,linkedin,aggregator,,,,both
+SleepDoctor,https://sleepdoctor.fr/en/careers,custom/unknown,custom,,,,both
+MixBytes,https://mixbytes.io/career,custom/unknown,custom,,,,both
+Balancy,https://balancy.co/,custom/unknown,custom,,,,hellonewjob
+Seneka,https://www.seneka.life/,fetch_failed,fetch_failed,,,,hellonewjob
+TalentWay,https://talentway.io/,linkedin,aggregator,,,,both
+Fluently,https://getfluently.app/,notion,notion,,,,both
+Gracia AI,https://www.gracia.ai/,notion,notion,,,,both
+Lightspeed eCom (ex-Ecwid),https://boards.greenhouse.io/lightspeedhq,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/lightspeedhq/jobs,fail:404,,hellonewjob
+Revolut,https://www.revolut.com/careers/,fetch_failed,fetch_failed,,,,both
+Affirm,https://www.affirm.com/careers,custom/unknown,custom,,,,both
+Noom,https://noom.eightfold.ai/careers,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/noomgrowth/jobs,ok,3,both
+Exness,https://exness-careers.com/jobs/,custom/unknown,custom,,,,both
+Personio,https://www.personio.com/about-personio/careers/,personio,public_api,,,,both
+GoPuff,https://www.gopuff.com/go/careers,fetch_failed,fetch_failed,,,,both
+Playrix,https://playrix.com/job/open/,custom/unknown,custom,,,,both
+Wargaming,https://wargaming.com/en/careers/,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/wargamingen/jobs,ok,36,both
+ABBYY,https://www.abbyy.com/company/careers/open-positions/,greenhouse,public_api,https://boards-api.greenhouse.io/v1/boards/abbyy/jobs,ok,7,both
+Luxoft,https://career.luxoft.com/,custom/unknown,custom,,,,both
+EPAM,,fetch_failed,fetch_failed,,,,both
+Playkot,https://playkot.com/jobs,custom/unknown,custom,,,,both
+DataArt,https://www.dataart.team/vacancies,fetch_failed,fetch_failed,,,,both
+Grid Dynamics,https://careers.griddynamics.com/discover-openings,fetch_failed,fetch_failed,,,,both
+MY.GAMES,https://my.games/careers,fetch_failed,fetch_failed,,,,both
+Kaspersky,https://careers.kaspersky.com/vacancy,custom/unknown,custom,,,,hellonewjob
+Enpal,https://www.enpal.de/jobs?#jobs,fetch_failed,fetch_failed,,,,hellonewjob
+TheSoul Publishing,https://www.jointhesoul.com/jobs/,workable,public_api,https://apply.workable.com/api/v1/widget/accounts/thesoul-publishing-1,ok,3,both
+Core42,https://www.core42.ai/,custom/unknown,custom,,,,hellonewjob
+G42,https://careers.g42.ai/careers-home/,fetch_failed,fetch_failed,,,,hellonewjob
+PandaDoc,https://www.pandadoc.com/careers/,fetch_failed,fetch_failed,,,,both
+Emerging Travel Group,https://www.emergingtravel.com/career/,custom/unknown,custom,,,,both
+Webflow,https://webflow.com/careers/roles,ashby,public_api,https://api.ashbyhq.com/posting-api/job-board/webflow,ok,31,both
+Formlabs,https://careers.formlabs.com/all-open-roles/,custom/unknown,custom,,,,both
+Bumble,https://bumble.wd3.myworkdayjobs.com/Bumble_Careers,workday,public_api,https://bumble.wd3.myworkdayjobs.com/wday/cxs/bumble/Bumble_Careers/jobs,fail:403,,both
+Borzo,https://borzodelivery.com/,linkedin,aggregator,,,,both
+G5 Entertainment AB,https://jobs.g5.com/,custom/unknown,custom,,,,hellonewjob
+Quantori,https://career.quantori.com/,custom/unknown,custom,,,,both
+airSlate,https://jobs.lever.co/airslate,lever,public_api,https://api.lever.co/v0/postings/airslate?mode=json,ok,15,hellonewjob
+Armis Security,https://www.armis.com/careers/,fetch_failed,fetch_failed,,,,both
+Meracux,https://mercaux.com/careers.html,custom/unknown,custom,,,,hellonewjob
+MEL Science,https://melscience.com/,linkedin,aggregator,,,,both
+Cindicator,https://www.notion.so/Jobs-at-Cindicator-37ea0aed8b7b4a7799999c94ea00f3a2,notion,notion,,,,both
+DestinyX,https://destinyx.com/careers,fetch_failed,fetch_failed,,,,hellonewjob
+Cartwheel,https://trycartwheel.com/,linkedin,aggregator,,,,both
+Made on Earth Games,https://madeonearthgames.notion.site/MEG-Job-Board-2c89130953004b8cafbc50195dd8e87b,notion,notion,,,,hellonewjob
+AURA Devices,https://aura-devices.breezy.hr/,breezy,public_api,https://aura-devices.breezy.hr/json,ok,0,hellonewjob
+EdgeDB,https://www.edgedb.com/careers,fetch_failed,fetch_failed,,,,hellonewjob
+FinDev,https://findev.team/,custom/unknown,custom,,,,both
+Linguix.com,https://linguix.com/,linkedin,aggregator,,,,both

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
 import { describe, test } from 'node:test';
 
-import { nextRunAt, scheduleAfterDrain } from './schedule.ts';
+import { nextRunAt, scheduleAfterDrain, spreadDelay } from './schedule.ts';
 
 const NOW = new Date('2026-11-20T12:00:00.000Z');
 const HOUR_MS = 60 * 60 * 1000;
@@ -70,5 +71,17 @@ describe('scheduleAfterDrain', () => {
     assert.equal(schedule.consecutiveFailures, 1);
     assert.deepEqual(schedule.nextRunAt, after(24));
     assert.equal(schedule.lastError, 'Telegram request failed: HTTP 429');
+  });
+});
+
+describe('spreadDelay', () => {
+  test('gives one source the same delay every time, a whole second within ten minutes', () => {
+    const id = randomUUID();
+    assert.equal(spreadDelay(id), spreadDelay(id));
+
+    const delays = Array.from({ length: 1000 }, () => spreadDelay(randomUUID()));
+    assert.ok(delays.every((delay) => Number.isInteger(delay) && delay >= 0 && delay < 600));
+    // Задержки разные: источники тика не идут к сервисам разом.
+    assert.ok(new Set(delays).size > 300);
   });
 });

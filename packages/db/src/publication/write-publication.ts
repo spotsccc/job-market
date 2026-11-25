@@ -197,17 +197,19 @@ export async function addPublications(
 }
 
 /**
- * Итог разбора публикации: вакансия или не вакансия с причиной. Пояснение есть только у
- * `trash`: пустой публикации объяснять нечего.
+ * Итог разбора публикации: вакансия, не вакансия с причиной или дубль — все её роли уже
+ * сохранены из других публикаций, `originalId` — публикация первой такой роли (П20). Пояснение
+ * есть только у `trash`: пустой публикации объяснять нечего.
  */
 export type PublicationOutcome =
   | { readonly status: 'vacancy' }
+  | { readonly status: 'duplicate'; readonly originalId: string }
   | { readonly status: 'not_vacancy'; readonly reason: 'empty' }
   | { readonly status: 'not_vacancy'; readonly reason: 'trash'; readonly note: string };
 
 /**
  * Пишет итог разбора (П12 плана коннекторов): статус, причину для `not_vacancy` и пояснение для
- * `trash`, `processed_at` — сейчас. У вакансии причина и пояснение стираются.
+ * `trash`, оригинал для `duplicate`, `processed_at` — сейчас. Поля других итогов стираются.
  */
 export async function setOutcome(
   db: DbExecutor,
@@ -220,6 +222,7 @@ export async function setOutcome(
       status: outcome.status,
       notVacancyReason: outcome.status === 'not_vacancy' ? outcome.reason : null,
       note: outcome.status === 'not_vacancy' && outcome.reason === 'trash' ? outcome.note : null,
+      duplicateOfId: outcome.status === 'duplicate' ? outcome.originalId : null,
       processedAt: sql`now()`,
     })
     .where(eq(publications.id, publicationId));

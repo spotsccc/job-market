@@ -1,4 +1,5 @@
 /** Экстрактор: роли публикации-вакансии по схеме ответа модели и дереву профессий. */
+export { ExtractionError } from './errors/index.ts';
 export { defaultExtractorModel, extract, EXTRACTOR_MODEL_ID } from './extract.ts';
 export type { ExtractedRole, ExtractOptions } from './extract.ts';
 export { normalizeVacancy } from './normalize.ts';

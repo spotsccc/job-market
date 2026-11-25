@@ -268,6 +268,37 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
+  packages/dashboards:
+    dependencies:
+      '@grafana/grafana-foundation-sdk':
+        specifier: 0.0.22
+        version: 0.0.22
+    devDependencies:
+      '@job-market/oxfmt-config':
+        specifier: workspace:*
+        version: link:../oxfmt-config
+      '@job-market/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      '@job-market/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.19.2
+        version: 24.19.2
+      oxfmt:
+        specifier: 0.79.0
+        version: 0.79.0
+      oxlint:
+        specifier: 1.94.0
+        version: 1.94.0(oxlint-tsgolint@7.0.2007)
+      oxlint-tsgolint:
+        specifier: 7.0.2007
+        version: 7.0.2007
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
   packages/db:
     dependencies:
       '@job-market/errors':
@@ -442,12 +473,18 @@ importers:
       '@job-market/db':
         specifier: workspace:*
         version: link:../db
+      '@job-market/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@job-market/geo':
         specifier: workspace:*
         version: link:../geo
       '@job-market/publication-text':
         specifier: workspace:*
         version: link:../publication-text
+      '@spotsccc/error-as-value':
+        specifier: 0.16.0
+        version: 0.16.0
       ai:
         specifier: 7.0.178
         version: 7.0.178(zod@4.6.7)
@@ -1191,6 +1228,9 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@grafana/grafana-foundation-sdk@0.0.22':
+    resolution: {integrity: sha512-AbjJEIFoSlvyfc9Ks/RaNKHPx3v/oX9znjnQxB+xPWoqVoMuhaTHTUFpaEGYDO+YcZ00jTZBMQ9an9iW/uKV6g==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -3090,6 +3130,10 @@ snapshots:
       tabbable: 6.5.2
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@grafana/grafana-foundation-sdk@0.0.22':
+    dependencies:
+      tslib: 2.9.1
 
   '@img/colour@1.1.0':
     optional: true

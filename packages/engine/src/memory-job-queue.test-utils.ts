@@ -5,16 +5,19 @@ export type MemoryJobQueueOptions = {
   readonly failOnBatch?: number;
 };
 
-export type MemoryJobQueue = JobQueue & {
+export type MemoryJobQueue<Job = DrainSourceJob> = JobQueue<Job> & {
   /** Отправленные задания по порядку. */
-  readonly jobs: readonly DrainSourceJob[];
+  readonly jobs: readonly Job[];
 };
 
 /** Очередь в памяти для тестов движка: запоминает задания и не отдаёт их. */
-export function memoryJobQueue(options: MemoryJobQueueOptions = {}): MemoryJobQueue {
-  const jobs: DrainSourceJob[] = [];
+export function memoryJobQueue<Job = DrainSourceJob>(
+  options: MemoryJobQueueOptions = {},
+): MemoryJobQueue<Job> {
+  const jobs: Job[] = [];
   let batches = 0;
-  async function enqueue(batch: readonly DrainSourceJob[]): Promise<Error | undefined> {
+
+  async function enqueue(batch: readonly Job[]): Promise<Error | undefined> {
     // Ответ приходит в следующей задаче, как от настоящей очереди.
     await Promise.resolve();
     batches += 1;
@@ -24,5 +27,6 @@ export function memoryJobQueue(options: MemoryJobQueueOptions = {}): MemoryJobQu
     jobs.push(...batch);
     return undefined;
   }
+
   return { jobs, enqueue };
 }

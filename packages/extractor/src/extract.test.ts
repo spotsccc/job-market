@@ -4,6 +4,7 @@ import { describe, test } from 'node:test';
 import type { PublicationForModel } from '@job-market/publication-text';
 import { MockLanguageModelV4 } from 'ai/test';
 
+import { ExtractionError } from './errors/index.ts';
 import { extract } from './extract.ts';
 import type { OccupationNode } from './occupations.ts';
 import type { ModelVacancy } from './vacancy.ts';
@@ -153,42 +154,42 @@ describe('extract', () => {
     );
   });
 
-  test('an occupation that is not a node id is an error', async () => {
+  test('an occupation that is not a node id is an ExtractionError', async () => {
     const result = await extract(publication, {
       occupations: TREE,
       model: mockModel({ vacancies: [modelVacancy({ occupation: 'frontend developer' })] }),
     });
 
-    assert.ok(result instanceof Error);
+    assert.ok(result instanceof ExtractionError);
   });
 
-  test('a node missing from the given tree is an error', async () => {
+  test('a node missing from the given tree is an ExtractionError', async () => {
     const result = await extract(publication, {
       occupations: TREE,
       model: mockModel({ vacancies: [modelVacancy({ occupation: 'backend' })] }),
     });
 
-    assert.ok(result instanceof Error);
+    assert.ok(result instanceof ExtractionError);
   });
 
-  test('an answer without roles is an error', async () => {
+  test('an answer without roles is an ExtractionError', async () => {
     const result = await extract(publication, {
       occupations: TREE,
       model: mockModel({ vacancies: [] }),
     });
 
-    assert.ok(result instanceof Error);
-    assert.match(result.message, /Vacancy extraction failed/u);
+    assert.ok(result instanceof ExtractionError);
   });
 
-  test('a provider failure is an error', async () => {
+  test('returns ExtractionError with the provider failure as the cause', async () => {
+    const failure = new Error('Gateway unavailable');
     const model = new MockLanguageModelV4({
-      doGenerate: () => Promise.reject(new Error('Gateway unavailable')),
+      doGenerate: () => Promise.reject(failure),
     });
 
     const result = await extract(publication, { occupations: TREE, model });
 
-    assert.ok(result instanceof Error);
-    assert.match(result.message, /Vacancy extraction failed/u);
+    assert.ok(result instanceof ExtractionError);
+    assert.equal(result.cause, failure);
   });
 });

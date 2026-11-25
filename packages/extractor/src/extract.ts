@@ -5,6 +5,7 @@ import type { PublicationForModel } from '@job-market/publication-text';
 import { generateText, Output } from 'ai';
 import type { LanguageModel } from 'ai';
 
+import { ExtractionError } from './errors/index.ts';
 import { normalizeVacancy } from './normalize.ts';
 import { isLeaf } from './occupations.ts';
 import type { OccupationNode } from './occupations.ts';
@@ -96,15 +97,16 @@ function toRole(tree: readonly OccupationNode[], vacancy: ModelVacancy): Extract
 
 /**
  * Достаёт роли из публикации, которая уже признана вакансией. Роли — в порядке ответа
- * модели, то есть в порядке текста, после нормализации (П10–П15). Ответ не по схеме —
- * в том числе профессия не из переданного дерева (E3) — или сбой провайдера — `Error`.
+ * модели, то есть в порядке текста, после нормализации (П10–П15). Сбой провайдера, таймаут
+ * или ответ не по схеме — в том числе ноль ролей (П5) и профессия не из переданного дерева
+ * (E3) — `ExtractionError` с исходной ошибкой в `cause`.
  */
 export async function extract(
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
   publication: PublicationForModel,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- модель AI SDK — объект провайдера, readonly его не сделать
   options: ExtractOptions,
-): Promise<Error | readonly ExtractedRole[]> {
+): Promise<ExtractionError | readonly ExtractedRole[]> {
   const { occupations } = options;
   const result = await generateText({
     model: options.model ?? defaultExtractorModel,
@@ -113,7 +115,7 @@ export async function extract(
     instructions: extractorInstructions(occupations),
     prompt: formatPublication(publication),
     output: Output.object({ schema: vacancySchema(occupations) }),
-  }).catch((cause: unknown) => new Error('Vacancy extraction failed', { cause }));
+  }).catch((cause: unknown) => new ExtractionError({ cause }));
   if (result instanceof Error) return result;
   return result.output.vacancies.map(
     // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- тип выведен из zod-схемы, массивы в нём изменяемые

@@ -1,0 +1,3353 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Гейт качества вакансий</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --card: #ffffff;
+        --fg: #1f2328;
+        --muted: #59636e;
+        --line: #d0d7de;
+        --soft: #eef1f4;
+        --accent: #0969da;
+        --accent-soft: #ddf4ff;
+        --amber: #bc4c00;
+        --amber-soft: #fff1db;
+        --red: #cf222e;
+        --red-soft: #ffebe9;
+        --green: #1a7f37;
+        --green-soft: #dafbe1;
+        --band: #f2f6fc;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --card: #151b23;
+          --fg: #e6edf3;
+          --muted: #9198a1;
+          --line: #3d444d;
+          --soft: #212830;
+          --accent: #4493f8;
+          --accent-soft: #10243e;
+          --amber: #d29922;
+          --amber-soft: #2e1f0b;
+          --red: #f85149;
+          --red-soft: #2d1215;
+          --green: #3fb950;
+          --green-soft: #0f2a18;
+          --band: #121d2f;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          16px/1.55 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+      code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.9em;
+      }
+      a {
+        color: var(--accent);
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: color-mix(in srgb, var(--bg) 92%, transparent);
+        backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--line);
+      }
+      nav .in {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 10px 16px;
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+      nav a:hover {
+        background: var(--soft);
+        color: var(--fg);
+      }
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px 16px 80px;
+      }
+      header h1 {
+        font-size: 30px;
+        margin: 0 0 6px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 14px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--soft);
+        color: var(--fg);
+        white-space: nowrap;
+      }
+      .badge.new {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .badge.chg {
+        background: var(--amber-soft);
+        border-color: var(--amber);
+        color: var(--amber);
+      }
+      .badge.ok {
+        background: var(--green-soft);
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .badge.err {
+        background: var(--red-soft);
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .tldr {
+        margin-top: 16px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--accent);
+        border-radius: 10px;
+        padding: 14px 18px;
+      }
+      .tldr ul {
+        margin: 6px 0 0;
+        padding-left: 20px;
+      }
+      section {
+        margin-top: 40px;
+        scroll-margin-top: 56px;
+      }
+      section > h2 {
+        font-size: 26px;
+        margin: 0 0 4px;
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+      }
+      section > h2 .num {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 14px;
+        scroll-margin-top: 60px;
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .card h4 {
+        margin: 16px 0 8px;
+        font-size: 15px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 900px) {
+        .grid2,
+        .grid3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      figure {
+        margin: 0;
+      }
+      figure svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      figcaption,
+      .cap {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      .scroll {
+        overflow-x: auto;
+      }
+      .scroll svg {
+        min-width: 760px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .nowrap {
+        white-space: nowrap;
+      }
+      td.null {
+        color: var(--amber);
+        font-weight: 600;
+      }
+      .small {
+        font-size: 14px;
+      }
+      .schip {
+        display: inline-block;
+        font: 600 12px var(--mono);
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent);
+        border-radius: 999px;
+        padding: 1px 7px;
+        cursor: pointer;
+        margin: 1px;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      .legend span::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 10px;
+        border-radius: 3px;
+        margin-right: 6px;
+        vertical-align: -1px;
+        border: 1.5px solid var(--line);
+      }
+      .legend .l-new::before {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+      .legend .l-chg::before {
+        background: var(--card);
+        border-color: var(--amber);
+        border-width: 2.5px;
+      }
+      .legend .l-old::before {
+        background: var(--card);
+      }
+      .legend .l-ext::before {
+        background: transparent;
+        border-style: dashed;
+      }
+      .legend .l-person::before {
+        background: var(--soft);
+        border-color: var(--muted);
+        border-radius: 999px;
+      }
+      .legend .l-bound::before {
+        background: transparent;
+        border-style: dotted;
+        border-color: var(--muted);
+      }
+      .legend .l-chk::before {
+        background: var(--amber-soft);
+        border-color: var(--amber);
+        border-radius: 6px;
+      }
+      .legend .l-test::before {
+        background: var(--card);
+        border-color: var(--green);
+        border-width: 2px;
+      }
+      .legend .l-testnew::before {
+        background: var(--green-soft);
+        border-color: var(--green);
+        border-width: 2px;
+      }
+      .legend .l-pk::before {
+        background: var(--soft);
+        border-color: var(--muted);
+        border-radius: 2px;
+      }
+      .legend .l-pknew::before {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        border-width: 2px;
+        border-radius: 2px;
+      }
+      .seqlegend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      .seqlegend svg {
+        vertical-align: middle;
+        margin-right: 6px;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      button {
+        font: inherit;
+        font-size: 14px;
+        color: var(--fg);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 5px 12px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: var(--soft);
+      }
+      button.on {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .stepnote {
+        min-height: 50px;
+        background: var(--band);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 15px;
+        margin-top: 10px;
+      }
+      .stepnote b {
+        color: var(--accent);
+      }
+
+      /* chat mockups */
+      .scen {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 900px) {
+        .scen {
+          grid-template-columns: 1fr;
+        }
+      }
+      .chat {
+        background: var(--soft);
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .msg {
+        max-width: 86%;
+        padding: 8px 12px;
+        border-radius: 14px;
+        font-size: 14.5px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+        white-space: pre-line;
+      }
+      .msg.me {
+        align-self: flex-end;
+        background: var(--accent-soft);
+        border-bottom-right-radius: 4px;
+      }
+      .msg.bot {
+        align-self: flex-start;
+        background: var(--card);
+        border-bottom-left-radius: 4px;
+      }
+      .msg.tool {
+        align-self: flex-start;
+        background: transparent;
+        box-shadow: none;
+        color: var(--muted);
+        font: 12px var(--mono);
+        padding: 0 4px;
+      }
+      .effect {
+        font-size: 14px;
+        margin-top: 8px;
+      }
+      .effect li {
+        margin: 2px 0;
+      }
+      .minus {
+        color: var(--red);
+        font-family: var(--mono);
+      }
+      .plus {
+        color: var(--green);
+        font-family: var(--mono);
+      }
+
+      /* page mockups */
+      .mock {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      .mock .bar {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--soft);
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .mock .bar i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--line);
+        display: inline-block;
+      }
+      .mock .url {
+        margin-left: 10px;
+        background: var(--card);
+        border-radius: 6px;
+        padding: 2px 10px;
+        font-family: var(--mono);
+      }
+      .mock .pg {
+        padding: 14px 16px;
+      }
+      .mock .topnav {
+        display: flex;
+        gap: 14px;
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+      .mock .topnav b {
+        color: var(--accent);
+      }
+      .mock .total {
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .mock .tile {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      .mock .tile .h {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .mock .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 14px;
+        padding: 2px 0;
+      }
+      .mock .barline {
+        height: 8px;
+        border-radius: 4px;
+        background: var(--accent);
+      }
+      .mock .field {
+        margin-bottom: 9px;
+        font-size: 14px;
+      }
+      .mock .field label {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 2px;
+      }
+      .mock .input {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 5px 9px;
+      }
+      .mock .input.bad {
+        border-color: var(--red);
+      }
+      .mock .ferr {
+        color: var(--red);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .mock .seg {
+        display: flex;
+        gap: 0;
+        margin-bottom: 10px;
+      }
+      .mock .seg span {
+        border: 1px solid var(--line);
+        padding: 4px 10px;
+        font-size: 13px;
+        background: var(--card);
+      }
+      .mock .seg span.on {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .mock .btn {
+        display: inline-block;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 6px;
+        padding: 5px 14px;
+        font-size: 14px;
+      }
+
+      /* type matrix */
+      .tm td,
+      .tm th {
+        text-align: center;
+      }
+      .tm td:first-child,
+      .tm th:first-child {
+        text-align: left;
+      }
+      .dot {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        vertical-align: -2px;
+      }
+      .dot.d-req {
+        background: var(--accent);
+      }
+      .dot.d-opt {
+        border: 2px solid var(--accent);
+      }
+      .dot.d-no {
+        background: var(--line);
+        width: 8px;
+        height: 8px;
+        vertical-align: 1px;
+      }
+
+      svg .st {
+        transition: opacity 0.2s;
+      }
+      svg.stepping .st {
+        opacity: 0.13;
+      }
+      svg.stepping .st.cur {
+        opacity: 1;
+      }
+      svg.stepping .st.past {
+        opacity: 0.4;
+      }
+      svg.stepping .st.cur line,
+      svg.stepping .st.cur path {
+        stroke-width: 2.8;
+      }
+      svg.stepping .st.cur text {
+        font-weight: 700;
+      }
+
+      svg text {
+        fill: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      svg .mu {
+        fill: var(--muted);
+      }
+      svg .ac {
+        fill: var(--accent);
+      }
+      svg .am {
+        fill: var(--amber);
+      }
+      svg .rd {
+        fill: var(--red);
+      }
+      svg .gr {
+        fill: var(--green);
+      }
+      svg .mono {
+        font-family: var(--mono);
+      }
+      svg .ln {
+        stroke: var(--fg);
+        fill: none;
+      }
+      svg .lm {
+        stroke: var(--muted);
+        fill: none;
+      }
+      svg .lr {
+        stroke: var(--red);
+        fill: none;
+      }
+      svg .la {
+        stroke: var(--accent);
+        fill: none;
+      }
+      svg .lg {
+        stroke: var(--green);
+        fill: none;
+      }
+      svg .bx {
+        fill: var(--card);
+        stroke: var(--line);
+      }
+      svg .bx-new {
+        fill: var(--accent-soft);
+        stroke: var(--accent);
+      }
+      svg .bx-chg {
+        fill: var(--card);
+        stroke: var(--amber);
+        stroke-width: 2.5;
+      }
+      svg .bx-ext {
+        fill: none;
+        stroke: var(--muted);
+        stroke-dasharray: 6 4;
+      }
+      svg .bx-bound {
+        fill: none;
+        stroke: var(--muted);
+        stroke-dasharray: 3 5;
+      }
+      svg .bx-person {
+        fill: var(--soft);
+        stroke: var(--muted);
+        stroke-width: 1.5;
+      }
+      svg .cf {
+        fill: var(--card);
+        stroke: var(--fg);
+        stroke-width: 1.5;
+      }
+      svg .mopen {
+        fill: none;
+        stroke: var(--fg);
+        stroke-width: 1.4;
+      }
+      svg .fragtag {
+        fill: var(--soft);
+        stroke: var(--muted);
+        stroke-width: 1.2;
+      }
+      svg .bx-note {
+        fill: var(--amber-soft);
+        stroke: var(--muted);
+        stroke-width: 1;
+      }
+      svg .bx-chk {
+        fill: var(--amber-soft);
+        stroke: var(--amber);
+      }
+      svg .bx-err {
+        fill: var(--red-soft);
+        stroke: var(--red);
+      }
+      svg .bx-ok {
+        fill: var(--green-soft);
+        stroke: var(--green);
+      }
+      svg .bx-head {
+        fill: var(--soft);
+        stroke: var(--line);
+      }
+      svg .bx-cur {
+        fill: var(--accent-soft);
+        stroke: var(--accent);
+        stroke-width: 2.5;
+      }
+      svg .bx-test {
+        fill: var(--card);
+        stroke: var(--green);
+        stroke-width: 1.8;
+      }
+      svg .bx-test-new {
+        fill: var(--green-soft);
+        stroke: var(--green);
+        stroke-width: 1.8;
+      }
+      svg .pk {
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.2;
+      }
+      svg .pk-tab {
+        fill: var(--soft);
+        stroke: var(--muted);
+        stroke-width: 1.2;
+      }
+      svg .pk-new {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 2;
+      }
+      svg .pk-new-tab {
+        fill: var(--accent-soft);
+        stroke: var(--accent);
+        stroke-width: 2;
+      }
+      svg .pk-ext {
+        fill: none;
+        stroke: var(--muted);
+        stroke-dasharray: 6 4;
+      }
+      svg .pk-ext-tab {
+        fill: var(--card);
+        stroke: var(--muted);
+        stroke-dasharray: 6 4;
+      }
+      svg .dep {
+        stroke: var(--fg);
+        fill: none;
+      }
+      svg .dep-t {
+        stroke: var(--green);
+        fill: none;
+      }
+      svg .mopen-g {
+        fill: none;
+        stroke: var(--green);
+        stroke-width: 1.4;
+      }
+      svg .band {
+        fill: var(--band);
+      }
+      svg .fillacc {
+        fill: var(--accent);
+      }
+      svg .fillred {
+        fill: var(--red);
+      }
+      svg .fillgreen {
+        fill: var(--green);
+      }
+      svg .fillline {
+        fill: var(--line);
+      }
+      svg .fillsoft {
+        fill: var(--soft);
+      }
+      svg .ah {
+        fill: var(--fg);
+      }
+      svg .ahr {
+        fill: var(--red);
+      }
+      svg .ahm {
+        fill: var(--muted);
+      }
+      svg .aha {
+        fill: var(--accent);
+      }
+      svg .ahg {
+        fill: var(--green);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="in">
+        <a href="#task">1 · Задача</a><a href="#now">2 · Исходное</a
+        ><a href="#how">3 · Как работает</a><a href="#data">4 · Данные</a
+        ><a href="#rules">5 · Правила</a><a href="#edges">6 · Эджкейсы</a
+        ><a href="#risks">7 · Риски</a><a href="#stages">8 · Этапы</a
+        ><a href="#progress">9 · Ход работ</a>
+      </div>
+    </nav>
+    <main>
+      <header>
+        <h1>План: гейт качества вакансий</h1>
+        <div class="meta">
+          <span>Статус:</span>
+          <span class="badge chg">требует ревью</span>
+        </div>
+        <div class="tldr">
+          Как владелец, я хочу, чтобы после экстрактора гейт качества решал, какие роли публикации
+          становятся вакансиями, а публикация без годных ролей получала статус low_quality с
+          пояснением, чтобы пустышки не попадали в выдачу, а разбор таких публикаций не падал
+          ошибкой и не повторялся.
+        </div>
+      </header>
+
+      <section id="task">
+        <h2><span class="num">1</span>Задача</h2>
+        <p class="lead">
+          Классификатор идёт раньше экстрактора и иногда ошибается: признаёт вакансией пост «мы
+          растём, скоро откроем позиции». Экстрактор не находит в нём ни одной роли. Для этого
+          случая в коде два разных решения. Экстрактор считает пустой ответ ошибкой, а коннектор
+          ждёт пустой список и хочет записать «не вакансия». Срабатывает первое:
+          <code>mine</code> возвращает <code>Error</code>, и публикация уходит на повтор без итога.
+          Второй пробел: роль, у которой есть только название, пишется как полноценная вакансия.
+        </p>
+        <p class="lead">
+          Этот план добавляет <b>qualityGate</b> — шаг <code>process</code> после экстрактора.
+          Экстрактор только извлекает и возвращает роли как нашёл, в том числе пустой список. Что с
+          ними делать, решает гейт. Он судит каждую роль отдельно: негодная роль отбрасывается,
+          годные пишутся вакансиями. Годных нет — публикация получает новый статус
+          <code>low_quality</code> и пояснение в <code>note</code>.
+        </p>
+        <p class="lead">
+          Первая версия гейта — правила в коде, без модели. Контракт гейта при этом асинхронный и
+          допускает <code>Error</code>, как у классификатора и экстрактора: гейт с моделью встанет
+          на то же место без правок <code>process</code> и <code>mine</code>.
+        </p>
+        <div class="card">
+          <h3>Сценарии — критерии готовности</h3>
+          <p class="small muted">
+            Каждый сценарий — что делает система, что владелец видит и что меняется в данных.
+            Страниц и роутов в плане нет, поэтому макет — вывод тестов пакетов на тестовой базе.
+          </p>
+          <div id="scenarios"></div>
+        </div>
+        <div class="card">
+          <h3>Страницы</h3>
+          <p class="small">Не применимо: план не меняет страниц.</p>
+        </div>
+        <div class="card">
+          <h3>Не делаем</h3>
+          <table id="nogo"></table>
+        </div>
+      </section>
+
+      <section id="now">
+        <h2><span class="num">2</span>Исходное состояние</h2>
+        <p class="small muted">
+          Факты сверены с рабочей копией 24 ноября 2026, коммит <code>76d356e</code>.
+        </p>
+        <div class="card"><table id="facts"></table></div>
+      </section>
+
+      <section id="how">
+        <h2><span class="num">3</span>Как это работает</h2>
+        <div class="card">
+          <h3>Карта компонентов</h3>
+          <p class="small muted">
+            Схема компонентов по нотации C4: что участвует в разборе одной публикации и что из этого
+            меняет план. Порядок шагов показывает следующая карточка. Блок — имя, [тип: технология]
+            и что делает. Стрелка идёт от того, кто начинает действие, подпись — что он делает и
+            [как]; ответы не рисуются.
+          </p>
+          <div class="legend" style="margin: 0 0 12px">
+            <span class="l-new">новое</span><span class="l-chg">изменяется</span
+            ><span class="l-old">существующее</span><span class="l-ext">внешняя система</span
+            ><span class="l-bound">граница контейнера</span>
+          </div>
+          <figure class="scroll">
+            <div id="mapA"></div>
+            <figcaption>
+              Гейт не ходит ни в модели, ни в базу: он получает роли от
+              <code>process</code> и отвечает ему же. Места ролей <code>mine</code> по-прежнему
+              сводит к гео-справочнику пакетом <code>@job-market/geo</code> — он не меняется и на
+              карте не показан. Вызывающего у <code>mine</code> пока нет: его зовут тесты, а
+              обработчик задания разбора добавит <a href="mine-job.html">план 5</a>.
+            </figcaption>
+          </figure>
+        </div>
+        <div class="card">
+          <h3>Путь сценария шаг за шагом</h3>
+          <p class="small muted">
+            Схема последовательности по UML: участники сверху, время идёт вниз. Сообщение идёт
+            только от вызывающего к вызываемому, ответ возвращается тем же путём. Рамки — фрагменты:
+            в <b>alt</b> выполняется одна ветка. Кнопка «Шаг ▶» проходит схему по одному сообщению и
+            объясняет его.
+          </p>
+          <div class="seqlegend" style="margin: 0 0 12px">
+            <span
+              ><svg width="40" height="12">
+                <line
+                  x1="2"
+                  y1="6"
+                  x2="36"
+                  y2="6"
+                  class="ln"
+                  stroke-width="1.6"
+                  marker-end="url(#ah)"
+                /></svg
+              >синхронный вызов</span
+            ><span
+              ><svg width="40" height="12">
+                <line
+                  x1="2"
+                  y1="6"
+                  x2="36"
+                  y2="6"
+                  class="ln"
+                  stroke-width="1.6"
+                  stroke-dasharray="6 4"
+                  marker-end="url(#opn)"
+                /></svg
+              >возврат</span
+            ><span><b>alt</b> — ветки по условию в [ ]</span
+            ><span>красный текст — ошибка, возвращается значением</span>
+          </div>
+          <div id="seqA"></div>
+        </div>
+        <div class="card">
+          <h3>Функции и типы плана</h3>
+          <table id="contract"></table>
+          <p class="cap">
+            Гейт — параметр <code>classifyAndExtract</code> со значением по умолчанию: реестр
+            коннекторов берёт гейт на правилах, тесты подставляют свой. Так же позже подставится
+            гейт с моделью.
+          </p>
+        </div>
+      </section>
+
+      <section id="data">
+        <h2><span class="num">4</span>Модель данных</h2>
+        <div class="card">
+          <h3>Таблица publications</h3>
+          <p class="small muted">
+            Схема в нотации Crow's Foot. Значок на конце линии говорит, сколько строк этой таблицы
+            может быть у одной строки на другом конце. Например, у публикации ноль или много
+            вакансий, а у вакансии ровно одна публикация.
+          </p>
+          <div class="seqlegend" style="margin: 0 0 12px">
+            <span
+              ><svg width="44" height="18">
+                <line x1="0" y1="9" x2="40" y2="9" class="ln" stroke-width="1.5" />
+                <line x1="32" y1="2" x2="32" y2="16" class="ln" stroke-width="1.5" />
+                <line x1="26" y1="2" x2="26" y2="16" class="ln" stroke-width="1.5" /></svg
+              >ровно один</span
+            ><span
+              ><svg width="44" height="18">
+                <line x1="0" y1="9" x2="40" y2="9" class="ln" stroke-width="1.5" />
+                <line x1="40" y1="1" x2="27" y2="9" class="ln" stroke-width="1.5" />
+                <line x1="40" y1="17" x2="27" y2="9" class="ln" stroke-width="1.5" />
+                <circle cx="18" cy="9" r="5" class="cf" /></svg
+              >ноль или много</span
+            ><span><b class="mono">PK</b> первичный ключ</span
+            ><span><b class="mono">FK</b> внешний ключ</span
+            ><span
+              ><b class="mono" style="color: var(--amber)">NULL</b> может быть пустым, без пометки —
+              NOT NULL</span
+            ><span class="l-chg">изменённая таблица</span><span class="l-old">уже есть</span>
+          </div>
+          <figure class="scroll">
+            <div id="er"></div>
+            <figcaption>
+              Столбцы не добавляются: меняется список значений <code>status</code> и его CHECK. У
+              обеих таблиц показаны только столбцы, которые нужны плану. Связи
+              <code>source_id</code> и <code>duplicate_of_id</code> ведут к <code>sources</code> и к
+              самой <code>publications</code>; они не меняются и линиями не показаны.
+            </figcaption>
+          </figure>
+          <h4>Словарь данных</h4>
+          <p class="small muted">
+            Что значит одна строка, столбцы (что это за значение и, если неочевидно, почему оно
+            такое) и ограничения — в том же порядке, что в <code>\d</code> в psql. Что и когда в эти
+            столбцы пишется — правила раздела 5.
+          </p>
+          <div class="tabs" id="fieldTabs"></div>
+          <div id="fields"></div>
+        </div>
+        <div class="card">
+          <h3>Поля по итогам разбора</h3>
+          <p class="small muted">
+            Строка — итог разбора публикации, колонка — что при нём лежит в столбцах итога и есть ли
+            у публикации вакансии.
+          </p>
+          <table id="matrix"></table>
+        </div>
+      </section>
+
+      <section id="rules">
+        <h2><span class="num">5</span>Правила</h2>
+        <p class="lead">
+          Что можно делать с данными и как по ним считается. «Поведение» — что разрешено и что
+          запрещено, «определение» — как вычисляется значение. Что хранится — в разделе 4. Правила
+          других документов здесь не повторяются, на них ссылки: «П12 плана 2» — правило
+          <a href="connectors.html">плана коннекторов</a>, «П4 пакета db» — правило из
+          <code>packages/db/src/publication/README.md</code>.
+        </p>
+        <div class="card"><table id="rulesTable"></table></div>
+      </section>
+
+      <section id="edges">
+        <h2><span class="num">6</span>Эджкейсы</h2>
+        <p class="lead">
+          Технические ситуации: что миграция, порядок выкладки, повторная доставка задания, модель
+          экстрактора и общие тесты могут сделать с правилами. Что система обязана делать — в
+          разделе 5.
+        </p>
+        <div class="card"><table id="edgeTable"></table></div>
+      </section>
+
+      <section id="risks">
+        <h2><span class="num">7</span>Риски и открытые вопросы</h2>
+        <div class="card">
+          <h3>Открытые вопросы</h3>
+          <table>
+            <tr>
+              <th>Вопрос</th>
+              <th>Варианты и предложение</th>
+            </tr>
+            <tr>
+              <td colspan="2" class="small muted">
+                Открытых вопросов нет. Решения владельца — отдельная сущность после экстрактора,
+                статус <code>low_quality</code> с пояснением, первая версия на правилах — вошли в
+                план. Пороги правила П2 проверяет Э0: его ответ может ослабить правило, но не меняет
+                устройство гейта.
+              </td>
+            </tr>
+          </table>
+          <h3>Риски</h3>
+          <table id="riskTable"></table>
+        </div>
+      </section>
+
+      <section id="stages">
+        <h2><span class="num">8</span>Этапы</h2>
+        <div class="card">
+          <h3>Порядок</h3>
+          <figure class="scroll">
+            <div id="stagesGraph"></div>
+            <figcaption>
+              Клик по этапу — его карточка. Э0, Э1 и Э2 друг от друга не зависят и могут идти
+              параллельно. Э3 берёт пустой список экстрактора из Э1 и статус из Э2. Пунктир — мягкая
+              зависимость: Э3 пишется по правилу П2 как есть, а если Э0 покажет, что правило
+              отсекает годные вакансии, условие правится до Э3 или отдельным коммитом после него.
+              Каждый этап — отдельный коммит, который проходит <code>pnpm check</code> и
+              <code>pnpm test</code>.
+            </figcaption>
+          </figure>
+        </div>
+        <div class="card">
+          <h3>Карта модулей этапа</h3>
+          <p class="small muted">
+            Диаграмма пакетов UML: где лежит каждый модуль этапа и от чего он зависит. Рамка с
+            вкладкой — пакет репозитория или каталог, вложенная рамка — вложенный каталог; каталог
+            без своих модулей входит в путь на вкладке. Тест лежит рядом со своим модулем.
+            Пунктирная стрелка идёт от того, кто зависит: чёрная — «импортирует», зелёная — «тест
+            проверяет». Под именем модуля — что с ним в этом этапе или откуда он. Тесты —
+            <code>node --test</code>: «unit» — без базы, «db» — на тестовой базе из
+            <code>apps/web/.env.test</code>.
+          </p>
+          <div class="legend" style="margin: 0">
+            <span class="l-new">новый модуль</span><span class="l-chg">изменённый</span
+            ><span class="l-old">уже есть в коде или из прошлого этапа</span
+            ><span class="l-testnew">новый тест</span><span class="l-test">изменённый тест</span
+            ><span class="l-pknew">новый каталог</span><span class="l-pk">каталог</span
+            ><span class="l-ext">вне репозитория</span>
+          </div>
+        </div>
+        <div id="stageCards"></div>
+      </section>
+
+      <section id="progress">
+        <h2><span class="num">9</span>Ход работ</h2>
+        <div class="card">
+          <table id="progressTable"></table>
+          <h4>Результаты spike</h4>
+          <p class="small">Э0 не начат: результатов пока нет.</p>
+          <h4>Находки и журнал изменений плана</h4>
+          <ul class="small">
+            <li>
+              24 ноября 2026: первая версия. План вырос из сверки экстрактора с архитектурой: ответ
+              без ролей был ошибкой экстрактора и одновременно веткой «не вакансия» в коннекторе.
+              Решения владельца: отдельная сущность <code>qualityGate</code> после экстрактора,
+              статус <code>low_quality</code> с пояснением, первая версия — правила без модели.
+            </li>
+            <li>
+              24 ноября 2026, находка при составлении плана: у
+              <code>publications.status</code> есть CHECK со списком значений, поэтому новый статус
+              требует миграции (Э2).
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    <script>
+      "use strict";
+      const NS = "http://www.w3.org/2000/svg";
+      const esc = (s) =>
+        String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const $ = (id) => document.getElementById(id);
+      const MK = { ln: "ah", lr: "ahr", lm: "ahm", la: "aha", lg: "ahg" };
+      const DEFS = `<defs>${Object.values(MK)
+        .map(
+          (m) =>
+            `<marker id="${m}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="${m}"/></marker>`,
+        )
+        .join(
+          "",
+        )}<marker id="opn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" class="mopen"/></marker><marker id="opn-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" class="mopen-g"/></marker></defs>`;
+      function svg(id, w, h, body, label) {
+        $(id).innerHTML =
+          `<svg xmlns="${NS}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}" id="${id}-svg">${DEFS}${body}</svg>`;
+      }
+      function T(x, y, s, o = {}) {
+        const cls = [o.cls || "", o.mono ? "mono" : ""].join(" ").trim();
+        return `<text x="${x}" y="${y}" font-size="${o.size || 14}" text-anchor="${o.anchor || "middle"}" font-weight="${o.weight || "normal"}"${cls ? ` class="${cls}"` : ""}>${esc(s)}</text>`;
+      }
+      function R(x, y, w, h, cls, rx = 8, extra = "") {
+        return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${cls}" ${extra}/>`;
+      }
+      function L(x1, y1, x2, y2, o = {}) {
+        const c = o.cls || "ln";
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${c}" stroke-width="${o.w || 1.6}"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}${o.noArrow ? "" : ` marker-end="url(#${MK[c]})"`}${o.both ? ` marker-start="url(#${MK[c]})"` : ""}/>`;
+      }
+      function P(d, o = {}) {
+        const c = o.cls || "ln";
+        return `<path d="${d}" class="${c}" stroke-width="${o.w || 1.6}"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}${o.noArrow ? "" : ` marker-end="url(#${MK[c]})"`}/>`;
+      }
+      function tabs(holder, items) {
+        const h = $(holder);
+        h.innerHTML = items
+          .map(([label], i) => `<button class="${i ? "" : "on"}">${esc(label)}</button>`)
+          .join("");
+        [...h.children].forEach((b, i) =>
+          b.addEventListener("click", () => {
+            [...h.children].forEach((x) => x.classList.remove("on"));
+            b.classList.add("on");
+            items.forEach(([, id], k) => {
+              $(id).hidden = k !== i;
+            });
+          }),
+        );
+      }
+
+      /* =================== DATA =================== */
+
+      const SCEN = [
+        {
+          id: "S1",
+          t: "Ролей нет",
+          chat: [
+            ["me", "pnpm --filter @job-market/connectors test"],
+            [
+              "tool",
+              "process по посту «Мы растём, скоро откроем много позиций»: классификатор → vacancy, экстрактор → [], qualityGate([]) → low_quality",
+            ],
+            [
+              "bot",
+              "✔ mine → { status: 'low_quality', vacancies: 0 }; публикация low_quality, note «экстрактор не нашёл ролей»",
+            ],
+          ],
+          eff: [
+            ["publications.status", "pending → low_quality", "+1"],
+            ["publications.note", "NULL → «экстрактор не нашёл ролей»", "+1"],
+          ],
+          note: "разбор закончен итогом, а не ошибкой: повтора нет (П4, П5)",
+        },
+        {
+          id: "S2",
+          t: "Одна роль из трёх — пустышка",
+          chat: [
+            [
+              "me",
+              "пост Acme: «Senior Frontend, React, jobs@acme.com», «Backend, Go, jobs@acme.com» и «ещё ищем дизайнера»",
+            ],
+            [
+              "tool",
+              "экстрактор → 3 роли; qualityGate → accepted: Senior Frontend и Backend, отброшен «Дизайнер» — только название",
+            ],
+            [
+              "bot",
+              "✔ mine → { status: 'vacancy', vacancies: 2 }; в логе «Roles dropped by quality gate»: Дизайнер, title_only",
+            ],
+          ],
+          eff: [
+            ["publications.status", "pending → vacancy", "+1"],
+            ["vacancies публикации", "0 → 2", "+2"],
+          ],
+          note: "негодная роль не отменяет годные (П3); отброшенная роль остаётся только в логе (П6)",
+        },
+        {
+          id: "S3",
+          t: "Все роли — пустышки",
+          chat: [
+            ["me", "пост «Ищем менеджера и дизайнера!» без компании и контактов"],
+            ["tool", "экстрактор → 2 роли; qualityGate → low_quality"],
+            [
+              "bot",
+              "✔ mine → { status: 'low_quality', vacancies: 0 }; note «все роли отброшены: Менеджер — нет компании и способа отклика; Дизайнер — нет компании и способа отклика»",
+            ],
+          ],
+          eff: [
+            ["publications.status", "pending → low_quality", "+1"],
+            ["publications.note", "NULL → «все роли отброшены: …»", "+1"],
+          ],
+          note: "пояснение называет каждую роль и её изъян (П4)",
+        },
+        {
+          id: "S4",
+          t: "Годная вакансия",
+          chat: [
+            ["me", "пост «Frontend Vue-разработчик в Lamoda, удалённо из РФ, описание по ссылке»"],
+            [
+              "tool",
+              "экстрактор → 1 роль: company Lamoda, skills [Vue], место найма; qualityGate → accepted, отброшенных нет",
+            ],
+            ["bot", "✔ mine → { status: 'vacancy', vacancies: 1 }"],
+          ],
+          eff: [
+            ["publications.status", "pending → vacancy", "+1"],
+            ["vacancies публикации", "0 → 1", "+1"],
+          ],
+          note: "гейт роль не правит: он её пропускает или отбрасывает (П2)",
+        },
+        {
+          id: "S5",
+          t: "Копия плохого поста",
+          chat: [
+            ["me", "pnpm --filter @job-market/db test"],
+            ["tool", "публикация A — low_quality с хэшем текста h; findOriginals(db, [h])"],
+            ["bot", "✔ Map { h → id публикации A }"],
+          ],
+          eff: [],
+          note: "low_quality — оригинал для копий: задание разбора плана 5 пометит копию duplicate и не позовёт модели (П7)",
+        },
+        {
+          id: "S6",
+          t: "Сбой гейта",
+          chat: [
+            ["me", "process с подставным гейтом, который отвечает Error «Gate failed»"],
+            ["tool", "классификатор → vacancy, экстрактор → 1 роль, гейт → Error"],
+            [
+              "bot",
+              "✔ process → Error «Gate failed»; mine → Error, публикация по-прежнему pending",
+            ],
+          ],
+          eff: [],
+          note: "гейт на правилах Error не возвращает; ветка нужна гейту с моделью и проверяется подставным гейтом (П8)",
+        },
+      ];
+
+      const NOGO = [
+        [
+          "Модель в гейте: LLM или классификатор вместо правил",
+          "без размеченных данных не понять, лучше модель правил или хуже; сначала правила и то, что они отсеют. Контракт гейта модель допускает (П1)",
+        ],
+        [
+          "Смысловые случаи: реклама курсов, сетевой маркетинг, «работа на дому» под видом вакансии",
+          "это вопрос «настоящая ли вакансия», его решает классификатор до экстрактора; правка его промпта и набора проверки — отдельная задача",
+        ],
+        [
+          "Дедупликация вакансий между публикациями",
+          "ей нужна база, а гейт базы не знает; отдельный план, шаг mine после сопоставления компании",
+        ],
+        [
+          "Оценка полезности вакансии для ранжирования выдачи",
+          "это поле вакансии, а не решение «пустить или нет»",
+        ],
+        ["Хранение отброшенных ролей в базе", "в первой версии — лог (П6); цена — в рисках"],
+        [
+          "Гейт в переносе старых постов (apps/web/src/transfer)",
+          "перенос разовый и удаляется после сверки; его поведение не меняется (П9)",
+        ],
+        [
+          "Пересчёт гейтом уже записанных вакансий",
+          "гейт работает при разборе; сколько записанных вакансий он бы отсеял, считает Э0",
+        ],
+        [
+          "Страница или фильтр по low_quality",
+          "позже; до этого статус и пояснение видны в таблице publications",
+        ],
+      ];
+
+      const FACTS = [
+        [
+          "Ответ без ролей в экстракторе",
+          "packages/extractor/src/vacancy.ts: vacancySchema — refine «Вакансия без единой роли»; такой ответ не проходит схему, и extract возвращает Error «Vacancy extraction failed» (П5 README экстрактора, тест «an answer without roles is an error»)",
+          "Э1 убирает refine: пустой список — обычный ответ экстрактора",
+        ],
+        [
+          "Ответ без ролей в коннекторе",
+          "packages/connectors/src/classify-extract.ts: после extract ветка roles.length === 0 → not_vacancy с причиной trash и пояснением NO_ROLES_NOTE; с настоящим экстрактором она недостижима",
+          "Э3 заменяет ветку вызовом гейта",
+        ],
+        [
+          "Итог process и mine",
+          "packages/connectors/src/contract.ts: ProcessOutcome — vacancy с ролями, not_vacancy empty, not_vacancy trash с note; MineResult.status — vacancy, not_vacancy, skipped",
+          "оба типа получают low_quality (Э3)",
+        ],
+        [
+          "Запись итога",
+          "packages/connectors/src/mine.ts: write пишет вакансии и итог одной транзакцией — saveVacancies и setOutcome; при not_vacancy вакансии публикации не трогает. setOutcome (packages/db/src/publication/write-publication.ts) принимает PublicationOutcome из трёх вариантов",
+          "setOutcome получает четвёртый вариант (Э2); mine при итоге без вакансий стирает вакансии публикации (П5)",
+        ],
+        [
+          "Статус в базе",
+          "packages/db/src/publication/values.ts: PUBLICATION_STATUSES — pending, processing, vacancy, not_vacancy, duplicate, failed; publication.ts — CHECK publications_status_check с тем же списком; последняя миграция — 0013_not_vacancy_reasons.sql",
+          "новый статус — это значение в списке и миграция CHECK (Э2)",
+        ],
+        [
+          "Пояснение итога",
+          "packages/db/src/publication/publication.ts: note — text NULL, «пояснение, почему не вакансия; у причины empty его нет»",
+          "пояснение low_quality пишется в тот же столбец; новый столбец не нужен",
+        ],
+        [
+          "Оригиналы копий",
+          "write-publication.ts: findOriginals берёт публикации со статусом vacancy или not_vacancy (П4 пакета db)",
+          "без правки копия поста low_quality снова пойдёт в модели — П7, Э2",
+        ],
+        [
+          "Перенос старых постов",
+          "apps/web/src/transfer/prepare.ts зовёт extract без классификатора; Error с причиной NoObjectGeneratedError — пост failed, fromModel false (П5 README переноса; тесты «no roles is a failure», «posts without roles are failures but do not stop the run»)",
+          "Э1 сохраняет это поведение: пустой список в переносе остаётся ошибкой поста (П9)",
+        ],
+        [
+          "Логи",
+          "packages/connectors/src/drain.ts импортирует log из @job-market/logger; mine.ts логгера не использует",
+          "отброшенные роли mine пишет логгером модуля connectors (AGENTS.md)",
+        ],
+        [
+          "Обработчик задания разбора",
+          "в packages/engine/src нет mine-job.ts; план 5 (mine-job.html) в статусе «требует ревью» и называет итоги mine vacancy и not_vacancy",
+          "Э4 добавляет в журнал плана 5 строку: итог low_quality проходит через handleMineJob так же",
+        ],
+        [
+          "Фейки тестов",
+          "packages/connectors/src/models.test-utils.ts: roleOutput и extractedRole по умолчанию — роль без компании, контактов, навыков и мест",
+          "по П2 такая роль негодная: Э3 делает роль по умолчанию годной, иначе нынешние тесты process потеряют роли",
+        ],
+        [
+          "Данные для порогов",
+          "в репозитории нет выгрузки записанных вакансий; DATABASE_URL в apps/web/.env.local ведёт на базу Neon",
+          "сколько вакансий отсеет каждое условие П2, считает Э0 запросом на чтение к этой базе, с разрешения владельца",
+        ],
+      ];
+
+      const EDGES = [
+        {
+          id: "E1",
+          sit: "Правка промпта экстрактора меняет ответы модели на тех же постах",
+          beh: "до коммита Э1 идёт прогон набора экстрактора с --compare к последнему отчёту: совпадение числа ролей не падает больше, чем расходятся два прогона без правок (E1 README экстрактора)",
+          test: "pnpm --filter @job-market/extractor eval --compare",
+          st: "Э1",
+        },
+        {
+          id: "E2",
+          sit: "Код, который пишет low_quality, выложен раньше миграции CHECK",
+          beh: "запись нарушает publications_status_check, транзакция mine откатывается, mine → Error; публикация остаётся в прежнем статусе и разбирается после миграции. Поэтому Э2 с миграцией — отдельный коммит раньше Э3",
+          test: "mine.test на базе с миграцией Э2",
+          st: "Э2",
+        },
+        {
+          id: "E3",
+          sit: "Миграция меняет CHECK на таблице, в которую в это время пишет разбор",
+          beh: "DROP и ADD CONSTRAINT идут в одной транзакции миграции: запись ждёт её конца и видит уже новый список. Все строки таблицы новому списку соответствуют: старые значения в нём остались",
+          test: "CI: применение миграций и шаг «Migrations match the schema»",
+          st: "Э2",
+        },
+        {
+          id: "E4",
+          sit: "Тесты пакетов db и connectors идут параллельно на одной тестовой базе",
+          beh: "новые случаи заводят публикации со своим префиксом external_id и content_hash: findOriginals не находит чужих оригиналов, тест удаляет только свои строки",
+          test: "pnpm test дважды подряд — зелёный",
+          st: "Э2",
+        },
+        {
+          id: "E5",
+          sit: "Публикацию разобрали дважды: первый разбор записал вакансии, второй получил low_quality",
+          beh: "транзакция второго стирает вакансии публикации и пишет low_quality: остаётся итог последнего разбора, публикации low_quality с вакансиями не бывает (П5)",
+          test: "mine.test",
+          st: "Э3",
+        },
+      ];
+
+      const RISKS = [
+        [
+          "Правило П2 отсекает годные вакансии: короткий пост «Frontend в Lamoda, описание по ссылке», если ссылку не удалось прочитать",
+          "Э0: доля и выборка по каждому условию; после запуска — доля low_quality по источникам в таблице publications",
+          "Э0 идёт до Э3. Условие, которое режет годные вакансии, ослабляется или убирается",
+        ],
+        [
+          "Плохая вакансия с заполненными полями проходит гейт: реклама курсов, оформленная как вакансия",
+          "просмотр выдачи",
+          "принятая цена первой версии: смысловые случаи решает классификатор. Не хватит его — модель в гейте по контракту П1",
+        ],
+        [
+          "Отброшенные роли есть только в логе: для настройки правил их придётся собирать из логов",
+          "при правке П2 не хватает примеров отброшенного",
+          "принятая цена. Понадобится история — отдельная задача: таблица отброшенных ролей",
+        ],
+        [
+          "После правки промпта экстрактор чаще отвечает пустым списком на настоящие вакансии",
+          "прогон набора экстрактора (E1); доля low_quality с пояснением «экстрактор не нашёл ролей»",
+          "убрать строку промпта: схема пустой список всё равно допускает, и гейт его обрабатывает",
+        ],
+        [
+          "Публикация low_quality не возвращается в разбор после смягчения правил",
+          "после правки П2 старые low_quality остаются как есть",
+          "принятая цена: возврат публикаций в разбор — вне плана, как и возврат failed в плане 5",
+        ],
+      ];
+      /* =================== RENDER: edges table =================== */
+      $("edgeTable").innerHTML =
+        `<tr><th>№</th><th>Ситуация</th><th>Поведение</th><th>Тест</th><th>Этап</th></tr>` +
+        EDGES.map(
+          (e) =>
+            `<tr><td><b>${e.id}</b></td><td>${esc(e.sit)}</td><td>${esc(e.beh)}</td><td><code>${esc(e.test)}</code></td><td><a href="#stage-${e.st}">${e.st}</a></td></tr>`,
+        ).join("");
+
+      /* =================== Section 1 =================== */
+      $("scenarios").innerHTML = `<div class="scen">${SCEN.map(
+        (s) => `
+  <div class="card" style="margin:0" id="scen-${s.id}">
+    <h3><span class="schip">${s.id}</span>${esc(s.t)}</h3>
+    <div class="chat">${s.chat.map(([w, t]) => `<div class="msg ${w}">${esc(t)}</div>`).join("")}</div>
+    <div class="effect">${s.eff.length ? `<ul style="margin:0;padding-left:18px">${s.eff.map(([k, v, d]) => `<li><b>${esc(k)}</b>: <span class="mono">${esc(v)}</span> <span class="${d.startsWith("+") ? "plus" : "minus"}">${esc(d)}</span></li>`).join("")}</ul>` : `<span class="muted">данные не меняются</span>`}
+      <div class="muted small">${esc(s.note)}</div></div>
+  </div>`,
+      ).join("")}</div>`;
+
+      $("nogo").innerHTML =
+        `<tr><th>Не делаем</th><th>Почему</th></tr>` +
+        NOGO.map(([a, b]) => `<tr><td>${esc(a)}</td><td class="muted">${esc(b)}</td></tr>`).join(
+          "",
+        );
+      const factRows = (rows) =>
+        rows
+          .map(
+            ([a, b, c]) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`,
+          )
+          .join("");
+      $("facts").innerHTML =
+        `<tr><th>Вопрос</th><th>Факт в коде</th><th>Что из этого следует</th></tr>` +
+        factRows(FACTS);
+
+      /* =================== Contract, matrix, migration =================== */
+      const plainTable = (id, head, rows) => {
+        $(id).innerHTML =
+          `<tr>${head.map((h) => `<th>${h}</th>`).join("")}</tr>` +
+          rows
+            .map(
+              (r) =>
+                `<tr>${r.map((c, i) => (i === 0 ? `<td><code>${esc(c)}</code></td>` : `<td class="small">${esc(c)}</td>`)).join("")}</tr>`,
+            )
+            .join("");
+      };
+      plainTable(
+        "contract",
+        ["Функция или тип", "Что это"],
+        [
+          [
+            "qualityGate(publication, roles)",
+            "новый, пакет коннекторов: гейт на правилах → Promise<Error | GateVerdict>. Считает вердикт функцией judgeRoles; публикацию первая версия не читает, Error не возвращает (П1)",
+          ],
+          [
+            "QualityGate",
+            "(publication: PublicationForModel, roles: readonly ExtractedRole[]) => Promise<Error | GateVerdict> — контракт гейта; по нему же встанет гейт с моделью (П1)",
+          ],
+          [
+            "GateVerdict",
+            "{ kind: 'accepted', roles, dropped } — годные роли в порядке текста и отброшенные; { kind: 'low_quality', note, dropped } — годных ролей нет (П3, П4)",
+          ],
+          [
+            "roleDefect(role)",
+            "чистая функция: изъян роли 'no_contact' или 'title_only' либо null — роль годная (П2)",
+          ],
+          [
+            "judgeRoles(roles)",
+            "чистая функция: вердикт по списку ролей и пояснение для low_quality (П3, П4)",
+          ],
+          ["DroppedRole", "{ title, defect } — отброшенная роль: название и изъян"],
+          [
+            "classifyAndExtract(models, gate = qualityGate)",
+            "изменён: после extract зовёт гейт и сводит его вердикт к ProcessOutcome; ветка «ролей нет → not_vacancy» удалена (П1, П8)",
+          ],
+          [
+            "ProcessOutcome",
+            "изменён: у варианта vacancy появляется dropped — отброшенные роли; новый вариант { kind: 'low_quality', note }",
+          ],
+          [
+            "MineResult.status",
+            "изменён: vacancy, not_vacancy, low_quality или skipped; у low_quality vacancies — 0 (П5)",
+          ],
+          [
+            "extract(publication, { occupations, model? })",
+            "изменён, пакет экстрактора: ответ модели без ролей — пустой список, а не Error; Error — сбой провайдера или ответ не по схеме (П1)",
+          ],
+          [
+            "setOutcome(db, publicationId, outcome)",
+            "изменён, @job-market/db: PublicationOutcome получает вариант { status: 'low_quality', note } (П5)",
+          ],
+          [
+            "findOriginals(db, hashes)",
+            "изменён, @job-market/db: оригинал — публикация со статусом vacancy, not_vacancy или low_quality (П7)",
+          ],
+          [
+            "NO_ROLES_NOTE",
+            "«экстрактор не нашёл ролей» — пояснение low_quality для пустого списка; переезжает из classify-extract.ts в quality-gate.ts (П4)",
+          ],
+        ],
+      );
+      plainTable(
+        "matrix",
+        ["Итог разбора", "not_vacancy_reason", "note", "processed_at", "Вакансии публикации"],
+        [
+          ["vacancy", "NULL", "NULL", "время записи", "годные роли, номер — индекс среди годных"],
+          ["not_vacancy · empty", "empty", "NULL", "время записи", "нет"],
+          ["not_vacancy · trash", "trash", "пояснение классификатора", "время записи", "нет"],
+          ["low_quality", "NULL", "пояснение гейта (П4)", "время записи", "нет"],
+        ],
+      );
+      /* =================== Component maps =================== */
+
+      function c4Map(id, W, H, nodes, bounds, links, label) {
+        const N = {};
+        nodes.forEach((n) => {
+          n.w = n.w || 190;
+          n.h = n.h || 92;
+          N[n.id] = n;
+        });
+        const center = (n) => [n.x + n.w / 2, n.y + n.h / 2];
+        const clip = (n, [tx, ty]) => {
+          const [cx, cy] = center(n),
+            dx = tx - cx,
+            dy = ty - cy;
+          const s = Math.min(
+            Math.abs((n.w / 2 + 3) / (dx || 1e-9)),
+            Math.abs((n.h / 2 + 3) / (dy || 1e-9)),
+          );
+          return [cx + dx * s, cy + dy * s];
+        };
+        let b = "";
+        bounds.forEach((r) => {
+          b +=
+            R(r.x, r.y, r.w, r.h, "bx-bound", 14) +
+            T(r.x + 14, r.y + 20, r.label, {
+              anchor: "start",
+              cls: "mu",
+              size: 13,
+              weight: 600,
+            });
+        });
+        links.forEach((l) => {
+          const a = N[l.a],
+            c = N[l.b],
+            via = l.via || [];
+          const p1 = l.from || clip(a, via[0] || center(c)),
+            p2 = l.to || clip(c, via[via.length - 1] || center(a));
+          const pts = [p1, ...via, p2];
+          b += P("M" + pts.map((p) => p.join(",")).join(" L"));
+          const mx = l.lx !== undefined ? l.lx : (p1[0] + p2[0]) / 2,
+            my = l.ly !== undefined ? l.ly : (p1[1] + p2[1]) / 2;
+          const x = { r: mx + 8, l: mx - 8 }[l.side] || mx,
+            anchor = { r: "start", l: "end" }[l.side] || "middle";
+          const top = l.side ? my + 4 - (l.l.length - 1) * 7 : my - 7 - (l.l.length - 1) * 15;
+          l.l.forEach((s, i) => {
+            b += `<text x="${x}" y="${top + i * 15}" font-size="${i ? 11 : 12}" text-anchor="${anchor}"${i ? ' class="mu"' : ""} paint-order="stroke" stroke="var(--card)" stroke-width="4">${esc(s)}</text>`;
+          });
+        });
+        nodes.forEach((n) => {
+          const cls = {
+            person: "bx-person",
+            new: "bx-new",
+            chg: "bx-chg",
+            old: "bx",
+            ext: "bx-ext",
+          }[n.k];
+          b += R(n.x, n.y, n.w, n.h, cls, n.k === "person" ? 22 : 10);
+          const cx = n.x + n.w / 2;
+          b +=
+            T(cx, n.y + 25, n.t, {
+              mono: n.k !== "person" && n.k !== "ext" && !n.plain,
+              weight: 700,
+              size: 14,
+            }) + T(cx, n.y + 43, n.type, { cls: "mu", size: 11 });
+          n.d.forEach((s, i) => {
+            b += T(cx, n.y + 63 + i * 15, s, { size: 11.5 });
+          });
+        });
+        svg(id, W, H, b, label);
+      }
+      c4Map(
+        "mapA",
+        1200,
+        560,
+        [
+          {
+            id: "call",
+            x: 20,
+            y: 210,
+            w: 170,
+            k: "ext",
+            t: "Вызывающий",
+            type: "[Тесты; план 5]",
+            d: ["handleMineJob"],
+          },
+          {
+            id: "mine",
+            x: 250,
+            y: 210,
+            k: "chg",
+            t: "mine.ts",
+            type: "[Компонент: connectors]",
+            d: ["пишет вакансии и итог,", "теперь и low_quality"],
+          },
+          {
+            id: "proc",
+            x: 510,
+            y: 210,
+            k: "chg",
+            t: "classify-extract.ts",
+            type: "[Компонент: connectors]",
+            d: ["process: классификатор,", "экстрактор, гейт"],
+          },
+          {
+            id: "cls",
+            x: 760,
+            y: 60,
+            w: 200,
+            k: "old",
+            t: "@job-market/classifier",
+            type: "[Компонент: пакет]",
+            d: ["вакансия или нет"],
+          },
+          {
+            id: "ext",
+            x: 760,
+            y: 210,
+            w: 200,
+            k: "chg",
+            t: "@job-market/extractor",
+            type: "[Компонент: пакет]",
+            d: ["роли публикации; пустой", "список — не ошибка"],
+          },
+          {
+            id: "gate",
+            x: 760,
+            y: 360,
+            w: 200,
+            k: "new",
+            t: "quality-gate.ts",
+            type: "[Компонент: connectors]",
+            d: ["годные роли или", "low_quality с пояснением"],
+          },
+          {
+            id: "db",
+            x: 250,
+            y: 430,
+            k: "chg",
+            t: "@job-market/db",
+            type: "[Компонент: Drizzle]",
+            d: ["setOutcome, findOriginals:", "статус low_quality"],
+          },
+          {
+            id: "llm",
+            x: 1020,
+            y: 60,
+            w: 160,
+            h: 242,
+            k: "ext",
+            t: "Модели",
+            type: "[Внешняя система]",
+            d: ["AI Gateway;", "в тестах — фейк"],
+          },
+          {
+            id: "pg",
+            x: 1020,
+            y: 430,
+            w: 160,
+            k: "ext",
+            t: "Postgres",
+            type: "[База данных]",
+            d: ["publications,", "vacancies"],
+          },
+        ],
+        [
+          {
+            x: 225,
+            y: 30,
+            w: 760,
+            h: 510,
+            label: "packages/* · библиотеки TypeScript [Контейнер]",
+          },
+        ],
+        [
+          { a: "call", b: "mine", l: ["зовёт", "mine"], ly: 198 },
+          { a: "mine", b: "proc", l: ["зовёт", "process"], ly: 198 },
+          {
+            a: "proc",
+            b: "cls",
+            l: ["classify"],
+            via: [[605, 106]],
+            from: [605, 207],
+            to: [757, 106],
+            lx: 681,
+            ly: 106,
+          },
+          { a: "proc", b: "ext", l: ["extract"] },
+          {
+            a: "proc",
+            b: "gate",
+            l: ["передаёт роли"],
+            via: [[605, 406]],
+            from: [605, 305],
+            to: [757, 406],
+            lx: 681,
+            ly: 406,
+          },
+          { a: "cls", b: "llm", l: ["[HTTPS]"], from: [963, 106], to: [1017, 106] },
+          { a: "ext", b: "llm", l: ["[HTTPS]"], from: [963, 256], to: [1017, 256] },
+          { a: "mine", b: "db", l: ["пишет вакансии", "и итог [SQL]"], side: "r" },
+          { a: "db", b: "pg", l: ["[TCP]"], lx: 560 },
+        ],
+        "Разбор публикации: process с гейтом качества и запись итога",
+      );
+      /* =================== Sequences =================== */
+
+      function sequence(id, lanes, steps, title) {
+        $(id).innerHTML =
+          `<div class="controls"><button class="on" data-a="all">Все шаги</button><button data-a="prev">◀ Назад</button><button data-a="next">Шаг ▶</button><span class="muted small" data-a="count"></span></div><figure class="scroll"><div id="${id}-fig"></div></figure><div class="stepnote" data-a="note"></div>`;
+        const G = Math.min(160, Math.floor(1040 / (lanes.length - 1))),
+          X0 = 90,
+          W = X0 * 2 + G * (lanes.length - 1);
+        const cx = lanes.map((_, i) => X0 + i * G);
+        const tw = (s, mono, size) => s.length * size * (mono ? 0.66 : 0.58);
+        const lbl = (x, y, s, o = {}) =>
+          `<text x="${x}" y="${y}" font-size="${o.size || 13}" text-anchor="${o.anchor || "middle"}" font-weight="${o.weight || "normal"}"${o.cls ? ` class="${o.cls}"` : ""} paint-order="stroke" stroke="var(--card)" stroke-width="4">${esc(s)}</text>`;
+        const inner = (s) => s.ops.flatMap((o) => o.body);
+        const used = (items) =>
+          items.flatMap((s) =>
+            s.frag ? used(inner(s)) : s.comment ? [s.lane] : [s.a, s.b ?? s.a],
+          );
+        const depth = (items) =>
+          Math.max(0, ...items.map((s) => (s.frag ? 1 + depth(inner(s)) : 0)));
+        const selfReach = (items) =>
+          Math.max(
+            0,
+            ...items.map((s) =>
+              s.frag
+                ? selfReach(inner(s))
+                : !s.comment && s.b === undefined
+                  ? cx[s.a] + 52 + tw(s.label, s.mono, 13)
+                  : 0,
+            ),
+          );
+        const frames = [],
+          comments = [],
+          body = [],
+          notes = [];
+        let y = 122,
+          n = 0;
+        const walk = (items) =>
+          items.forEach((s) => {
+            if (s.frag) {
+              const ls = used(inner(s)),
+                pad = 16 + depth(inner(s)) * 12;
+              const f = {
+                kind: s.frag,
+                x1: cx[Math.min(...ls)] - pad,
+                x2: Math.max(cx[Math.max(...ls)] + pad, selfReach(inner(s)) + 12),
+                y0: y - 22,
+                guards: [],
+              };
+              y += 28;
+              s.ops.forEach((o, k) => {
+                if (k) {
+                  f.guards.push({ g: o.guard, sep: y - 24 });
+                  y += 26;
+                } else f.guards.push({ g: o.guard });
+                walk(o.body);
+              });
+              f.y1 = y - 24;
+              y += 16;
+              frames.push(f);
+              return;
+            }
+            if (s.comment) {
+              const w = Math.max(...s.comment.map((t) => tw(t, false, 12))) + 22;
+              const top = y - 20,
+                h = s.comment.length * 16 + 12,
+                x = cx[s.lane] + 14;
+              comments.push(
+                `<path d="M${x},${top} h${w - 10} l10,10 v${h - 10} h-${w} z" class="bx-note"/><path d="M${x + w - 10},${top} v10 h10" class="lm" stroke-width="1"/><line x1="${cx[s.lane]}" y1="${top + h / 2}" x2="${x}" y2="${top + h / 2}" class="lm" stroke-width="1" stroke-dasharray="3 3"/>` +
+                  s.comment
+                    .map(
+                      (t, k) =>
+                        `<text x="${x + 10}" y="${top + 20 + k * 16}" font-size="12" text-anchor="start">${esc(t)}</text>`,
+                    )
+                    .join(""),
+              );
+              y = top + h + 42;
+              return;
+            }
+            const i = n++;
+            notes.push(s.note);
+            let g = "";
+            const head = s.m === "sync" ? "url(#ah)" : "url(#opn)";
+            if (s.b === undefined) {
+              const x = cx[s.a];
+              g +=
+                `<path d="M${x + 5},${y - 6} h40 v20 h-38" class="ln" stroke-width="1.6" marker-end="${head}"/>` +
+                lbl(x + 52, y + 8, s.label, {
+                  anchor: "start",
+                  cls: s.mono ? "mono" : "",
+                });
+              y += 14;
+            } else {
+              const x1 = cx[s.a],
+                x2 = cx[s.b],
+                d = x2 > x1 ? 1 : -1;
+              g += `<line x1="${x1 + d * 5}" y1="${y}" x2="${x2 - d * 5}" y2="${y}" class="ln" stroke-width="1.6"${s.m === "ret" ? ' stroke-dasharray="6 4"' : ""} marker-end="${head}"/>`;
+              g += lbl((x1 + x2) / 2, y - 8, s.label, {
+                cls: [s.mono ? "mono" : "", s.err ? "rd" : ""].join(" ").trim(),
+              });
+            }
+            body.push(`<g class="st" data-i="${i}">${g}</g>`);
+            y += 44;
+          });
+        walk(steps);
+        const H = y;
+        let b = "";
+        lanes.forEach(([t, s, kind], i) => {
+          const x = cx[i];
+          if (kind === "actor") {
+            b +=
+              `<g class="ln" stroke-width="1.6" fill="none"><circle cx="${x}" cy="20" r="8"/><path d="M${x},28 v18 M${x - 12},34 h24 M${x},46 l-10,14 M${x},46 l10,14"/></g>` +
+              T(x, 80, t, { weight: 600, size: 14 });
+          } else
+            b +=
+              R(x - G / 2 + 6, 12, G - 12, 58, "bx-head", 4) +
+              T(x, 36, t, { weight: 600, size: 14, mono: /[._/]/.test(t) }) +
+              T(x, 56, s, { cls: "mu", size: 11 });
+          b += `<line x1="${x}" y1="${kind === "actor" ? 88 : 70}" x2="${x}" y2="${H - 8}" class="lm" stroke-width="1" stroke-dasharray="4 4"/>`;
+        });
+        frames.forEach((f) => {
+          const w = tw(f.kind, false, 12) + 18;
+          b += `<rect x="${f.x1}" y="${f.y0}" width="${f.x2 - f.x1}" height="${f.y1 - f.y0}" class="lm" stroke-width="1.2"/>`;
+          b += `<path d="M${f.x1},${f.y0} h${w} v12 l-7,8 h-${w - 7} z" class="fragtag"/>`;
+          b += `<text x="${f.x1 + 6}" y="${f.y0 + 15}" font-size="12" font-weight="700">${f.kind}</text>`;
+          f.guards.forEach((o, k) => {
+            if (k)
+              b += `<line x1="${f.x1}" y1="${o.sep}" x2="${f.x2}" y2="${o.sep}" class="lm" stroke-width="1.2" stroke-dasharray="6 4"/>`;
+            if (o.g)
+              b += lbl(k ? f.x1 + 10 : f.x1 + w + 8, k ? o.sep + 17 : f.y0 + 15, `[${o.g}]`, {
+                anchor: "start",
+                size: 12,
+                weight: 600,
+              });
+          });
+        });
+        svg(`${id}-fig`, W, H, b + comments.join("") + body.join(""), title);
+        const el = $(`${id}-fig-svg`),
+          q = (a) => $(id).querySelector(`[data-a="${a}"]`);
+        let cur = -1;
+        const show = () => {
+          const all = cur < 0;
+          el.classList.toggle("stepping", !all);
+          q("all").classList.toggle("on", all);
+          el.querySelectorAll(".st").forEach((g) => {
+            const i = +g.dataset.i;
+            g.classList.toggle("cur", i === cur);
+            g.classList.toggle("past", i < cur);
+          });
+          q("count").textContent = all ? `${n} сообщений` : `сообщение ${cur + 1} из ${n}`;
+          q("note").innerHTML = all
+            ? "«Шаг ▶» проходит сценарий по одному сообщению и объясняет каждое."
+            : `<b>${cur + 1}.</b> ${esc(notes[cur])}`;
+        };
+        q("all").onclick = () => {
+          cur = -1;
+          show();
+        };
+        q("next").onclick = () => {
+          cur = Math.min(n - 1, cur + 1);
+          show();
+        };
+        q("prev").onclick = () => {
+          cur = Math.max(-1, cur - 1);
+          show();
+        };
+        show();
+      }
+      sequence(
+        "seqA",
+        [
+          ["mine", "mine.ts"],
+          ["process", "classify-extract.ts"],
+          ["classify", "классификатор"],
+          ["extract", "экстрактор"],
+          ["qualityGate", "quality-gate.ts"],
+          ["@job-market/db", "пакет"],
+        ],
+        [
+          {
+            m: "sync",
+            a: 0,
+            b: 1,
+            label: "process(publication, { occupations })",
+            mono: true,
+            note: "mine уже прочитал дерево профессий. process базы не знает: он только зовёт модели и гейт.",
+          },
+          {
+            m: "sync",
+            a: 1,
+            b: 2,
+            label: "classify(publication)",
+            mono: true,
+            note: "Классификатор решает, вакансия ли пост. Гейт на это решение не влияет.",
+          },
+          {
+            m: "ret",
+            a: 2,
+            b: 1,
+            label: "vacancy, not_vacancy или Error",
+          },
+          {
+            frag: "alt",
+            ops: [
+              {
+                guard: "не вакансия",
+                body: [
+                  {
+                    m: "ret",
+                    a: 1,
+                    b: 0,
+                    label: "{ kind: 'not_vacancy', … }",
+                    mono: true,
+                    note: "Экстрактор и гейт не зовутся: гейт судит только то, что классификатор признал вакансией (П1).",
+                  },
+                  {
+                    m: "sync",
+                    a: 0,
+                    b: 5,
+                    label: "setOutcome(not_vacancy)",
+                    mono: true,
+                    note: "Как сейчас; в той же транзакции стираются вакансии публикации, если они остались от прошлого разбора (П5).",
+                  },
+                  { m: "ret", a: 5, b: 0, label: "ok" },
+                ],
+              },
+              {
+                guard: "вакансия",
+                body: [
+                  {
+                    m: "sync",
+                    a: 1,
+                    b: 3,
+                    label: "extract(publication, …)",
+                    mono: true,
+                    note: "Экстрактор только извлекает роли. Что с ними делать, он не решает.",
+                  },
+                  {
+                    m: "ret",
+                    a: 3,
+                    b: 1,
+                    label: "роли, в том числе [], или Error",
+                    note: "Пустой список — обычный ответ: ролей в посте нет (П1). Error — сбой провайдера или ответ не по схеме.",
+                  },
+                  {
+                    m: "sync",
+                    a: 1,
+                    b: 4,
+                    label: "qualityGate(publication, roles)",
+                    mono: true,
+                    note: "Гейт ищет изъян у каждой роли (П2) и собирает вердикт по списку (П3).",
+                  },
+                  {
+                    m: "ret",
+                    a: 4,
+                    b: 1,
+                    label: "accepted, low_quality или Error",
+                    note: "Гейт на правилах Error не возвращает. Вариант остаётся в контракте для гейта с моделью (П8).",
+                  },
+                  {
+                    frag: "alt",
+                    ops: [
+                      {
+                        guard: "accepted: есть годные роли",
+                        body: [
+                          {
+                            m: "ret",
+                            a: 1,
+                            b: 0,
+                            label: "{ kind: 'vacancy', roles, dropped }",
+                            mono: true,
+                            note: "roles — только годные, в порядке текста. dropped — отброшенные: название и изъян.",
+                          },
+                          {
+                            m: "sync",
+                            a: 0,
+                            label: "места ролей; лог отброшенных",
+                            note: "Места годных ролей mine сводит к гео-справочнику, как сейчас. Отброшенные роли пишет в лог с id публикации (П6).",
+                          },
+                          {
+                            m: "sync",
+                            a: 0,
+                            b: 5,
+                            label: "saveVacancies; setOutcome(vacancy)",
+                            mono: true,
+                            note: "Одна транзакция: вакансии годных ролей и итог.",
+                          },
+                          { m: "ret", a: 5, b: 0, label: "ok" },
+                        ],
+                      },
+                      {
+                        guard: "low_quality: годных ролей нет",
+                        body: [
+                          {
+                            m: "ret",
+                            a: 1,
+                            b: 0,
+                            label: "{ kind: 'low_quality', note }",
+                            mono: true,
+                            note: "note — «экстрактор не нашёл ролей» или список ролей с изъянами (П4).",
+                          },
+                          {
+                            m: "sync",
+                            a: 0,
+                            b: 5,
+                            label: "setOutcome(low_quality, note)",
+                            mono: true,
+                            note: "Одна транзакция: вакансии публикации стираются, статус low_quality, пояснение в note (П5).",
+                          },
+                          { m: "ret", a: 5, b: 0, label: "ok" },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            comment: [
+              "Error классификатора, экстрактора или гейта process",
+              "возвращает как есть: mine ничего не пишет,",
+              "статус публикации прежний (П8).",
+            ],
+            lane: 1,
+          },
+        ],
+        "process с гейтом качества",
+      );
+      /* =================== Data model =================== */
+      /**
+       * Столбец: [имя, тип, ключ, NULL, по умолчанию, что это, почему]. `k: "old"` — таблица уже есть
+       * и показана ради связи, `k: "chg"` — меняется. `dict` — вкладка словаря.
+       */
+      const TABLES = {
+        publications: {
+          k: "chg",
+          x: 20,
+          y: 20,
+          w: 400,
+          dict: true,
+          grain: "одна публикация на площадке: сообщение Telegram-канала или пост LinkedIn.",
+          f: [
+            ["id", "uuid", "PK", false, "gen_random_uuid()", "Идентификатор публикации.", ""],
+            [
+              "source_id",
+              "uuid",
+              "FK",
+              false,
+              "",
+              "Источник, который нашёл публикацию первым.",
+              "",
+            ],
+            [
+              "content_hash",
+              "text",
+              "",
+              false,
+              "",
+              "Хэш текста автора без рекламы соседних каналов.",
+              "",
+            ],
+            [
+              "status",
+              "text",
+              "",
+              false,
+              "'pending'",
+              "Где публикация в разборе: pending, processing, vacancy, not_vacancy, low_quality, duplicate или failed.",
+              "low_quality — отдельное значение, а не причина not_vacancy: not_vacancy значит «классификатор отсёк», low_quality — «это вакансия, но брать нечего». По двум числам видно разное: ошибки классификатора и бедные источники.",
+            ],
+            [
+              "not_vacancy_reason",
+              "text",
+              "",
+              true,
+              "",
+              "Почему публикация не вакансия: empty или trash. У остальных статусов значения нет.",
+              "",
+            ],
+            [
+              "note",
+              "text",
+              "",
+              true,
+              "",
+              "Пояснение итога словами: у not_vacancy с причиной trash — что это за пост, у low_quality — почему роли не годятся.",
+              "пояснение low_quality — тот же вид данных, что пояснение trash; второй столбец не нужен.",
+            ],
+            [
+              "processed_at",
+              "timestamptz",
+              "",
+              true,
+              "",
+              "Когда разбор закончился, с любым итогом.",
+              "",
+            ],
+            [
+              "duplicate_of_id",
+              "uuid",
+              "FK",
+              true,
+              "",
+              "Публикация с тем же текстом, которая разобрана вместо этой.",
+              "",
+            ],
+          ],
+          c: [
+            [
+              "CHECK",
+              "status IN ('pending', 'processing', 'vacancy', 'not_vacancy', 'low_quality', 'duplicate', 'failed')",
+              "publications_status_check: в списке новое значение low_quality, остальные — как были",
+            ],
+          ],
+          ix: [],
+        },
+        vacancies: {
+          k: "old",
+          x: 600,
+          y: 64,
+          w: 320,
+          f: [
+            ["id", "uuid", "PK", false],
+            ["publication_id", "uuid", "FK", false],
+            ["position", "integer", "", false],
+            ["title", "text", "", false],
+          ],
+        },
+      };
+      (function er() {
+        let b = "";
+        Object.entries(TABLES)
+          .filter(([, t]) => t.x !== undefined)
+          .forEach(([name, t]) => {
+            const h = 36 + t.f.length * 22;
+            b +=
+              R(t.x, t.y, t.w, h, t.k === "old" ? "bx" : t.k === "chg" ? "bx-chg" : "bx-new", 10) +
+              `<line x1="${t.x}" y1="${t.y + 30}" x2="${t.x + t.w}" y2="${t.y + 30}" class="la" stroke-width="1"/>`;
+            b += T(t.x + 12, t.y + 21, name, {
+              anchor: "start",
+              weight: 700,
+              mono: true,
+              size: 14,
+            });
+            const nameX = t.x + 20 + Math.max(...t.f.map(([, , k]) => k.length * 6.3));
+            const typeX = t.x + t.w - (t.f.some((c) => c[3]) ? 48 : 12);
+            t.f.forEach(([f, type, key, nullable], i) => {
+              const yy = t.y + 50 + i * 22;
+              if (key)
+                b += T(t.x + 10, yy, key, {
+                  anchor: "start",
+                  cls: "ac",
+                  weight: 700,
+                  size: 10.5,
+                });
+              b += T(nameX, yy, f, {
+                anchor: "start",
+                mono: true,
+                size: 12.5,
+                weight: key.startsWith("PK") ? 700 : "normal",
+              });
+              b += T(typeX, yy, type, {
+                anchor: "end",
+                cls: "mu",
+                mono: true,
+                size: 11.5,
+              });
+              if (nullable)
+                b += T(t.x + t.w - 10, yy, "NULL", {
+                  anchor: "end",
+                  cls: "am",
+                  weight: 600,
+                  size: 10.5,
+                });
+            });
+          });
+        const end = ([x, y], [ux, uy], kind) => {
+          const nx = -uy,
+            ny = ux;
+          const at = (d, s) => [x + ux * d + nx * s, y + uy * d + ny * s];
+          const seg = (p, q) =>
+            `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" class="ln" stroke-width="1.5"/>`;
+          const bar = (d) => seg(at(d, -7), at(d, 7));
+          const ring = (d) => {
+            const [cx, cy] = at(d, 0);
+            return `<circle cx="${cx}" cy="${cy}" r="5" class="cf"/>`;
+          };
+          const foot = seg(at(0, -8), at(13, 0)) + seg(at(0, 8), at(13, 0));
+          return {
+            one: bar(8) + bar(14),
+            zeroOne: bar(8) + ring(20),
+            zeroMany: foot + ring(22),
+          }[kind];
+        };
+        const dir = ([x1, y1], [x2, y2]) => [Math.sign(x2 - x1), Math.sign(y2 - y1)];
+        const rel = (pts, endA, endB, label) => {
+          b += `<path d="M${pts.map((p) => p.join(",")).join(" L")}" class="ln" stroke-width="1.5" fill="none"/>`;
+          b += end(pts[0], dir(pts[0], pts[1]), endA);
+          const n = pts.length;
+          b += end(pts[n - 1], dir(pts[n - 1], pts[n - 2]), endB);
+          if (label)
+            b += `<text x="${label[0]}" y="${label[1]}" font-size="12" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="var(--card)" stroke-width="4">${esc(label[2])}</text>`;
+        };
+        rel(
+          [
+            [420, 108],
+            [600, 108],
+          ],
+          "one",
+          "zeroMany",
+        );
+        svg("er", 940, 280, b, "Таблица publications и её вакансии в нотации Crow's Foot");
+        const names = Object.keys(TABLES).filter((n) => TABLES[n].dict);
+        tabs(
+          "fieldTabs",
+          names.map((n) => [n, "f-" + n.replace(".", "-")]),
+        );
+        const td = (s, cls = "") => `<td${cls ? ` class="${cls}"` : ""}>${s}</td>`;
+        const table = (head, rows) =>
+          `<table><tr>${head.map((h) => `<th>${h}</th>`).join("")}</tr>${rows.map((r) => `<tr>${r.join("")}</tr>`).join("")}</table>`;
+        $("fields").innerHTML = names
+          .map((n, i) => {
+            const t = TABLES[n];
+            const cols = table(
+              ["Столбец", "Тип", "NULL", "По умолчанию", "Описание"],
+              t.f.map(([name, type, key, nullable, def, what, why]) => [
+                td(
+                  `<code>${esc(name)}</code>${key ? ` <span class="small nowrap" style="color: var(--accent); font-weight: 600">${esc(key)}</span>` : ""}`,
+                ),
+                td(`<code>${esc(type)}</code>`),
+                td(
+                  nullable ? "NULL" : "NOT NULL",
+                  nullable ? "small nowrap null" : "small nowrap muted",
+                ),
+                td(def ? `<code>${esc(def)}</code>` : "", "small"),
+                td(esc(what) + (why ? `<div class="small muted">Почему: ${esc(why)}</div>` : "")),
+              ]),
+            );
+            const cons = t.view
+              ? `<p class="small">Представление: ограничений и своих индексов нет, запрос идёт по индексам таблиц. Определение — ${esc(t.view)}. Права — П11.</p>`
+              : `<h4>Ограничения</h4>` +
+                table(
+                  ["Ограничение", "Условие", "Что значит"],
+                  t.c.map(([kind, cond, means]) => [
+                    td(`<b>${esc(kind)}</b>`, "small"),
+                    td(/[а-я]/i.test(cond) ? esc(cond) : `<code>${esc(cond)}</code>`, "small"),
+                    td(esc(means), "small"),
+                  ]),
+                );
+            const idx = t.ix.length
+              ? `<h4>Индексы</h4>` +
+                table(
+                  ["Индекс", "Зачем"],
+                  t.ix.map(([ix, why]) => [
+                    td(`<code>${esc(ix)}</code>`, "small"),
+                    td(esc(why), "small"),
+                  ]),
+                )
+              : "";
+            return `<div id="f-${n.replace(".", "-")}"${i ? " hidden" : ""}><p><b>Одна строка</b> — ${esc(t.grain)}</p><h4>Столбцы</h4>${cols}${cons}${idx}</div>`;
+          })
+          .join("");
+      })();
+
+      /* =================== rules =================== */
+      /** Правило: [номер, формулировка, вид, где проверяется, тест]. */
+      const RULES = [
+        { group: "Гейт" },
+        [
+          "П1",
+          "process зовёт гейт после экстрактора и только для публикации, которую классификатор признал вакансией. Экстрактор возвращает роли как нашёл; ответ без ролей — пустой список, а не ошибка экстрактора. Гейт получает публикацию и роли и отвечает вердиктом. Его контракт асинхронный и допускает Error. Почему: первая версия — правила без модели, но гейт с моделью встанет на то же место без правок process и mine.",
+          "поведение",
+          "connectors/src/classify-extract.ts; extractor/src/vacancy.ts",
+          "classify-extract.test, extract.test",
+        ],
+        [
+          "П2",
+          "Изъян роли — первый подходящий из двух. no_contact: у роли нет компании (company и companyUrl пусты) и нет способа отклика (apply.urls и apply.emails пусты, apply.directMessage — false). title_only: у роли нет ничего, кроме названия, — пусты skills, niceSkills, responsibilities, requirements, benefits, places и languages, нет зарплаты (salaryMin, salaryMax и salaryRaw — null) и нет опыта (experienceYearsMin — null). seniority, workplace, employmentTypes и summary не считаются: summary модель пишет всегда, а одно слово «remote» роль не описывает. Роль без изъяна — годная. Гейт роль не правит. Почему такие условия: по роли без компании и отклика некуда идти, а роль из одного названия нечем отличить от соседней.",
+          "определение",
+          "connectors/src/quality-gate.ts: roleDefect",
+          "quality-gate.test",
+        ],
+        [
+          "П3",
+          "Вердикт по списку ролей. Годные роли остаются в порядке текста. Есть хотя бы одна годная — accepted: годные роли и список отброшенных с изъяном каждой. Годных нет, в том числе список пуст, — low_quality. Почему по ролям, а не по посту: одна пустышка не должна отменять годные роли того же поста.",
+          "определение",
+          "connectors/src/quality-gate.ts: judgeRoles",
+          "quality-gate.test",
+        ],
+        [
+          "П4",
+          "Пояснение low_quality. Список ролей пуст — «экстрактор не нашёл ролей». Все роли отброшены — «все роли отброшены: » и через «; » название каждой роли и её изъян словами: no_contact — «нет компании и способа отклика», title_only — «только название».",
+          "определение",
+          "connectors/src/quality-gate.ts: judgeRoles",
+          "quality-gate.test",
+        ],
+        { group: "Запись итога" },
+        [
+          "П5",
+          "Итог low_quality mine пишет одной транзакцией: status — low_quality, note — пояснение гейта, not_vacancy_reason — пусто, processed_at — время записи; вакансии публикации стираются. Так же стираются вакансии при итоге not_vacancy. Ответ mine — { status: 'low_quality', vacancies: 0 }. Это итог разбора, а не ошибка: вызывающий его не повторяет.",
+          "поведение",
+          "connectors/src/mine.ts; db/src/publication/write-publication.ts: setOutcome",
+          "mine.test, write-publication.test",
+        ],
+        [
+          "П6",
+          "Вердикт accepted с отброшенными ролями: публикация — vacancy, пишутся только годные роли, номер роли — её индекс среди годных. Отброшенные роли mine пишет в лог уровнем info: id публикации, название и изъян каждой. В базе отброшенных ролей нет.",
+          "поведение",
+          "connectors/src/mine.ts",
+          "mine.test",
+        ],
+        [
+          "П7",
+          "Публикация low_quality — оригинал для копий наравне с vacancy и not_vacancy (П4 пакета db): копия плохого поста получает duplicate без вызова моделей.",
+          "поведение",
+          "db/src/publication/write-publication.ts: findOriginals",
+          "write-publication.test",
+        ],
+        [
+          "П8",
+          "Гейт вернул Error — process возвращает этот Error. mine ничего не пишет, статус публикации прежний, повтор решает вызывающий (П12 плана 2).",
+          "поведение",
+          "connectors/src/classify-extract.ts",
+          "classify-extract.test",
+        ],
+        { group: "Перенос старых постов" },
+        [
+          "П9",
+          "Перенос гейт не зовёт. Ответ экстрактора без ролей в переносе остаётся ошибкой поста, которая не считается сбоем вызова модели (П5 README переноса): пустой список prepare.ts превращает в Error «Vacancy extraction returned no roles», пост — failed с fromModel false. Почему: в переносе нет классификатора, а сам перенос удаляется после сверки.",
+          "поведение",
+          "apps/web/src/transfer/prepare.ts",
+          "transfer.test",
+        ],
+      ];
+
+      $("rulesTable").innerHTML =
+        `<tr><th>№</th><th>Правило</th><th>Вид</th><th>Где проверяется</th><th>Тест</th></tr>` +
+        RULES.map((r) =>
+          r.group
+            ? `<tr><td colspan="5" class="small" style="font-weight: 700; padding-top: 16px">${esc(r.group)}</td></tr>`
+            : `<tr id="rule-${r[0]}"><td><b>${r[0]}</b></td><td>${esc(r[1])}</td><td class="small muted">${r[2]}</td><td class="small">${esc(r[3])}</td><td class="small">${r[4] ? `<code>${esc(r[4])}</code>` : "—"}</td></tr>`,
+        ).join("");
+
+      /* =================== risks =================== */
+      $("riskTable").innerHTML =
+        `<tr><th>Риск</th><th>Как узнаем</th><th>Что делаем</th></tr>` +
+        RISKS.map(
+          ([a, b, c]) =>
+            `<tr><td><b>${esc(a)}</b></td><td class="small">${esc(b)}</td><td>${esc(c)}</td></tr>`,
+        ).join("");
+
+      /* =================== stages =================== */
+      const STAGES = [
+        {
+          id: "Э0",
+          t: "Spike: пороги",
+          res: "ответ: сколько записанных вакансий отсеяло бы каждое условие П2 и есть ли среди них годные",
+          gres: "что отсеет П2 на данных",
+          kind: "исследование",
+          g: [0, 2],
+          q: [
+            "Сколько записанных вакансий версии схемы 2 попало бы под no_contact и под title_only: число и доля, всего и по источникам.",
+            "По 20 случайных вакансий на каждое условие со ссылкой на публикацию: владелец смотрит, есть ли среди них годные.",
+            "Сколько публикаций целиком ушло бы в low_quality: все их роли с изъяном.",
+          ],
+          how: "SQL-запросы только на чтение к базе из apps/web/.env.local, с разрешения владельца; запросы — в scratchpad, без коммитов; около часа",
+          exit: "итог — раздел «Результаты spike»",
+          no: "если условие отсекает годные вакансии, оно ослабляется или убирается из П2 до Э3; Э1 и Э2 от ответа не зависят",
+        },
+        {
+          id: "Э1",
+          t: "Экстрактор без ролей",
+          res: "extract отвечает пустым списком, когда ролей в посте нет; разбор такого поста коннектором кончается итогом not_vacancy с пояснением «экстрактор не нашёл ролей», а не ошибкой; перенос ведёт себя как раньше",
+          gres: "пустой список вместо ошибки",
+          g: [0, 0],
+          newDirs: [],
+          ctx: [["packages/connectors/src/classify-extract.ts", "old"]],
+          mods: [
+            [
+              "packages/extractor/src/vacancy.ts",
+              "chg",
+              "vacancySchema без refine «Вакансия без единой роли»: пустой список проходит схему (П1)",
+              [],
+            ],
+            [
+              "packages/extractor/src/prompt.ts",
+              "chg",
+              "строка в инструкциях: конкретной роли в посте нет — пустой список",
+              [],
+            ],
+            [
+              "packages/extractor/src/extract.ts",
+              "chg",
+              "комментарий функции: ответ без ролей — пустой список; код вызова модели не меняется",
+              ["vacancy.ts", "prompt.ts"],
+            ],
+            [
+              "packages/extractor/README.md",
+              "chg",
+              "П5 и строка API extract: ответ без ролей — пустой список, решение о нём принимает вызывающий",
+              [],
+            ],
+            [
+              "apps/web/src/transfer/prepare.ts",
+              "chg",
+              "extractRoles: пустой список → Error «Vacancy extraction returned no roles», пост failed с fromModel false (П9)",
+              ["extract.ts"],
+            ],
+            [
+              "apps/web/src/transfer/README.md",
+              "chg",
+              "П5: ролей нет — extract отвечает пустым списком, перенос считает его ошибкой поста",
+              [],
+            ],
+          ],
+          tests: [
+            [
+              "packages/extractor/src/extract.test.ts",
+              "chg",
+              "unit. Модель отвечает { vacancies: [] } → extract возвращает [] (был Error); роль с пустым названием по-прежнему → Error",
+              ["extract.ts"],
+            ],
+            [
+              "apps/web/src/transfer/transfer.test.ts",
+              "chg",
+              "db. Случаи «no roles is a failure» и «posts without roles are failures but do not stop the run» остаются зелёными: пост без ролей — failed, запуск не останавливается; в last_error — «Vacancy extraction returned no roles»",
+              ["prepare.ts"],
+            ],
+          ],
+          note: "Не зависит от Э0 и Э2. После этапа оживает ветка коннектора «ролей нет → not_vacancy trash»: это рабочее промежуточное состояние, Э3 заменит её гейтом. Правка промпта меняет ответы модели, поэтому до коммита — прогон набора экстрактора с --compare к отчёту 2026-11-23T23-36-55.json; прогону нужны AI_GATEWAY_API_KEY и база.",
+        },
+        {
+          id: "Э2",
+          t: "Статус low_quality",
+          res: "база принимает статус low_quality: значение в списке статусов, миграция CHECK, setOutcome пишет итог с пояснением, findOriginals считает такую публикацию оригиналом",
+          gres: "low_quality в базе",
+          g: [0, 1],
+          newDirs: [],
+          ctx: [],
+          mods: [
+            [
+              "packages/db/src/publication/values.ts",
+              "chg",
+              "low_quality в PUBLICATION_STATUSES и в комментарии о статусах",
+              [],
+            ],
+            [
+              "packages/db/src/publication/publication.ts",
+              "chg",
+              "CHECK publications_status_check со значением low_quality; комментарий note: пояснение итога not_vacancy trash или low_quality",
+              ["publication/values.ts"],
+            ],
+            [
+              "packages/db/migrations/*_low_quality_status.sql",
+              "new",
+              "DROP и ADD CONSTRAINT publications_status_check с новым списком; файл и снимок в migrations/meta даёт pnpm db:generate",
+              [],
+            ],
+            [
+              "packages/db/src/publication/write-publication.ts",
+              "chg",
+              "PublicationOutcome: вариант { status: 'low_quality', note }; setOutcome пишет note и для него (П5); findOriginals берёт и low_quality (П7)",
+              ["publication/publication.ts"],
+            ],
+            [
+              "packages/db/src/publication/README.md",
+              "chg",
+              "П4: оригинал — публикация vacancy, not_vacancy или low_quality",
+              [],
+            ],
+          ],
+          tests: [
+            [
+              "packages/db/src/publication/write-publication.test.ts",
+              "chg",
+              "db. setOutcome({ status: 'low_quality', note: «экстрактор не нашёл ролей» }) на публикации с прошлым итогом trash → [low_quality, причина NULL, «экстрактор не нашёл ролей»], processed_at задан. findOriginals: публикация low_quality с хэшем h → оригинал h; ранняя low_quality и поздняя vacancy с одним хэшем → оригинал ранняя",
+              ["write-publication.ts"],
+            ],
+          ],
+          note: "Не зависит от Э0 и Э1. Теста на сам CHECK нет: Postgres соблюдает объявленное ограничение, а схему с миграцией сверяет шаг CI «Migrations match the schema» (AGENTS.md). Миграция выкладывается раньше кода Э3.",
+        },
+        {
+          id: "Э3",
+          t: "Гейт в process и mine",
+          res: "process зовёт qualityGate после экстрактора; mine пишет годные роли вакансиями, а публикацию без годных ролей — статусом low_quality с пояснением; правила гейта проверены unit-тестами, запись — на тестовой базе",
+          gres: "гейт решает судьбу ролей",
+          g: [1, 1],
+          newDirs: [],
+          ctx: [
+            ["packages/extractor/src/index.ts", "Э1"],
+            ["packages/db/src/publication/write-publication.ts", "Э2"],
+            ["packages/logger/src/index.ts", "old"],
+          ],
+          mods: [
+            [
+              "packages/connectors/src/quality-gate.ts",
+              "new",
+              "roleDefect (П2), judgeRoles (П3, П4), qualityGate и типы QualityGate, GateVerdict, DroppedRole, RoleDefect; константа NO_ROLES_NOTE",
+              ["extractor/src/index.ts"],
+            ],
+            [
+              "packages/connectors/src/contract.ts",
+              "chg",
+              "ProcessOutcome: dropped у vacancy и вариант low_quality; MineResult.status — ещё и low_quality",
+              ["quality-gate.ts"],
+            ],
+            [
+              "packages/connectors/src/classify-extract.ts",
+              "chg",
+              "параметр gate со значением qualityGate; после extract — вызов гейта и сведение вердикта к ProcessOutcome; ветка roles.length === 0 удалена (П1, П8)",
+              ["quality-gate.ts", "contract.ts", "extractor/src/index.ts"],
+            ],
+            [
+              "packages/connectors/src/mine.ts",
+              "chg",
+              "write: итог low_quality — setOutcome с пояснением; итог без вакансий стирает вакансии публикации (П5); отброшенные роли — в лог логгером log.with({ module: 'connectors' }) (П6)",
+              ["contract.ts", "write-publication.ts", "logger/src/index.ts"],
+            ],
+            [
+              "packages/connectors/src/models.test-utils.ts",
+              "chg",
+              "roleOutput и extractedRole по умолчанию — годная роль: company «Acme», skills [React]",
+              [],
+            ],
+          ],
+          api: [
+            [
+              "qualityGate(publication, roles): Promise<Error | GateVerdict>",
+              "гейт на правилах; Error не возвращает, публикацию не читает (П1).",
+            ],
+            ["roleDefect(role): RoleDefect | null", "изъян роли; без моделей и базы (П2)."],
+            ["judgeRoles(roles): GateVerdict", "вердикт и пояснение low_quality (П3, П4)."],
+            [
+              "classifyAndExtract(models, gate?): Processor",
+              "gate по умолчанию — qualityGate; тесты подставляют свой.",
+            ],
+          ],
+          tests: [
+            [
+              "packages/connectors/src/quality-gate.test.ts",
+              "new",
+              "unit. roleDefect: роль с company «Acme» и skills [React] → null; без company и companyUrl, apply пуст, skills [React] → no_contact; та же с apply.directMessage true → null; та же с companyUrl «https://acme.com» → null; company «Acme», содержания нет → title_only; та же с salaryRaw «от 3000 €» → null; та же с местом { hiring, region «ЕС» } → null; та же только с seniority senior и workplace remote → title_only; без компании, отклика и содержания → no_contact (первый подходящий). judgeRoles: [] → low_quality, note «экстрактор не нашёл ролей», dropped пуст; [годная A, пустышка B, годная C] → accepted, roles [A, C], dropped [{ title B, defect title_only }]; [«Менеджер» без компании и отклика, «Дизайнер» в Acme без содержания] → low_quality, note «все роли отброшены: Менеджер — нет компании и способа отклика; Дизайнер — только название». qualityGate(publication, roles) → вердикт judgeRoles(roles)",
+              ["quality-gate.ts"],
+            ],
+            [
+              "packages/connectors/src/classify-extract.test.ts",
+              "chg",
+              "unit. Экстрактор отвечает { vacancies: [] } → { kind: 'low_quality', note: «экстрактор не нашёл ролей» }; две роли, у второй только название → vacancy с одной ролью и dropped [{ title, defect: 'title_only' }]; подставной гейт получает публикацию и роли экстрактора в порядке ответа; подставной гейт → Error «Gate failed» → Error; классификатор отвечает not_vacancy → гейт не позван",
+              ["classify-extract.ts", "models.test-utils.ts"],
+            ],
+            [
+              "packages/connectors/src/mine.test.ts",
+              "chg",
+              "db. process → { kind: 'low_quality', note } → { status: 'low_quality', vacancies: 0 }, в строке [low_quality, причина NULL, note], processed_at задан; публикация processing с двумя записанными вакансиями, process → low_quality → вакансий нет; та же, process → not_vacancy trash → вакансий нет; process → vacancy с одной ролью и dropped из одной → одна вакансия с position 0",
+              ["mine.ts", "models.test-utils.ts"],
+            ],
+          ],
+          note: "Идёт после Э1 и Э2. Гейт — чистые функции и тонкая асинхронная обёртка: ветки П2–П4 проверяет quality-gate.test без моделей и базы, остальные тесты их не пересчитывают, а проверяют связку. Запись в лог тестом не проверяется: это штатная работа логгера (AGENTS.md). Комментарии в коде ссылаются на правила этого плана: «П2 плана гейта качества».",
+        },
+        {
+          id: "Э4",
+          t: "Документация",
+          res: "README и соседние планы описывают гейт: process зовёт его после экстрактора, итог mine включает low_quality",
+          gres: "README и журналы планов",
+          g: [2, 1],
+          ctx: [],
+          mods: [
+            [
+              "README.md",
+              "chg",
+              "раздел «Коннекторы»: process — классификатор, экстрактор и гейт качества; итог mine — vacancy, not_vacancy, low_quality или skipped; ссылка на этот план",
+              [],
+            ],
+            [
+              "docs/plans/connectors.html",
+              "chg",
+              "журнал: ответ экстрактора без ролей и негодные роли решает гейт этого плана, а не П8",
+              [],
+            ],
+            [
+              "docs/plans/mine-job.html",
+              "chg",
+              "журнал и П3, П6: итог low_quality проходит через handleMineJob так же, как vacancy и not_vacancy",
+              [],
+            ],
+          ],
+          tests: [],
+          note: "Когда готов Э3.",
+        },
+      ];
+      (function graph() {
+        const W = 240,
+          H = 74,
+          col = (c) => 20 + c * 290,
+          row = (r) => 20 + r * 110;
+        const N = {};
+        STAGES.forEach((s) => {
+          N[s.id] = s;
+        });
+        const pos = (k) => ({ x: col(N[k].g[0]), y: row(N[k].g[1]) });
+        let b = "";
+        const edge = (a, c, o = {}) => {
+          const p = pos(a),
+            q = pos(c);
+          if (p.x === q.x) {
+            const down = q.y > p.y;
+            b += L(p.x + W / 2, down ? p.y + H : p.y, q.x + W / 2, down ? q.y - 2 : q.y + H + 2, o);
+          } else b += L(p.x + W, p.y + H / 2, q.x - 3, q.y + H / 2, o);
+        };
+        edge("Э1", "Э3");
+        edge("Э2", "Э3");
+        edge("Э0", "Э3", { dash: "5 4", cls: "lm" });
+        edge("Э3", "Э4");
+        STAGES.forEach((s) => {
+          const p = pos(s.id);
+          b +=
+            `<g style="cursor:pointer" onclick="location.hash='stage-${s.id}'">` +
+            R(p.x, p.y, W, H, s.kind ? "bx-chk" : "bx", 10);
+          b +=
+            T(p.x + 12, p.y + 25, s.id, {
+              anchor: "start",
+              weight: 700,
+              size: 15,
+              cls: s.kind ? "am" : "ac",
+            }) +
+            T(p.x + (s.id.length > 2 ? 58 : 46), p.y + 25, s.t, {
+              anchor: "start",
+              weight: 600,
+              size: 14,
+            });
+          b +=
+            T(p.x + 12, p.y + 52, "→ " + (s.gres || s.res), {
+              anchor: "start",
+              cls: "mu",
+              size: 12,
+            }) + "</g>";
+        });
+        svg("stagesGraph", 880, 340, b, "Этапы и зависимости");
+      })();
+      /** Размер — в `style`: правило страницы `.mono { font-size: 0.9em }` перебивает атрибут `font-size` у текста SVG. */
+      const MONO = 12.5;
+      const monoCtx = document.createElement("canvas").getContext("2d");
+      monoCtx.font = `600 ${MONO}px ${getComputedStyle(document.documentElement).getPropertyValue("--mono")}`;
+      const monoWidth = (t) => monoCtx.measureText(t).width;
+      const monoText = (x, y, t, cls = "") =>
+        `<text x="${x}" y="${y}" text-anchor="start" font-weight="600" class="mono ${cls}" style="font-size:${MONO}px">${esc(t)}</text>`;
+      const REPO = "job-market";
+      const OUTSIDE = "вне репозитория";
+      /**
+       * Диаграмма пакетов UML для этапа. Блоки раскладываются сами: у каждой рамки свой прямоугольник клеток, внутри
+       * рамки зависимые левее зависимостей, тест под своим модулем; колонок столько, сколько влезает в карточку.
+       */
+      function packageMap(id, s) {
+        const BH = 44,
+          GAP = 22,
+          PAD = 10,
+          TAB = 22,
+          MAX_W = 1200;
+        const items = [
+          ...s.ctx.map(([p, k]) => ({ p, k, role: "ctx" })),
+          ...s.mods.map(([p, k, , uses]) => ({ p, k, uses, role: "mod" })),
+          ...s.tests.map(([p, k, d, uses]) => ({
+            p,
+            k,
+            uses,
+            role: "test",
+            kind: d.split(/[:\s(]/)[0],
+          })),
+        ];
+        const outside = (it) => it.k === "npm" || it.k === "ext";
+        items.forEach((it) => {
+          const parts = it.p.split("/");
+          const glob = parts.findIndex((x) => /[*[{]/.test(x));
+          const cut = glob === -1 ? parts.length - 1 : glob;
+          it.name = outside(it) ? it.p : parts.slice(cut).join("/");
+          const dirs = outside(it) ? [] : parts.slice(0, cut);
+          const chain = outside(it) ? [OUTSIDE] : [REPO];
+          let i = 0;
+          if (/^(apps|packages)$/.test(dirs[0]) && dirs.length > 1) {
+            chain.push(`${REPO}/${dirs[0]}/${dirs[1]}`);
+            i = 2;
+          }
+          for (; i < dirs.length; i++) chain.push(chain[chain.length - 1] + "/" + dirs[i]);
+          it.chain = chain;
+          it.home = chain[chain.length - 1];
+        });
+        const frames = {};
+        items.forEach((it) =>
+          it.chain.forEach((key, i) => {
+            frames[key] = frames[key] || {
+              key,
+              parent: it.chain[i - 1],
+              own: [],
+              all: [],
+            };
+            frames[key].all.push(it);
+            if (i === it.chain.length - 1) frames[key].own.push(it);
+          }),
+        );
+        const workspace = (k) => /^(apps|packages)\/[^/]+$/.test(k.slice(REPO.length + 1));
+        const upIn = (f, keys) => {
+          let up = f.parent;
+          while (up && !keys.has(up)) up = frames[up].parent;
+          return up;
+        };
+        let shown = Object.values(frames).filter(
+          (f) => f.own.length || workspace(f.key) || !f.parent,
+        );
+        const drawn = new Set(shown.map((f) => f.key));
+        if (
+          frames[REPO] &&
+          !frames[REPO].own.length &&
+          shown.filter((f) => upIn(f, drawn) === REPO).length < 2
+        ) {
+          shown = shown.filter((f) => f.key !== REPO);
+          drawn.delete(REPO);
+        }
+        shown.forEach((f) => {
+          const up = upIn(f, drawn);
+          f.up = up;
+          f.label = up ? f.key.slice(up.length + 1) : f.key.replace(REPO + "/", "");
+          for (let k = f.key; k && k !== up; k = frames[k].parent)
+            if ((s.newDirs || []).includes(k.slice(REPO.length + 1))) f.isNew = true;
+        });
+        const find = (ref) => {
+          const hit = items.filter((it) => it.p === ref || it.p.endsWith("/" + ref));
+          if (hit.length !== 1) console.error(`${s.id}: ссылка «${ref}» найдена ${hit.length} раз`);
+          return hit[0];
+        };
+        const edges = items.flatMap((it) =>
+          (it.uses || []).map((ref) => [it, find(ref)]).filter(([, t]) => t),
+        );
+        /** Под кем стоит блок: тест — под первым своим модулем из того же каталога, помощник тестов — под тестом. */
+        const under = new Map();
+        items.forEach((t) => {
+          const m = edges.find(([a, z]) => a === t && z.role !== "test" && z.home === t.home);
+          if (t.role === "test" && m) under.set(t, m[1]);
+        });
+        items.forEach((h) => {
+          const users = edges.filter(([, z]) => z === h).map(([a]) => a);
+          const test = users.find((u) => u.home === h.home && under.get(u) !== h);
+          if (h.role !== "test" && users.length && users.every((u) => u.role === "test") && test)
+            under.set(h, test);
+        });
+        const stack = (it, seen) => {
+          seen.add(it);
+          return [
+            it,
+            ...items
+              .filter((o) => under.get(o) === it && !seen.has(o))
+              .flatMap((o) => stack(o, seen)),
+          ];
+        };
+        const units = (own) => {
+          const seen = new Set(),
+            out = [];
+          [...own.filter((it) => !under.has(it)), ...own].forEach((it) => {
+            if (!seen.has(it)) out.push(stack(it, seen));
+          });
+          return out;
+        };
+        const linkedAtAll = (all) => edges.some(([a, z]) => all.includes(a) || all.includes(z));
+        const memo = new Map(),
+          firstOrder = new Map(),
+          orderOf = new Map();
+        /**
+         * Блок рамки не шире `L` колонок: её модули и вложенные рамки по полкам, связанные — в порядке `orderOf`,
+         * а без него — после всех, кто от них зависит, по возможности сразу за последним из них. Элементы без связей —
+         * на последней полке. Ширину полки делят соседи: колонку получает самый высокий, пока высота уменьшается.
+         */
+        const block = (key, own, L) => {
+          const id = `${key}|${L}`;
+          if (memo.has(id)) return memo.get(id);
+          const els = [
+            ...units(own).map((u) => ({
+              all: u,
+              fit: () => ({
+                w: 1,
+                h: u.length,
+                set: (c, r) =>
+                  u.forEach((it, i) => {
+                    it.g = [c, r + i];
+                  }),
+              }),
+            })),
+            ...shown
+              .filter((f) => f.up === key && f.key !== OUTSIDE)
+              .map((f) => ({
+                all: f.all,
+                frame: true,
+                fit: (b) => block(f.key, f.own, b),
+              })),
+          ];
+          const of = (it) => els.findIndex((e) => e.all.includes(it));
+          const next = els.map(() => new Set());
+          edges.forEach(([a, z]) => {
+            const i = of(a),
+              j = of(z);
+            if (i >= 0 && j >= 0 && i !== j) next[i].add(j);
+          });
+          const linked = els.map((e) => linkedAtAll(e.all));
+          const order = [];
+          while (order.length < els.length && !firstOrder.has(key)) {
+            const left = els.map((_, i) => i).filter((i) => !order.includes(i));
+            const ready = left.filter(
+              (i) => linked[i] && next.every((n, j) => order.includes(j) || !n.has(i)),
+            );
+            const pick =
+              [...order]
+                .reverse()
+                .map((o) => ready.find((i) => next[o].has(i)))
+                .find((i) => i !== undefined) ??
+              ready[0] ??
+              left.find((i) => linked[i]) ??
+              left[0];
+            order.push(pick);
+          }
+          if (!firstOrder.has(key))
+            firstOrder.set(
+              key,
+              order.filter((i) => linked[i]),
+            );
+          const shelves = [];
+          const chunk = (list) =>
+            list.forEach((k, i) => {
+              if (i % L === 0) shelves.push([]);
+              shelves[shelves.length - 1].push(els[k]);
+            });
+          chunk(orderOf.get(key) ?? firstOrder.get(key));
+          chunk(els.map((_, i) => i).filter((i) => !linked[i]));
+          let w = 0,
+            h = 0;
+          const placed = [];
+          shelves.forEach((shelf) => {
+            const pick = shelf.map((e) => ({ e, b: 1, lay: e.fit(1) }));
+            const width = () => pick.reduce((sum, p) => sum + p.lay.w, 0);
+            const height = () => Math.max(...pick.map((p) => p.lay.h));
+            for (let grown = true; grown;) {
+              grown = false;
+              const tallest = pick.filter((p) => p.lay.h === height());
+              if (tallest.some((p) => !p.e.frame)) break;
+              const p = tallest[0];
+              for (let b = p.b + 1; width() - p.lay.w + b <= L && !grown; b++) {
+                const lay = p.e.fit(b);
+                if (lay.h < p.lay.h && width() - p.lay.w + lay.w <= L) {
+                  p.b = b;
+                  p.lay = lay;
+                  grown = true;
+                }
+              }
+            }
+            let x = 0;
+            pick.forEach((p) => {
+              placed.push({ lay: p.lay, dx: x, dy: h });
+              x += p.lay.w;
+            });
+            w = Math.max(w, x);
+            h += height();
+          });
+          const out = {
+            w,
+            h,
+            set: (c, r) => placed.forEach((p) => p.lay.set(c + p.dx, r + p.dy)),
+          };
+          memo.set(id, out);
+          return out;
+        };
+        const root = drawn.has(REPO) ? REPO : undefined;
+        const outer = items.filter(outside);
+        /** Внешний пакет — в строке 0 над первым, кто от него зависит, или в ближайшей свободной клетке строки. */
+        const placeOutside = () => {
+          const taken = new Set();
+          outer.forEach((it) => {
+            const cols = edges.filter(([a, z]) => z === it && !outside(a)).map(([a]) => a.g[0]);
+            const want = cols.length ? Math.min(...cols) : 0;
+            let c = want;
+            for (let d = 1; taken.has(c) || c < 0; d++)
+              c = want + (d % 2 ? Math.ceil(d / 2) : -d / 2);
+            taken.add(c);
+            it.g = [c, 0];
+          });
+        };
+        const inNew = (f) => f.up && (frames[f.up].isNew || inNew(frames[f.up]));
+        const tabLabel = (f) => f.label + (f.isNew && !inNew(f) ? " · новый" : "");
+        let colW, colX, rowY;
+        /** Сетка по текущим клеткам: ширина колонок по именам, промежутки под рамки. Тот же расчёт рисует карту. */
+        const measure = () => {
+          shown.forEach((f) => {
+            const cs = f.all.map((it) => it.g[0]),
+              rs = f.all.map((it) => it.g[1]);
+            f.minC = Math.min(...cs);
+            f.maxC = Math.max(...cs);
+            f.minR = Math.min(...rs);
+            f.maxR = Math.max(...rs);
+          });
+          const nC = Math.max(...items.map((it) => it.g[0])) + 1,
+            nR = Math.max(...items.map((it) => it.g[1])) + 1;
+          const border = (axis, b, open, close) => {
+            const [lo, hi, oLo, oHi] =
+              axis === "c" ? ["minC", "maxC", "minR", "maxR"] : ["minR", "maxR", "minC", "maxC"];
+            let need = 0;
+            for (let v = 0; v < (axis === "c" ? nR : nC); v++) {
+              const fs = shown.filter((f) => f[oLo] <= v && v <= f[oHi]);
+              need = Math.max(
+                need,
+                fs.filter((f) => f[hi] === b).length * close +
+                  fs.filter((f) => f[lo] === b + 1).length * open,
+              );
+            }
+            return need;
+          };
+          colW = [...Array(nC)].map((_, c) =>
+            Math.max(
+              150,
+              ...items.filter((it) => it.g[0] === c).map((it) => monoWidth(it.name) + 18),
+            ),
+          );
+          shown.forEach((f) => {
+            let have = -GAP + 2 * PAD;
+            for (let c = f.minC; c <= f.maxC; c++) have += colW[c] + GAP;
+            const need = monoWidth(tabLabel(f)) + 18;
+            if (have < need) colW[f.maxC] += need - have;
+          });
+          colX = [];
+          rowY = [];
+          let x = 4 + border("c", -1, PAD, PAD);
+          for (let c = 0; c < nC; c++) {
+            colX.push(x);
+            x += colW[c] + GAP + border("c", c, PAD, PAD);
+          }
+          let y = 4 + border("r", -1, PAD + TAB, PAD);
+          for (let r = 0; r < nR; r++) {
+            rowY.push(y);
+            y += BH + GAP + border("r", r, PAD + TAB, PAD);
+          }
+          return { W: x - GAP + 4, H: y - GAP + 4 };
+        };
+        const arrange = (L) => {
+          memo.clear();
+          block(root, root ? frames[REPO].own : [], L).set(0, outer.length ? 1 : 0);
+          placeOutside();
+          const size = measure();
+          items.forEach((it) => {
+            it.x = colX[it.g[0]];
+            it.w = colW[it.g[0]];
+            it.y = rowY[it.g[1]];
+          });
+          return size;
+        };
+        /** Цена раскладки: прямая стрелка, задевшая чужой блок, стоит как 1000px длины. */
+        const cost = () =>
+          edges.reduce((sum, [a, z]) => {
+            const ax = a.x + a.w / 2,
+              ay = a.y + BH / 2,
+              zx = z.x + z.w / 2,
+              zy = z.y + BH / 2,
+              len = Math.hypot(zx - ax, zy - ay),
+              n = Math.ceil(len / 6);
+            let hit = false;
+            for (let i = 0; i <= n && !hit; i++) {
+              const px = ax + ((zx - ax) * i) / n,
+                py = ay + ((zy - ay) * i) / n;
+              hit = items.some(
+                (o) =>
+                  o !== a &&
+                  o !== z &&
+                  px > o.x - 6 &&
+                  px < o.x + o.w + 6 &&
+                  py > o.y - 6 &&
+                  py < o.y + BH + 6,
+              );
+            }
+            return sum + len + (hit ? 1000 : 0);
+          }, 0);
+        const variants = (base) => {
+          if (base.length <= 4) {
+            const all = (rest) =>
+              rest.length
+                ? rest.flatMap((x, i) =>
+                    all([...rest.slice(0, i), ...rest.slice(i + 1)]).map((p) => [x, ...p]),
+                  )
+                : [[]];
+            return all(base);
+          }
+          return base.flatMap((x, i) =>
+            base.map((_, j) => {
+              const p = base.filter((_, k) => k !== i);
+              p.splice(j, 0, x);
+              return p;
+            }),
+          );
+        };
+        let L = 8,
+          size = arrange(L);
+        while (size.W > MAX_W && L > 1) size = arrange(--L);
+        if (size.W > MAX_W) console.error(`${s.id}: карта шире ${MAX_W} даже в одну колонку`);
+        else {
+          const score = () => (arrange(L).W > MAX_W ? Infinity : cost());
+          let best = score();
+          for (let pass = 0; pass < 2; pass++)
+            [...firstOrder.keys()].forEach((key) => {
+              let keep = orderOf.get(key) ?? firstOrder.get(key);
+              variants(keep).forEach((p) => {
+                orderOf.set(key, p);
+                const v = score();
+                if (v < best) {
+                  best = v;
+                  keep = p;
+                }
+              });
+              orderOf.set(key, keep);
+            });
+          size = arrange(L);
+        }
+        shown.forEach((f) =>
+          items.forEach((it) => {
+            const [c, r] = it.g;
+            if (!f.all.includes(it) && c >= f.minC && c <= f.maxC && r >= f.minR && r <= f.maxR)
+              console.error(`${s.id}: ${it.p} в клетке [${c}, ${r}] попадает в рамку ${f.label}`);
+          }),
+        );
+        const box = (f) => {
+          if (f.box) return f.box;
+          const rects = [
+            ...f.own.map((it) => [it.x, it.y, it.x + it.w, it.y + BH]),
+            ...shown
+              .filter((g) => g.up === f.key)
+              .map(box)
+              .map((b) => [b.x, b.y, b.x + b.w, b.y + b.h]),
+          ];
+          const x0 = Math.min(...rects.map((r) => r[0])) - PAD,
+            y0 = Math.min(...rects.map((r) => r[1])) - PAD - TAB;
+          f.box = {
+            x: x0,
+            y: y0,
+            w: Math.max(...rects.map((r) => r[2])) + PAD - x0,
+            h: Math.max(...rects.map((r) => r[3])) + PAD - y0,
+          };
+          return f.box;
+        };
+        let b = "";
+        shown
+          .map((f) => [f, box(f)])
+          .sort(([f], [g]) => g.box.w * g.box.h - f.box.w * f.box.h)
+          .forEach(([f, { x, y, w, h }]) => {
+            const cls = f.key === OUTSIDE ? "pk-ext" : f.isNew || inNew(f) ? "pk-new" : "pk";
+            const label = tabLabel(f);
+            f.tabW = monoWidth(label) + 18;
+            b +=
+              R(x, y + TAB - 1, w, h - TAB + 1, cls, 4) +
+              R(x, y, f.tabW, TAB, cls + "-tab", 3) +
+              monoText(x + 9, y + 15.5, label, f.isNew || inNew(f) ? "ac" : "");
+          });
+        const center = (it) => [it.x + it.w / 2, it.y + BH / 2];
+        const clip = (it, [tx, ty]) => {
+          const [cx, cy] = center(it),
+            dx = tx - cx,
+            dy = ty - cy;
+          const k = Math.min(
+            Math.abs((it.w / 2 + 3) / (dx || 1e-9)),
+            Math.abs((BH / 2 + 3) / (dy || 1e-9)),
+          );
+          return [cx + dx * k, cy + dy * k];
+        };
+        const obstacles = [
+          ...items.map((o) => ({ o, x: o.x, y: o.y, w: o.w, h: BH })),
+          ...shown.map((f) => ({ x: f.box.x, y: f.box.y, w: f.tabW, h: TAB })),
+        ];
+        const blocked = (pts, a, z) =>
+          pts.slice(1).some(([x1, y1], k) => {
+            const [x0, y0] = pts[k],
+              n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 4);
+            for (let i = 0; i <= n; i++) {
+              const px = x0 + ((x1 - x0) * i) / n,
+                py = y0 + ((y1 - y0) * i) / n;
+              if (
+                obstacles.some(
+                  (r) =>
+                    r.o !== a &&
+                    r.o !== z &&
+                    px > r.x - 6 &&
+                    px < r.x + r.w + 6 &&
+                    py > r.y - 6 &&
+                    py < r.y + r.h + 6,
+                )
+              )
+                return true;
+            }
+            return false;
+          });
+        /** Дорожки промежутка с шагом 6px, не ближе 5px к краю промежутка и к любой границе рамки; от середины к краям. */
+        const free = (lo, hi, cuts) => {
+          const lanes = [];
+          for (let v = lo + 5; v <= hi - 5; v++)
+            if (cuts.every((c) => Math.abs(c - v) >= 5) && lanes.every((u) => Math.abs(u - v) >= 6))
+              lanes.push(v);
+          const mid = (lo + hi) / 2;
+          return lanes.sort((u, v) => Math.abs(u - mid) - Math.abs(v - mid));
+        };
+        const boxes = shown.map((f) => f.box);
+        const rowGaps = rowY.slice(1).flatMap((y1, r) =>
+          free(
+            rowY[r] + BH,
+            y1,
+            boxes.flatMap((q) => [q.y, q.y + TAB, q.y + q.h]),
+          ),
+        );
+        const colGaps = colX.slice(1).flatMap((x1, c) =>
+          free(
+            colX[c] + colW[c],
+            x1,
+            boxes.flatMap((q) => [q.x, q.x + q.w]),
+          ),
+        );
+        const SPOTS = [0, -1, 1];
+        const xAt = (o, k) => o.x + o.w / 2 + (k * o.w) / 4,
+          yAt = (o, k) => o.y + BH / 2 + (k * BH) / 4;
+        const outV = (o, y, k) => [xAt(o, k), y < o.y ? o.y - 3 : o.y + BH + 3];
+        const outH = (o, x, k) => [x < o.x ? o.x - 3 : o.x + o.w + 3, yAt(o, k)];
+        const outsideV = (o, y) => y < o.y - 8 || y > o.y + BH + 8;
+        const outsideH = (o, x) => x < o.x - 8 || x > o.x + o.w + 8;
+        const length = (pts) =>
+          pts
+            .slice(1)
+            .reduce((sum, [x, y], k) => sum + Math.hypot(x - pts[k][0], y - pts[k][1]), 0);
+        /**
+         * Прямая, если она не задевает блоки и вкладки рамок; иначе вертикаль в стороне от вкладки или ломаная
+         * с одним или двумя изломами по промежуткам между клетками. Выход и вход — в середине или на четверти стороны.
+         */
+        const route = (a, z) => {
+          const [ax, ay] = center(a),
+            [zx, zy] = center(z);
+          const pairs = SPOTS.flatMap((i) => SPOTS.map((j) => [i, j]));
+          const bent = pairs.flatMap(([i, j]) => [
+            ...(outsideV(a, yAt(z, j)) && outsideH(z, xAt(a, i))
+              ? [[outV(a, yAt(z, j), i), [xAt(a, i), yAt(z, j)], outH(z, xAt(a, i), j)]]
+              : []),
+            ...(outsideH(a, xAt(z, j)) && outsideV(z, yAt(a, i))
+              ? [[outH(a, xAt(z, j), i), [xAt(z, j), yAt(a, i)], outV(z, yAt(a, i), j)]]
+              : []),
+          ]);
+          const zigzag = pairs.flatMap(([i, j]) => [
+            ...rowGaps
+              .filter((g) => outsideV(a, g) && outsideV(z, g))
+              .map((g) => [outV(a, g, i), [xAt(a, i), g], [xAt(z, j), g], outV(z, g, j)]),
+            ...colGaps
+              .filter((g) => outsideH(a, g) && outsideH(z, g))
+              .map((g) => [outH(a, g, i), [g, yAt(a, i)], [g, yAt(z, j)], outH(z, g, j)]),
+          ]);
+          const lo = Math.max(a.x, z.x) + 12,
+            hi = Math.min(a.x + a.w, z.x + z.w) - 12;
+          const shifted =
+            hi > lo && outsideV(a, zy)
+              ? [0.5, 0.75, 0.9, 0.25, 0.1].map((k) => {
+                  const x = lo + (hi - lo) * k;
+                  return [
+                    [x, outV(a, zy, 0)[1]],
+                    [x, outV(z, ay, 0)[1]],
+                  ];
+                })
+              : [];
+          const byLength = (p, q) => length(p) - length(q);
+          const open = [
+            [clip(a, [zx, zy]), clip(z, [ax, ay])],
+            ...shifted,
+            ...bent.sort(byLength),
+            ...zigzag.sort(byLength),
+          ].filter((pts) => !blocked(pts, a, z));
+          const cost = (pts) => Math.round(overlap(pts) / 6);
+          return open.reduce((best, pts) => (cost(pts) < cost(best) ? pts : best), open[0]);
+        };
+        const routed = [];
+        const gap = (px, py, [x0, y0], [x1, y1]) => {
+          const dx = x1 - x0,
+            dy = y1 - y0,
+            t = Math.max(
+              0,
+              Math.min(1, ((px - x0) * dx + (py - y0) * dy) / (dx * dx + dy * dy || 1)),
+            );
+          return Math.hypot(px - x0 - t * dx, py - y0 - t * dy);
+        };
+        const parallel = ([x0, y0], [x1, y1], [u0, v0], [u1, v1]) =>
+          Math.abs((x1 - x0) * (v1 - v0) - (y1 - y0) * (u1 - u0)) <
+          0.26 * Math.hypot(x1 - x0, y1 - y0) * Math.hypot(u1 - u0, v1 - v0);
+        /** Сколько пикселей пути идёт вплотную и параллельно уже нарисованным стрелкам: такие участки сливаются в одну линию. */
+        const overlap = (pts) =>
+          pts.slice(1).reduce((sum, end, k) => {
+            const start = pts[k],
+              n = Math.ceil(Math.hypot(end[0] - start[0], end[1] - start[1]) / 2);
+            for (let i = 0; i < n; i++) {
+              const px = start[0] + ((end[0] - start[0]) * i) / n,
+                py = start[1] + ((end[1] - start[1]) * i) / n;
+              if (
+                routed.some((q) =>
+                  q
+                    .slice(1)
+                    .some((p, j) => gap(px, py, q[j], p) < 4 && parallel(start, end, q[j], p)),
+                )
+              )
+                sum += Math.hypot(end[0] - start[0], end[1] - start[1]) / n;
+            }
+            return sum;
+          }, 0);
+        const straight = ([a, z]) => [clip(a, center(z)), clip(z, center(a))];
+        const clear = edges.filter((e) => !blocked(straight(e), ...e));
+        clear.forEach((e) => {
+          e.pts = straight(e);
+          routed.push(e.pts);
+        });
+        edges
+          .filter((e) => !clear.includes(e))
+          .forEach((e) => {
+            const [a, z] = e;
+            e.pts = route(a, z);
+            if (!e.pts) {
+              console.error(`${s.id}: стрелке ${a.name} → ${z.name} нет пути мимо блоков`);
+              e.pts = straight(e);
+            }
+            routed.push(e.pts);
+          });
+        const lines = edges
+          .map(({ 0: a, pts }) => {
+            const test = a.role === "test";
+            return `<path d="M${pts.map((p) => p.join(",")).join(" L")}" class="${test ? "dep-t" : "dep"}" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#${test ? "opn-g" : "opn"})"/>`;
+          })
+          .join("");
+        const sub = (it) =>
+          it.role === "test"
+            ? `${it.kind}-тест · ${it.k === "new" ? "новый" : "изменён"}`
+            : {
+                new: "новый",
+                chg: "изменён",
+                old: "уже есть",
+                npm: "пакет npm",
+                ext: "внешний сервис",
+              }[it.k] || `из ${it.k}`;
+        const cls = (it) =>
+          it.role === "test"
+            ? it.k === "new"
+              ? "bx-test-new"
+              : "bx-test"
+            : { new: "bx-new", chg: "bx-chg", npm: "bx-ext", ext: "bx-ext" }[it.k] || "bx";
+        items.forEach((it) => {
+          b +=
+            R(it.x, it.y, it.w, BH, cls(it), 8) +
+            monoText(it.x + 9, it.y + 19, it.name) +
+            T(it.x + 9, it.y + 35, sub(it), {
+              anchor: "start",
+              cls: "mu",
+              size: 11,
+            });
+        });
+        const W = size.W;
+        svg(id, W, size.H, b + lines, `Модули ${s.id}: где лежат и от чего зависят`);
+        Object.assign($(id).firstElementChild.style, {
+          maxWidth: `${W}px`,
+          minWidth: `${Math.min(W, 760)}px`,
+        });
+      }
+      $("stageCards").innerHTML = STAGES.map(
+        (s) => `
+  <div class="card" id="stage-${s.id}">
+    <h3><span class="badge ${s.kind ? "chg" : "new"}">${s.id}</span>${esc(s.t)} <span class="badge">${s.kind || "реализация"}</span></h3>
+    <p><b>Результат:</b> ${esc(s.res)}.</p>
+    ${
+      s.kind
+        ? `<ol class="small">${s.q.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
+      <table><tr><td>Как</td><td>${esc(s.how)}</td></tr><tr><td><b>Выход</b></td><td>${esc(s.exit)}</td></tr><tr><td><b>Если «нет»</b></td><td>${esc(s.no)}</td></tr></table>`
+        : `<figure class="scroll"><div id="pm-${s.id}"></div></figure>
+      <table style="margin-top:10px"><tr><th>Модуль</th><th></th><th>Что внутри</th></tr>${s.mods.map(([p, k, t]) => `<tr><td><code>${esc(p)}</code></td><td><span class="badge ${k}">${k === "new" ? "новый" : "изменён"}</span></td><td class="small">${esc(t)}</td></tr>`).join("")}</table>
+      ${s.api ? `<h4>Функции модуля</h4><table>${s.api.map(([a, b]) => `<tr><td><code>${esc(a)}</code></td><td class="small">${esc(b)}</td></tr>`).join("")}</table>` : ""}
+      ${s.tests.length ? `<h4>Тесты</h4><table>${s.tests.map(([p, k, d]) => `<tr><td><code>${esc(p)}</code></td><td><span class="badge ${k}">${k === "new" ? "новый" : "изменён"}</span></td><td class="small">${esc(d)}</td></tr>`).join("")}</table>` : ""}`
+    }
+    ${s.note ? `<p class="small muted" style="margin-bottom:0"><b>Особенности:</b> ${esc(s.note)}</p>` : ""}
+  </div>`,
+      ).join("");
+      STAGES.filter((s) => !s.kind).forEach((s) => packageMap(`pm-${s.id}`, s));
+      $("progressTable").innerHTML =
+        `<tr><th>Этап</th><th>Статус</th><th>Заметки</th></tr>` +
+        STAGES.map(
+          (s) =>
+            `<tr><td><a href="#stage-${s.id}">${s.id}. ${esc(s.t)}</a></td><td><span class="badge ${s.status ? "ok" : ""}">${esc(s.status || "не начат")}</span></td><td class="small">${esc(s.progress || "—")}</td></tr>`,
+        ).join("");
+    </script>
+  </body>
+</html>

@@ -1,8 +1,24 @@
+import { createHash } from 'node:crypto';
+
 import type { DrainResult } from '@job-market/connectors';
 import type { SourceRow, SourceSchedule } from '@job-market/db';
 
 /** Пауза перед продолжением незаконченного прохода (П7). */
 export const REQUEUE_DELAY_SECONDS = 60;
+
+/** Сколько источников берёт один тик самое большее (П1 плана тика). */
+export const TICK_LIMIT = 2000;
+
+/** Задержки заданий одного тика — в пределах 10 минут (П2 плана тика). */
+const SPREAD_SECONDS = 600;
+
+/**
+ * Задержка задания опроса в секундах (П2 плана тика): целое в [0, 600) из хэша id. Источники
+ * одного тика не идут к сервисам разом, а у одного источника задержка всегда одна.
+ */
+export function spreadDelay(sourceId: string): number {
+  return createHash('sha256').update(sourceId).digest().readUInt32BE(0) % SPREAD_SECONDS;
+}
 
 const MINUTE_MS = 60 * 1000;
 
@@ -19,8 +35,8 @@ export function nextRunAt(now: Date, intervalMinutes: number, failures: number):
   return new Date(now.getTime() + pause);
 }
 
-/** Ошибка одной строкой для `sources.last_error`: сообщение и причина. */
-function errorText(error: Readonly<Error> | undefined): string {
+/** Ошибка одной строкой для `last_error` источника и публикации: сообщение и причина. */
+export function errorText(error: Readonly<Error> | undefined): string {
   if (error === undefined) return 'drain failed without an error';
   const cause = error.cause instanceof Error ? `: ${error.cause.message}` : '';
   return `${error.message}${cause}`;

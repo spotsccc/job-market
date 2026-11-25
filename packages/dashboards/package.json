@@ -1,0 +1,28 @@
+{
+  "name": "@job-market/dashboards",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "build": "node src/generate.ts",
+    "check-types": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "dependencies": {
+    "@grafana/grafana-foundation-sdk": "0.0.22"
+  },
+  "devDependencies": {
+    "@job-market/oxfmt-config": "workspace:*",
+    "@job-market/oxlint-config": "workspace:*",
+    "@job-market/typescript-config": "workspace:*",
+    "@types/node": "24.19.2",
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
+    "oxlint-tsgolint": "7.0.2007",
+    "typescript": "7.0.2"
+  }
+}

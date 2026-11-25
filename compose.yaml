@@ -24,5 +24,29 @@ services:
       timeout: 5s
       retries: 15
 
+  # Grafana с дашбордом «Движок»: `pnpm grafana:up`, затем http://localhost:3001
+  # (admin / admin). Дашборды — JSON, который собирает `packages/dashboards`.
+  grafana:
+    image: grafana/grafana:13.3.1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Автообновление дашборда — не чаще раза в 5 минут: каждый запрос будит Neon.
+      GF_DASHBOARDS_MIN_REFRESH_INTERVAL: 5m
+    # Только localhost: пароль администратора по умолчанию.
+    ports:
+      - '127.0.0.1:3001:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./packages/dashboards/dist:/var/lib/grafana/dashboards:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O /dev/null http://localhost:3000/api/health']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
 volumes:
   postgres-data:
+  grafana-data:

@@ -51,20 +51,31 @@ async function locateRoles(
   });
 }
 
-/** Вакансии и итог одной транзакцией (П12); сбой базы — `Error`, не записано ничего. */
+/**
+ * Вакансии и итог одной транзакцией (П12); сбой базы — `Error`, не записано ничего. Роли, уже
+ * сохранённые из других публикаций, не пишутся; все роли такие — итог `duplicate` (П18–П20,
+ * packages/db/src/publication/README.md).
+ */
 async function write(
   publicationId: string,
   outcome: ProcessOutcome,
   vacancies: readonly VacancyToSave[],
-): Promise<Error | null> {
+): Promise<Error | MineResult> {
   return (
     db
       // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- транзакцию drizzle передаёт сам
-      .transaction(async (tx) => {
+      .transaction(async (tx): Promise<MineResult> => {
         if (outcome.kind === 'vacancy') {
-          await saveVacancies(tx, publicationId, vacancies);
+          const { saved, duplicateOf } = await saveVacancies(tx, publicationId, vacancies, {
+            skipDuplicates: true,
+          });
+          const [originalId] = duplicateOf;
+          if (saved === 0 && originalId !== undefined) {
+            await setOutcome(tx, publicationId, { status: 'duplicate', originalId });
+            return { status: 'duplicate', vacancies: 0 };
+          }
           await setOutcome(tx, publicationId, { status: 'vacancy' });
-          return null;
+          return { status: 'vacancy', vacancies: saved };
         }
         await setOutcome(
           tx,
@@ -73,7 +84,7 @@ async function write(
             ? { status: 'not_vacancy', reason: 'empty' }
             : { status: 'not_vacancy', reason: 'trash', note: outcome.note },
         );
-        return null;
+        return { status: 'not_vacancy', vacancies: 0 };
       })
       .catch(
         (cause: unknown) =>
@@ -84,7 +95,7 @@ async function write(
 
 /**
  * Разбор одной публикации (П12): дерево профессий, `process` коннектора, места ролей одним
- * вызовом справочника и запись вакансий с итогом одной транзакцией. Публикация не в `pending`
+ * вызовом справочника и запись вакансий без дублей с итогом одной транзакцией. Публикация не в `pending`
  * и не в `processing` — `skipped` без моделей. Сбой модели, справочника или базы — `Error`,
  * ничего не записано и статус прежний: повтор решает вызывающий.
  */
@@ -110,7 +121,5 @@ export async function mine(
   const vacancies = outcome.kind === 'vacancy' ? await locateRoles(outcome.roles, locate) : [];
   if (vacancies instanceof Error) return vacancies;
 
-  const written = await write(publication.id, outcome, vacancies);
-  if (written instanceof Error) return written;
-  return { status: outcome.kind, vacancies: vacancies.length };
+  return write(publication.id, outcome, vacancies);
 }

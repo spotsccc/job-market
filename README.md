@@ -22,7 +22,7 @@ pnpm check          # turbo run format:check lint check-types
 | Пакет | Что это |
 | --- | --- |
 | `apps/web` | Next.js 16 (App Router, `src/app`) |
-| `packages/engine` | движок опроса: обработчик задания «опроси источник» — раздел «Движок» ниже |
+| `packages/engine` | движок опроса: tick раздаёт задания «опроси источник», обработчик их выполняет — раздел «Движок» ниже |
 | `packages/connectors` | коннекторы источников: `drain` выкачивает публикации в базу, `mine` добывает из публикации вакансии — раздел «Коннекторы» ниже |
 | `packages/apify` | клиент Apify: запуск акторов, ожидание запуска и чтение датасета |
 | `packages/enricher` | дочитывает ссылки LinkedIn в тексте публикации |
@@ -67,7 +67,9 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Движок
 
-`packages/engine` — движок опроса источников. План — [docs/plans/drain-source-job.html](docs/plans/drain-source-job.html). Пока в нём один обработчик; tick, который раздаёт задания по расписанию, добавит план [docs/plans/engine.html](docs/plans/engine.html), а очередь Vercel Queues и её потребителя — план подключения очереди.
+`packages/engine` — движок опроса источников. Планы — [docs/plans/engine.html](docs/plans/engine.html) (tick) и [docs/plans/drain-source-job.html](docs/plans/drain-source-job.html) (обработчик). Вызывать tick по расписанию, очередь Vercel Queues и её потребителя подключит план подключения очереди; пока tick зовут только тесты.
+
+`tick({ now, connectors, queue, limit? })` — производитель заданий. Одним запросом `claimDueSources` из `@job-market/db` он берёт включённые источники с `next_run_at ≤ now` и коннектором из реестра — не больше 2000, самые ранние первыми — и тем же запросом сдвигает им `next_run_at` на `now + interval_minutes`. Строки, которые держит другой тик, запрос пропускает (`FOR UPDATE SKIP LOCKED`), поэтому повтор или параллельный тик те же источники не берёт. Затем на каждый источник кладёт задание `{ sourceId, delaySeconds, idempotencyKey }` пачками по 100: `delaySeconds = spreadDelay(sourceId)` — хэш id по модулю 600, чтобы источники не шли к сервисам разом; `idempotencyKey = sourceId:now`. Если пачка не ушла, `releaseSources` возвращает источникам этой и следующих пачек прежний `next_run_at`, их возьмёт следующий тик, а tick возвращает `Error`; отправленные пачки остаются в очереди. Итог `{ due, enqueued }` пишется в лог.
 
 `handleDrainSourceJob({ sourceId, connectors, queue, now, deadline })` — обработчик задания «опроси источник» из очереди; вызов может прийти повторно. Он читает источник заново, зовёт `drain` его коннектора из реестра `createConnectors`, пишет расписание источника и при необходимости кладёт продолжение в очередь. Итог — `done`, `requeued`, `failed` или `skipped` (источника нет, он выключен или его коннектора нет в реестре) и `inserted` из `drain`. `Error` — сбой базы или отправки продолжения: такое задание повторяет очередь. Сбой сервиса — `failed`, а не `Error`: у него своя пауза.
 
@@ -79,7 +81,7 @@ pnpm check          # turbo run format:check lint check-types
 
 `last_fetched_at` = now пишется при любом итоге. Очередь — интерфейс `JobQueue` (`enqueue(jobs)` → `Error` или ничего); в тестах движка — `memoryJobQueue({ failOnBatch? })` из `src/memory-job-queue.test-utils.ts`.
 
-Тесты: `schedule.test` проверяет ветки расписания без базы, `drain-source-job.test` — связку на тестовой базе с `open-telegram` на поддельном t.me: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/engine test`.
+Тесты: `schedule.test` проверяет ветки расписания и `spreadDelay` без базы, `tick.test` — отбор, лимит, пачки и сбой отправки на тестовой базе (с `now` в 2001 году, чтобы не брать источники других тестов), `drain-source-job.test` — связку на тестовой базе с `open-telegram` на поддельном t.me: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/engine test`.
 
 ## Перенос постов в новую модель
 

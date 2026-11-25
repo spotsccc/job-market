@@ -4,7 +4,7 @@ import type { Connector } from '@job-market/connectors';
 import { db, getSource, updateSourceSchedule } from '@job-market/db';
 import { log } from '@job-market/logger';
 
-import type { JobQueue } from './job-queue.ts';
+import type { DrainSourceJob, JobQueue } from './job-queue.ts';
 import { REQUEUE_DELAY_SECONDS, scheduleAfterDrain } from './schedule.ts';
 
 const moduleLog = log.with({ module: 'engine' });
@@ -14,7 +14,7 @@ export type DrainSourceJobInput = {
   /** Реестр коннекторов по id — `createConnectors` пакета коннекторов. */
   readonly connectors: ReadonlyMap<string, Connector>;
   /** Куда класть продолжение незаконченного прохода (П7). */
-  readonly queue: JobQueue;
+  readonly queue: JobQueue<DrainSourceJob>;
   readonly now: Date;
   /** `Date.now()`, после которого коннектор не начинает новый запрос к сервису. */
   readonly deadline: number;

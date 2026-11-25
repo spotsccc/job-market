@@ -1276,16 +1276,35 @@
               дважды подряд. Находки, которые расходятся с планом:
               <code>sources.config</code> каналов из миграции 0010 пустой, поэтому
               <code>configSchema</code> open-telegram принимает <code>{}</code>, а канал без
-              <code>config.channel</code> берётся из ключа источника — в <code>ParseInput</code>
-              добавлен <code>key</code>. Схема ответа экстрактора не пускает пустой список ролей, поэтому
-              «экстрактор не нашёл ролей» приходит из <code>extract</code> как <code>Error</code>, а
-              ветка <code>no_specific_role</code> в <code>classifyAndExtract</code> тестом не
-              достижима. Запуск LinkedIn, который закончился не <code>SUCCEEDED</code>, parse
-              возвращает как <code>error</code> с курсором <code>null</code>, а не <code>Error</code>:
-              иначе drain не стёр бы <code>{ runId }</code> и каждый следующий опрос ждал бы тот же
-              упавший запуск. <code>mine</code> принимает гео-справочник параметром, чтобы тест сбоя
-              справочника обошёлся без закрытой базы. Тесты чтения ссылок вынесены из
-              <code>drain.test</code> в <code>drain-links.test</code> (предел строк файла).
+              <code>config.channel</code> берётся из ключа источника — в
+              <code>ParseInput</code> добавлен <code>key</code>. Схема ответа экстрактора не пускает
+              пустой список ролей, поэтому «экстрактор не нашёл ролей» приходит из
+              <code>extract</code> как <code>Error</code>, а ветка <code>no_specific_role</code> в
+              <code>classifyAndExtract</code> тестом не достижима. Запуск LinkedIn, который
+              закончился не <code>SUCCEEDED</code>, parse возвращает как <code>error</code> с
+              курсором <code>null</code>, а не <code>Error</code>: иначе drain не стёр бы
+              <code>{ runId }</code> и каждый следующий опрос ждал бы тот же упавший запуск.
+              <code>mine</code> принимает гео-справочник параметром, чтобы тест сбоя справочника
+              обошёлся без закрытой базы. Тесты чтения ссылок вынесены из <code>drain.test</code> в
+              <code>drain-links.test</code> (предел строк файла).
+            </li>
+            <li>
+              24 ноября 2026: разбор публикаций — <a href="mine-job.html">план 5</a>. Его Э2
+              добавляет в <code>DrainResult</code> поле <code>pendingIds</code> — id публикаций,
+              которые drain записал впервые и в статусе <code>pending</code> (П8 плана 5): по ним
+              обработчик опроса кладёт задания разбора. Э1 экспортирует
+              <code>extractedRole</code> из <code>./test-utils</code>.
+            </li>
+            <li>
+              24 ноября 2026, по решению владельца: дедупликация по вакансии, а не по публикации.
+              <code>mine</code> не пишет роль, которая уже сохранена из другой публикации той же
+              компании: правило в коде, окно 30 дней. Новые П14 и П15, сценарий S7, эджкейс E10, два
+              риска — принятая цена правила. Изменены П12, контракт <code>mine</code> (итог
+              <code>duplicate</code>), таблица записи (<code>duplicate_of_id</code>), схема mine,
+              модули и тесты Э3: <code>duplicates.ts</code>, <code>skipDuplicates</code> у
+              <code>saveVacancies</code>, <code>duplicates.test</code> и
+              <code>mine-duplicates.test</code>. Код уже написан и проходит тесты. Вакансии,
+              сохранённые раньше, не пересматриваются.
             </li>
           </ul>
         </div>
@@ -1448,6 +1467,29 @@
           ],
           note: "модель упала → Error и ничего не записано; статус публикации прежний, повтор решает вызывающий (П12)",
         },
+        {
+          id: "S7",
+          t: "mine публикации с уже сохранёнными вакансиями",
+          chat: [
+            [
+              "me",
+              "mine(публикация forproducts/10888 в pending): те же Product Manager и Designer в Acme, что уже сохранены из forhr/9120",
+            ],
+            [
+              "tool",
+              "process → вакансия с двумя ролями → saveVacancies со skipDuplicates: обе роли — дубли вакансий Acme",
+            ],
+            [
+              "bot",
+              "✔ { status: 'duplicate', vacancies: 0 }; публикация — duplicate, duplicate_of_id — forhr/9120, новых вакансий нет",
+            ],
+          ],
+          eff: [
+            ["vacancies · forproducts/10888", "0 → 0", "+0"],
+            ["publications.status · forproducts/10888", "pending → duplicate", "+1"],
+          ],
+          note: "вторая роль — Analyst, которой ещё нет → { status: 'vacancy', vacancies: 1 }, записан только Analyst (П15)",
+        },
       ];
 
       const NOGO = [
@@ -1457,7 +1499,7 @@
         ],
         [
           "Кто и когда зовёт mine: выбор публикаций к разбору, статус processing, повторы, failed",
-          "план разбора после движка; mine разбирает одну публикацию, которую ему дали (П12)",
+          "план 5 (mine-job.html); mine разбирает одну публикацию, которую ему дали (П12)",
         ],
         [
           "Сбор вакансий между этим планом и движком",
@@ -1610,6 +1652,13 @@
           test: "mine.test",
           st: "Э3",
         },
+        {
+          id: "E10",
+          sit: "Два mine одновременно пишут одну вакансию из разных каналов: READ COMMITTED не показывает строки чужой незавершённой транзакции",
+          beh: "вакансия одна (П15): поиск дубля идёт после advisory-блокировок ключей компании, которые берёт saveVacancies (E1 пакета db, packages/db/src/company/README.md); второй mine ждёт конца транзакции первого и видит его вакансию",
+          test: "duplicates.test",
+          st: "Э3",
+        },
       ];
 
       const RISKS = [
@@ -1627,6 +1676,16 @@
           "Коннекторы без вызывающего расходятся с тем, что нужно движку",
           "план движка просит другой контракт",
           "контракт drain согласован с планом движка (engine.html); при расхождении правятся оба плана",
+        ],
+        [
+          "Дубль с другим названием или названием компании сохраняется второй раз: «Frontend Developer» и «Frontend Engineer», «Яндекс» и «Yandex» (П14)",
+          "в /vacancies одна роль одной компании видна дважды",
+          "принятая цена: правило только по точному совпадению; при частых повторах — сравнение моделью поверх кандидатов той же компании",
+        ],
+        [
+          "Ложный дубль не сохраняется, и вакансия потеряна: две разные роли компании с одним названием без уровня и мест (П14)",
+          "публикации в статусе duplicate с duplicate_of_id, у которых текст другой",
+          "принятая цена; такие публикации видны по статусу, правило П14 ужесточается по найденным случаям",
         ],
         [
           "Текст по ссылке теряется, если Apify не прочитал её за все попытки (П13, E8)",
@@ -1699,7 +1758,7 @@
           ],
           [
             "mine(publication)",
-            "снаружи: добывает вакансии из публикации, сводит их места к гео-справочнику и пишет их с итогом → { status: 'vacancy' | 'not_vacancy' | 'skipped', vacancies } или Error (П12). publication — PublicationForModel с id и status",
+            "снаружи: добывает вакансии из публикации, сводит их места к гео-справочнику и пишет их без дублей с итогом → { status: 'vacancy' | 'not_vacancy' | 'duplicate' | 'skipped', vacancies } или Error (П12, П15). publication — PublicationForModel с id и status",
           ],
           ["configSchema", "zod-схема sources.config: что читать — канал, запрос"],
           ["cursorSchema", "zod-схема sources.cursor: докуда уже прочитано"],
@@ -1746,16 +1805,16 @@
             "drain: курсор результата parse, кроме Error и неверного config",
             "П9, П11",
           ],
-          ["vacancies.*", "mine: saveVacancies плана экстрактора", "П12"],
+          ["vacancies.*", "mine: saveVacancies со skipDuplicates — без дублей", "П12, П15"],
           [
             "vacancy_locations.*",
             "mine: saveVacancies с местами, которые свёл locateVacancies",
             "П12",
           ],
           [
-            "publications.status, not_vacancy_reason, note, processed_at",
-            "mine: setOutcome (Э3) — vacancy или not_vacancy",
-            "П12",
+            "publications.status, not_vacancy_reason, note, duplicate_of_id, processed_at",
+            "mine: setOutcome (Э3) — vacancy, not_vacancy или duplicate с оригиналом",
+            "П12, П15",
           ],
         ],
       );
@@ -2680,7 +2739,7 @@
                             b: 4,
                             label: "saveVacancies + setOutcome в db.transaction",
                             mono: true,
-                            note: "Вакансии, их места и итог — одной транзакцией (П12).",
+                            note: "Вакансии, их места и итог — одной транзакцией (П12). Роль-дубль не пишется; все роли — дубли: итог duplicate (П14, П15).",
                           },
                           {
                             m: "ret",
@@ -2816,7 +2875,7 @@
         ],
         [
           "П12",
-          "mine разбирает публикацию в статусе pending или processing; в другом статусе — skipped без вызова моделей. Публикацию с автором в форме PublicationForModel с id и status передаёт вызывающий. mine читает дерево профессий listOccupations и зовёт process. Для вакансии mine сводит места всех ролей к гео-справочнику одним вызовом locateVacancies, затем одной транзакцией пишет вакансии с местами (saveVacancies) и итог: статус vacancy или not_vacancy с причиной, пояснением и processed_at (setOutcome). process или справочник вернули Error, или запись не удалась — mine возвращает Error и ничего не пишет: статус публикации прежний. Выбрать публикацию, поставить processing, найти копии по content_hash, повторить или пометить failed — дело вызывающего. Почему места в mine, а не в process: справочник — это база, а process без базы (П3).",
+          "mine разбирает публикацию в статусе pending или processing; в другом статусе — skipped без вызова моделей. Публикацию с автором в форме PublicationForModel с id и status передаёт вызывающий. mine читает дерево профессий listOccupations и зовёт process. Для вакансии mine сводит места всех ролей к гео-справочнику одним вызовом locateVacancies, затем одной транзакцией пишет вакансии с местами (saveVacancies) и итог: статус vacancy, not_vacancy с причиной и пояснением или duplicate (П15) и processed_at (setOutcome). process или справочник вернули Error, или запись не удалась — mine возвращает Error и ничего не пишет: статус публикации прежний. Выбрать публикацию, поставить processing, найти копии по content_hash, повторить или пометить failed — дело вызывающего. Почему места в mine, а не в process: справочник — это база, а process без базы (П3).",
           "поведение",
           "connectors/src/mine.ts: db.transaction",
           "mine.test",
@@ -2827,6 +2886,20 @@
           "поведение",
           "connectors/src/drain.ts; packages/enricher/src/enrich.ts",
           "drain.test",
+        ],
+        [
+          "П14",
+          "Дубль — роль, которая уже сохранена вакансией из другой публикации: та же компания (company_id), то же название и нет противоречий. Названия сравниваются без учёта регистра, ё и е, эмодзи, пунктуации и пробелов; слова не выбрасываются: «Frontend (React)» и «Frontend (Vue)» — разные роли. Противоречие — уровень или формат работы названы у обеих и разные, либо у обеих есть распознанные страны или города и они не пересекаются: «Sales Manager» в Берлине и в Париже — две вакансии. Дубль ищется среди вакансий, публикации которых вышли не дальше 30 дней от публикации роли, в обе стороны по posted_at: порядок разбора на итог не влияет. Роль без компании и роль с пустым названием дублем не бывают; роли одной публикации между собой не сравниваются. Почему правила в коде, а не модель: ложный дубль — потерянная вакансия, а правило предсказуемо и не стоит вызова модели (решение владельца 24 ноября 2026). Почему 30 дней: вакансия, выложенная заново через месяц, снова открыта.",
+          "определение",
+          "db/src/vacancy/duplicates.ts: isSameRole, titleKey, DUPLICATE_WINDOW_DAYS",
+          "duplicates.test",
+        ],
+        [
+          "П15",
+          "mine не пишет дубли (П14): saveVacancies со skipDuplicates пропускает роль-дубль, номера position получают только записанные роли, vacancies итога — число записанных. Дублей только часть — итог vacancy. Все роли — дубли — итог duplicate, vacancies 0: публикация получает status duplicate, duplicate_of_id = публикация первой роли-дубля и processed_at. Без skipDuplicates saveVacancies пишет все роли: так пишет перенос. Почему дубль не хранится: в выдаче одна вакансия, а не по строке на канал (решение владельца 24 ноября 2026).",
+          "поведение",
+          "db/src/vacancy/save-vacancies.ts; connectors/src/mine.ts",
+          "duplicates.test, mine-duplicates.test",
         ],
       ];
       $("rulesTable").innerHTML =
@@ -2850,7 +2923,8 @@
         {
           id: "Э1",
           status: "готов, не закоммичен",
-          progress: "пакет packages/connectors, channel-telegram перенесён в open-telegram, parse с курсором, дедлайном и сбоем страницы; open-telegram.test, connectors.test",
+          progress:
+            "пакет packages/connectors, channel-telegram перенесён в open-telegram, parse с курсором, дедлайном и сбоем страницы; open-telegram.test, connectors.test",
           t: "Пакет и чтение Telegram",
           res: "пакет @job-market/connectors с контрактом и коннектором open-telegram, который проходит канал t.me: проход, курсор, дедлайн и сбой страницы проверены тестами",
           gres: "контракт и parse open-telegram",
@@ -2961,7 +3035,8 @@
         {
           id: "Э2",
           status: "готов, не закоммичен",
-          progress: "classifyAndExtract — общий process open-telegram и linkedin; classify-extract.test",
+          progress:
+            "classifyAndExtract — общий process open-telegram и linkedin; classify-extract.test",
           t: "Разбор публикации",
           res: "у open-telegram есть process: классификатор, затем экстрактор для вакансии; вакансия, не вакансия, пустой ответ экстрактора и сбой модели проверены тестами с фейковыми моделями",
           gres: "process",
@@ -3022,16 +3097,16 @@
         {
           id: "Э3",
           status: "готов, не закоммичен",
-          progress: "addPublications, setOutcome, saveCursor в @job-market/db; drain и mine, testConnector и fakeTelegram в ./test-utils; drain.test, drain-links.test, mine.test на тестовой базе",
+          progress:
+            "addPublications, setOutcome, saveCursor в @job-market/db; drain и mine, testConnector и fakeTelegram в ./test-utils; drain.test, drain-links.test, mine.test на тестовой базе; дубли вакансий (П14, П15): duplicates.ts, skipDuplicates, duplicates.test и mine-duplicates.test",
           t: "drain и mine",
-          res: "у коннекторов реестра есть drain и mine: drain пишет авторов, публикации канала с прочитанным по ссылкам LinkedIn и курсор, mine — вакансии с местами из гео-справочника и итог разбора; проверено на тестовой базе с open-telegram на фейковом t.me",
+          res: "у коннекторов реестра есть drain и mine: drain пишет авторов, публикации канала с прочитанным по ссылкам LinkedIn и курсор, mine — вакансии без дублей с местами из гео-справочника и итог разбора; проверено на тестовой базе с open-telegram на фейковом t.me",
           gres: "drain и mine на тестовой базе",
           g: [2, 0],
           ctx: [
             ["packages/connectors/src/contract.ts", "Э2"],
             ["packages/connectors/src/open-telegram/index.ts", "Э2"],
             ["packages/connectors/src/open-telegram/fake-telegram.test-utils.ts", "Э1"],
-            ["packages/db/src/vacancy/save-vacancies.ts", "плана экстрактора"],
             ["packages/db/src/occupation/occupation.ts", "плана экстрактора"],
             ["packages/geo/src/server.ts", "плана экстрактора"],
             ["packages/enricher/src/index.ts", "old"],
@@ -3051,6 +3126,18 @@
               ["publication/write-publication.ts"],
             ],
             [
+              "packages/db/src/vacancy/duplicates.ts",
+              "new",
+              "правило дубля П14: titleKey(title) — название в одном виде; isSameRole(a, b) — то же название и нет противоречий; findDuplicates(tx, publicationId, roles, companyIds) — для каждой роли публикация-оригинал или null: кандидаты — вакансии тех же компаний из других публикаций в окне DUPLICATE_WINDOW_DAYS с их местами",
+              [],
+            ],
+            [
+              "packages/db/src/vacancy/save-vacancies.ts",
+              "chg",
+              "saveVacancies(tx, publicationId, roles, { skipDuplicates? }) → { saved, duplicateOf }: после сопоставления компаний зовёт findDuplicates и пишет только роли без оригинала (П15)",
+              ["vacancy/duplicates.ts"],
+            ],
+            [
               "packages/connectors/package.json",
               "chg",
               'зависимости @job-market/db, @job-market/geo, @job-market/enricher, @job-market/logger; скрипт test: node --env-file=../../apps/web/.env.test --test, как у packages/db; exports["./test-utils"] → fakeTelegram и testConnector — их берут тесты движка; фейковых читателей для enrich тесты берут из @job-market/enricher/test-utils (fakeReader)',
@@ -3065,7 +3152,7 @@
             [
               "packages/connectors/src/mine.ts",
               "new",
-              "mine(connector, publication) по П12: статус → listOccupations и строки дерева в OccupationNode → process → locateVacancies → роли с местами в VacancyToSave → saveVacancies и setOutcome одной транзакцией → итог. Преобразования — свой код mine, не из apps/web/src/transfer",
+              "mine(connector, publication) по П12: статус → listOccupations и строки дерева в OccupationNode → process → locateVacancies → роли с местами в VacancyToSave → saveVacancies со skipDuplicates и setOutcome одной транзакцией → итог; все роли — дубли: setOutcome duplicate (П15). Преобразования — свой код mine, не из apps/web/src/transfer",
               [
                 "contract.ts",
                 "db/src/publication/index.ts",
@@ -3094,7 +3181,7 @@
             ],
             [
               "mine(publication): Promise<Error | { status, vacancies }>",
-              "метод коннектора из реестра; publication — PublicationForModel с id и status; status — vacancy, not_vacancy или skipped (П12).",
+              "метод коннектора из реестра; publication — PublicationForModel с id и status; status — vacancy, not_vacancy, duplicate или skipped (П12, П15).",
             ],
           ],
           tests: [
@@ -3107,7 +3194,7 @@
             [
               "packages/db/src/publication/write-publication.test.ts",
               "chg",
-              "db: addPublications — две новые со ссылками и одна, уже записанная в failed с last_error → в ответе id двух новых; у failed не изменились status, attempts, last_error, content и ссылки; ссылки новых — по порядку, у раскрытой lnkd.in host по target_url; повтор тех же строк → пустой ответ. setOutcome not_vacancy → status, not_vacancy_reason, note и processed_at записаны; setOutcome vacancy → not_vacancy_reason и note NULL; saveCursor меняет только cursor — consecutive_failures, next_run_at и last_error прежние",
+              "db: addPublications — две новые со ссылками и одна, уже записанная в failed с last_error → в ответе id двух новых; у failed не изменились status, attempts, last_error, content и ссылки; ссылки новых — по порядку, у раскрытой lnkd.in host по target_url; повтор тех же строк → пустой ответ. setOutcome not_vacancy → status, not_vacancy_reason, note и processed_at записаны; setOutcome vacancy → not_vacancy_reason и note NULL; setOutcome duplicate → duplicate_of_id записан (mine-duplicates.test); saveCursor меняет только cursor — consecutive_failures, next_run_at и last_error прежние",
               ["publication/write-publication.ts"],
             ],
             [
@@ -3127,13 +3214,26 @@
               "db, testConnector и справочник тестовой базы: pending и вакансия с двумя ролями, у первой «Berlin, Germany» → vacancy, vacancies 2, две строки vacancies, одна строка vacancy_locations у первой; в process передано дерево из базы; processing и job_seeker → not_vacancy, причина и пояснение записаны, вакансий нет, справочник не вызван; empty и vacancy → skipped, process не вызван; process → Error → Error, статус pending, вакансий нет; справочник недоступен (GeoQueryError) → Error, ни вакансий, ни мест, статус прежний; вакансия, которую база не принимает → Error, статус прежний",
               ["mine.ts", "test-connector.test-utils.ts"],
             ],
+            [
+              "packages/db/src/vacancy/duplicates.test.ts",
+              "new",
+              "unit: titleKey — «🔥 Senior  Frontend-разработчик (React)!» и «senior frontend разработчик react» равны, «C++ Developer» и «C# Developer» — нет; isSameRole — то же название, senior и null, страны DE, FR и DE → дубль; другое название «(Vue)», junior против senior, onsite против remote, FR против DE, другой город → не дубль; название «🔥🔥» → не дубль. db, saveVacancies со skipDuplicates: «Frontend Developer» Acme сохранён из публикации 1, публикация 2 через 3 дня с «🔥 frontend developer» и «QA Engineer» → { saved: 1, duplicateOf: [публикация 1] }, записан QA с position 0; без skipDuplicates → записан снова; повторная запись той же публикации → не дубль себя; другая компания, junior против senior, роль без компании, Германия против Франции → saved 4; Германия и Берлин → дубль; публикации через 31 день → не дубль в любом порядке записи, через 30 → дубль; две транзакции одновременно пишут одну роль из двух публикаций → записана одна",
+              ["vacancy/duplicates.ts", "vacancy/save-vacancies.ts"],
+            ],
+            [
+              "packages/connectors/src/mine-duplicates.test.ts",
+              "new",
+              "db, testConnector: Product Manager и Designer компании Acme сохранены из публикации 1; публикация 2 с теми же ролями → duplicate, vacancies 0, status duplicate, duplicate_of_id — публикация 1, processed_at записан, вакансий нет; публикация 3 с Product Manager и Analyst → vacancy, vacancies 1, записан только Analyst",
+              ["mine.ts", "test-connector.test-utils.ts"],
+            ],
           ],
           note: "Идёт после Э2. Ключи по connector, функции записи, listOccupations, locateVacancies, источники каналов, enrich и fakeReader уже в коде (раздел 2). Тесты drain и mine — db: им нужен .env.test из apps/web. Тесты parse и process остаются unit.",
         },
         {
           id: "Э4",
           status: "готов, не закоммичен",
-          progress: "startActor, collectRun и isOutOfCredits в @job-market/apify; channel-linkedin перенесён в linkedin, коннектор в реестре; linkedin.test, channel.test",
+          progress:
+            "startActor, collectRun и isOutOfCredits в @job-market/apify; channel-linkedin перенесён в linkedin, коннектор в реестре; linkedin.test, channel.test",
           t: "Коннектор linkedin",
           res: "коннектор linkedin запускает поиск Apify, возвращает курсор { runId }, если запуск не успел, разбирает посты общим process; проверено тестами",
           gres: "поиск LinkedIn",

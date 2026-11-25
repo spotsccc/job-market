@@ -36,5 +36,9 @@ export type {
   PublicationToSave,
   SourceSchedule,
 } from './write-publication.ts';
+export { claimPublication, updatePublicationState } from './claim-publication.ts';
+export type { ClaimedPublication, ClaimOptions, PublicationState } from './claim-publication.ts';
 export { replacePublicationLinks } from './write-links.ts';
 export type { LinkToSave } from './write-links.ts';
+export { claimDueSources, releaseSources } from './claim-sources.ts';
+export type { ClaimDueOptions, ClaimedSource } from './claim-sources.ts';

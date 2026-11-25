@@ -3,6 +3,7 @@ import { and, eq, getTableColumns, gte, inArray, sql } from 'drizzle-orm';
 import type { DbExecutor } from '../client.ts';
 import { keysOf } from '../company/company-keys.ts';
 import { lockKeys, matchCompany } from '../company/match-company.ts';
+import { findDuplicates } from './duplicates.ts';
 import type { NewVacancyLocationRow } from './vacancy-location.ts';
 import { vacancyLocations } from './vacancy-location.ts';
 import type { NewVacancyRow } from './vacancy.ts';
@@ -104,24 +105,69 @@ async function matchCompanies(
   return ids;
 }
 
+export type SaveOptions = {
+  /**
+   * Не писать роль, которая уже сохранена из другой публикации (П18–П20,
+   * packages/db/src/publication/README.md). Без него пишутся все роли.
+   */
+  readonly skipDuplicates?: boolean;
+};
+
+/** Итог записи ролей публикации. */
+export type SaveSummary = {
+  /** Сколько вакансий записано. */
+  readonly saved: number;
+  /** Публикации-оригиналы пропущенных дублей, по порядку ролей; без `skipDuplicates` пуст. */
+  readonly duplicateOf: readonly string[];
+};
+
+/** Роли, которые пишутся, с их компаниями: все или, с `skipDuplicates`, без дублей (П20). */
+async function rolesToWrite(
+  db: DbExecutor,
+  publicationId: string,
+  allRoles: readonly VacancyToSave[],
+  options: SaveOptions,
+): Promise<{
+  roles: readonly VacancyToSave[];
+  companyIds: readonly (string | null)[];
+  summary: SaveSummary;
+}> {
+  const allCompanyIds = allRoles.length === 0 ? [] : await matchCompanies(db, allRoles);
+  const originals =
+    options.skipDuplicates === true
+      ? await findDuplicates(db, publicationId, allRoles, allCompanyIds)
+      : allRoles.map(() => null);
+  const kept = allRoles.flatMap((role, index) =>
+    originals[index] === null ? [{ role, companyId: allCompanyIds[index] ?? null }] : [],
+  );
+  return {
+    roles: kept.map((item) => item.role),
+    companyIds: kept.map((item) => item.companyId),
+    summary: { saved: kept.length, duplicateOf: originals.filter((id) => id !== null) },
+  };
+}
+
 /**
  * Пишет роли публикации (П9, П17, packages/db/src/publication/README.md): вакансия — upsert по
  * `(publication_id, position)`, лишние вакансии прежней записи удаляются; места каждой вакансии
  * стираются и пишутся заново по порядку. Компания каждой роли ищется заново при каждой записи
- * (П6, packages/db/src/company/README.md).
+ * (П6, packages/db/src/company/README.md). С `skipDuplicates` дубли не пишутся, а номера
+ * получают только записанные роли (П18–П20).
  * Транзакцию держит вызывающий: вакансии, места и компании пишутся вместе с публикацией.
  */
 export async function saveVacancies(
   db: DbExecutor,
   publicationId: string,
-  roles: readonly VacancyToSave[],
-): Promise<void> {
+  allRoles: readonly VacancyToSave[],
+  options: SaveOptions = {},
+): Promise<SaveSummary> {
+  const { roles, companyIds, summary } = await rolesToWrite(db, publicationId, allRoles, options);
+
   await db
     .delete(vacancies)
     .where(and(eq(vacancies.publicationId, publicationId), gte(vacancies.position, roles.length)));
-  if (roles.length === 0) return;
+  if (roles.length === 0) return summary;
 
-  const companyIds = await matchCompanies(db, roles);
   const saved = await db
     .insert(vacancies)
     .values(
@@ -147,4 +193,5 @@ export async function saveVacancies(
     })),
   );
   if (places.length > 0) await db.insert(vacancyLocations).values(places);
+  return summary;
 }

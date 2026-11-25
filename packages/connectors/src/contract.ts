@@ -130,10 +130,13 @@ export type MinePublication = PublicationForModel & {
   readonly status: PublicationStatus;
 };
 
-/** Итог `mine` (П12): `skipped` — статус не `pending` и не `processing`, модели не звались. */
+/**
+ * Итог `mine` (П12): `skipped` — статус не `pending` и не `processing`, модели не звались;
+ * `duplicate` — все роли публикации уже сохранены из других публикаций.
+ */
 export type MineResult = {
-  readonly status: 'vacancy' | 'not_vacancy' | 'skipped';
-  /** Сколько вакансий записано. */
+  readonly status: 'vacancy' | 'not_vacancy' | 'duplicate' | 'skipped';
+  /** Сколько вакансий записано: дубли не считаются. */
   readonly vacancies: number;
 };
 

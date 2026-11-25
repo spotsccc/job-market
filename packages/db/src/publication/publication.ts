@@ -62,7 +62,10 @@ export const publications = pgTable(
     notVacancyReason: text({ enum: NOT_VACANCY_REASONS }),
     /** Пояснение, почему не вакансия; у причины `empty` его нет. */
     note: text(),
-    /** Публикация с тем же текстом, которая разобрана вместо этой. */
+    /**
+     * Оригинал дубля: публикация с тем же текстом, которая разобрана вместо этой (П4), или
+     * публикация, из которой уже сохранены роли этой (П20).
+     */
     duplicateOfId: uuid().references((): AnyPgColumn => publications.id, {
       onDelete: 'set null',
     }),
