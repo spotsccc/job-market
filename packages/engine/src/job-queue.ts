@@ -21,8 +21,8 @@ export type MineJob = {
 };
 
 /**
- * Очередь заданий одного вида. В тестах — `memoryJobQueue`, реализацию на Vercel Queues даст
- * план подключения очереди. `Error` — задания не отправлены.
+ * Очередь заданий одного вида. В тестах — `memoryJobQueue`, на Vercel Queues —
+ * `vercelJobQueue` из `apps/web/src/engine/job-queue.ts`. `Error` — задания не отправлены.
  */
 export type JobQueue<Job> = {
   readonly enqueue: (jobs: readonly Job[]) => Promise<Error | undefined>;

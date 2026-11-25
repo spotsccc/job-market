@@ -249,6 +249,8 @@ describe('tick', () => {
       readers: [fakeReader({ match: () => null })],
     });
     const queue = memoryJobQueue();
+    // Заданиям разбора тест считает только число: поля задания ему не нужны.
+    const mineQueue = memoryJobQueue<{ readonly publicationId: string }>();
 
     const result = await tick({ now: NOW, connectors, queue });
     const drained = await Promise.all(
@@ -257,6 +259,7 @@ describe('tick', () => {
           sourceId: job.sourceId,
           connectors,
           queue,
+          mineQueue,
           now: NOW,
           deadline: Date.now() + 600_000,
         }),
@@ -270,6 +273,7 @@ describe('tick', () => {
       .from(publications)
       .where(eq(publications.sourceId, source.id));
     assert.equal(written.length, 10);
+    assert.equal(mineQueue.jobs.length, 10);
     const [row] = await db
       .select({ cursor: sources.cursor })
       .from(sources)

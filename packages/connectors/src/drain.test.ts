@@ -66,8 +66,16 @@ describe('drain of a Telegram channel', () => {
 
     const result = await source.drain(channelOf(history));
 
-    assert.deepEqual(result, { status: 'done', inserted: 10, cursor: { cursorId: 10 } });
     const rows = await source.publications();
+    assert.deepEqual(
+      { ...result, pendingIds: result.pendingIds.toSorted() },
+      {
+        status: 'done',
+        inserted: 10,
+        pendingIds: rows.map((row) => row.id).toSorted(),
+        cursor: { cursorId: 10 },
+      },
+    );
     assert.equal(rows.length, 10);
     // Пост из одних эмодзи тоже ждёт разбора: пустоту определяет классификатор.
     assert.ok(rows.every((row) => row.status === 'pending'));
@@ -86,6 +94,7 @@ describe('drain of a Telegram channel', () => {
     const again = await source.drain(channelOf(history));
 
     assert.equal(again.inserted, 0);
+    assert.deepEqual(again.pendingIds, []);
     assert.equal((await source.publications()).length, 10);
   });
 
@@ -107,6 +116,8 @@ describe('drain of a Telegram channel', () => {
     const result = await source.drain(channelOf([message(1), message(2), message(3)]));
 
     assert.equal(result.inserted, 2);
+    assert.equal(result.pendingIds.length, 2);
+    assert.ok(!result.pendingIds.includes((await source.publication(`${channel}/2`)).id));
     const failed = await source.publication(`${channel}/2`);
     assert.equal(failed.status, 'failed');
     assert.equal(failed.content, 'Старый текст');
@@ -121,6 +132,7 @@ describe('drain results', () => {
 
     assert.equal(result.status, 'failed');
     assert.equal(result.error?.message, 'HTTP 503');
+    assert.deepEqual(result.pendingIds, []);
     assert.equal((await source.publications()).length, 0);
     assert.deepEqual((await source.row()).cursor, { cursorId: 3 });
   });
@@ -137,6 +149,10 @@ describe('drain results', () => {
 
     assert.equal(result.status, 'failed');
     assert.equal(result.inserted, 5);
+    assert.deepEqual(
+      result.pendingIds.toSorted(),
+      (await source.publications()).map((row) => row.id).toSorted(),
+    );
     assert.deepEqual((await source.row()).cursor, { passTopId: 9, resumeBeforeId: 5 });
   });
 

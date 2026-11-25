@@ -1,3 +1,4 @@
+// oxlint-disable max-lines -- случаи обработчика делят одну тестовую базу и помощники
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, test } from 'node:test';
@@ -10,6 +11,7 @@ import type { NewSourceRow, SourceRow } from '@job-market/db';
 import { fakeReader } from '@job-market/enricher/test-utils';
 
 import { handleDrainSourceJob } from './drain-source-job.ts';
+import type { MineJob } from './job-queue.ts';
 import { memoryJobQueue } from './memory-job-queue.test-utils.ts';
 import type { MemoryJobQueue } from './memory-job-queue.test-utils.ts';
 
@@ -101,20 +103,40 @@ function telegramRegistry(channel: string): ReadonlyMap<string, Connector> {
   });
 }
 
+/** Очереди и время задания; не заданные — новые очереди в памяти и `NOW`. */
+type RunOptions = {
+  readonly queue?: MemoryJobQueue;
+  readonly mineQueue?: MemoryJobQueue<MineJob>;
+  readonly now?: Date;
+};
+
 async function run(
   source: Pick<SourceRow, 'id'>,
   connectors: ReadonlyMap<string, Connector>,
-  queue: MemoryJobQueue = memoryJobQueue(),
-  now: Date = NOW,
+  options: RunOptions = {},
 ): ReturnType<typeof handleDrainSourceJob> {
   return handleDrainSourceJob({
     sourceId: source.id,
     connectors,
-    queue,
-    now,
+    queue: options.queue ?? memoryJobQueue(),
+    mineQueue: options.mineQueue ?? memoryJobQueue<MineJob>(),
+    now: options.now ?? NOW,
     deadline: DEADLINE(),
   });
 }
+
+/** Задания разбора, которые обработчик опроса кладёт на новые публикации источника (П7). */
+async function firstMineJobs(source: Pick<SourceRow, 'id'>): Promise<MineJob[]> {
+  const rows = await db
+    .select({ id: publications.id })
+    .from(publications)
+    .where(eq(publications.sourceId, source.id));
+  return rows.map(({ id }) => ({ publicationId: id, delaySeconds: 0, idempotencyKey: `${id}:0` }));
+}
+
+/** Задания очереди по `publicationId`: порядок отправки тестам не важен. */
+const sorted = (jobs: readonly MineJob[]): MineJob[] =>
+  jobs.toSorted((a, b) => a.publicationId.localeCompare(b.publicationId));
 
 const publication = (key: string, id: number, content = `Вакансия ${String(id)}`) => ({
   externalId: `${key}/${String(id)}`,
@@ -147,9 +169,10 @@ describe('handleDrainSourceJob', () => {
   test('drains a Telegram channel, records the success, and a repeat adds nothing', async () => {
     const source = await createSource({ consecutiveFailures: 2, lastError: 'HTTP 503' });
     const connectors = telegramRegistry(source.key);
+    const mineQueue = memoryJobQueue<MineJob>();
 
-    const first = await run(source, connectors);
-    const repeat = await run(source, connectors);
+    const first = await run(source, connectors, { mineQueue });
+    const repeat = await run(source, connectors, { mineQueue });
 
     assert.deepEqual(first, { status: 'done', inserted: 10 });
     assert.deepEqual(repeat, { status: 'done', inserted: 0 });
@@ -165,6 +188,8 @@ describe('handleDrainSourceJob', () => {
       .from(publications)
       .where(eq(publications.sourceId, source.id));
     assert.equal(statuses.filter((row) => row.status === 'pending').length, 10);
+    // Разбор — на каждую новую публикацию, пост из эмодзи тоже; повтор новых не дал.
+    assert.deepEqual(sorted(mineQueue.jobs), sorted(await firstMineJobs(source)));
   });
 
   test('a failed drain counts the failure, pauses the source and queues nothing', async () => {
@@ -174,7 +199,7 @@ describe('handleDrainSourceJob', () => {
     // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5).
     const now = new Date('2100-01-01T00:00:00.000Z');
 
-    const result = await run(source, connectors, queue, now);
+    const result = await run(source, connectors, { queue, now });
 
     assert.deepEqual(result, { status: 'failed', inserted: 0 });
     await assertChanged(source, {
@@ -199,10 +224,12 @@ describe('handleDrainSourceJob', () => {
       more: true,
     }));
     const queue = memoryJobQueue();
+    const mineQueue = memoryJobQueue<MineJob>();
 
-    const result = await run(source, connectors, queue);
+    const result = await run(source, connectors, { queue, mineQueue });
 
     assert.deepEqual(result, { status: 'requeued', inserted: 1 });
+    assert.deepEqual(mineQueue.jobs, await firstMineJobs(source));
     await assertChanged(source, { cursor: { page: 1 }, lastFetchedAt: NOW });
     assert.deepEqual(
       queue.jobs.map(({ sourceId, delaySeconds }) => ({ sourceId, delaySeconds })),
@@ -216,10 +243,10 @@ describe('handleDrainSourceJob', () => {
     const { connectors } = parsing(() => ({ publications: [], cursor: { page }, more: true }));
     const queue = memoryJobQueue();
 
-    await run(source, connectors, queue);
-    await run(source, connectors, queue);
+    await run(source, connectors, { queue });
+    await run(source, connectors, { queue });
     page = 2;
-    await run(source, connectors, queue);
+    await run(source, connectors, { queue });
 
     const keys = queue.jobs.map((job) => job.idempotencyKey);
     assert.equal(keys.length, 3);
@@ -251,11 +278,13 @@ describe('handleDrainSourceJob', () => {
       cursor: { page: 1 },
       more: false,
     }));
+    const mineQueue = memoryJobQueue<MineJob>();
 
-    const result = await run(source, connectors);
+    const result = await run(source, connectors, { mineQueue });
 
     assert.ok(result instanceof Error);
     await assertChanged(source, {});
+    assert.deepEqual(mineQueue.jobs, []);
   });
 
   test('a repeat after the schedule was not written continues from the new cursor', async () => {
@@ -282,9 +311,47 @@ describe('handleDrainSourceJob', () => {
     const source = await createSource();
     const { connectors } = parsing(() => ({ publications: [], cursor: { page: 1 }, more: true }));
 
-    const result = await run(source, connectors, memoryJobQueue({ failOnBatch: 1 }));
+    const result = await run(source, connectors, { queue: memoryJobQueue({ failOnBatch: 1 }) });
 
     assert.ok(result instanceof Error);
     assert.deepEqual((await sourceRow(source.id)).cursor, { page: 1 });
+  });
+
+  test('a service failure mid-pass still queues mining of what was read', async () => {
+    const source = await createSource();
+    const { connectors } = parsing(() => ({
+      publications: [1, 2, 3, 4, 5].map((id) => publication(source.key, id)),
+      cursor: { page: 1 },
+      more: false,
+      error: new Error('HTTP 429'),
+    }));
+    const mineQueue = memoryJobQueue<MineJob>();
+    // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5).
+    const now = new Date('2100-01-01T00:00:00.000Z');
+
+    const result = await run(source, connectors, { mineQueue, now });
+
+    assert.deepEqual(result, { status: 'failed', inserted: 5 });
+    assert.equal(mineQueue.jobs.length, 5);
+    assert.deepEqual(sorted(mineQueue.jobs), sorted(await firstMineJobs(source)));
+  });
+
+  test('returns the failure to send mining, with the schedule written and no continuation', async () => {
+    const source = await createSource();
+    const { connectors } = parsing(() => ({
+      publications: [publication(source.key, 1)],
+      cursor: { page: 1 },
+      more: true,
+    }));
+    const queue = memoryJobQueue();
+
+    const result = await run(source, connectors, {
+      queue,
+      mineQueue: memoryJobQueue<MineJob>({ failOnBatch: 1 }),
+    });
+
+    assert.ok(result instanceof Error);
+    await assertChanged(source, { cursor: { page: 1 }, lastFetchedAt: NOW });
+    assert.deepEqual(queue.jobs, []);
   });
 });

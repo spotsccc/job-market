@@ -120,6 +120,11 @@ export type DrainOptions = {
 export type DrainResult = {
   readonly status: 'done' | 'more' | 'failed';
   readonly inserted: number;
+  /**
+   * Id публикаций, которые этот `drain` записал впервые, — все они `pending` и ждут разбора
+   * (П8 плана разбора). Записанные раньше в него не входят.
+   */
+  readonly pendingIds: readonly string[];
   readonly cursor: unknown;
   readonly error?: Error;
 };

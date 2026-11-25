@@ -167,8 +167,8 @@ function publicationRow(
 }
 
 /**
- * Авторы, новые публикации со ссылками и курсор одной транзакцией (П9, П10). Ответ — сколько
- * публикаций новых; сбой базы — `Error`, не записано ничего.
+ * Авторы, новые публикации со ссылками и курсор одной транзакцией (П9, П10). Ответ — id новых
+ * публикаций; сбой базы — `Error`, не записано ничего.
  */
 async function write(
   connector: Connector,
@@ -177,7 +177,7 @@ async function write(
   parsed: ParseResult<unknown>,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в публикации `Date`, глубоко readonly его не сделать
   context: { readonly now: Date; readonly enriched: ReadonlyMap<number, Enrichment> },
-): Promise<Error | number> {
+): Promise<Error | readonly string[]> {
   const { publications } = parsed;
   return (
     db
@@ -198,7 +198,7 @@ async function write(
         );
         const inserted = await addPublications(tx, rows);
         await saveCursor(tx, source.id, parsed.cursor);
-        return inserted.size;
+        return [...inserted.values()];
       })
       .catch(
         (cause: unknown) =>
@@ -222,7 +222,7 @@ export async function drain<Config, Cursor>(
   const config = connector.configSchema.safeParse(source.config);
   if (!config.success) {
     const error = new Error(`Config of source ${source.key} is invalid`, { cause: config.error });
-    return { status: 'failed', inserted: 0, cursor: source.cursor, error };
+    return { status: 'failed', inserted: 0, pendingIds: [], cursor: source.cursor, error };
   }
   const cursor = connector.cursorSchema.safeParse(source.cursor);
   const parsed = await connector.parse({
@@ -233,15 +233,14 @@ export async function drain<Config, Cursor>(
     deadline: options.deadline,
   });
   if (parsed instanceof Error) {
-    return { status: 'failed', inserted: 0, cursor: source.cursor, error: parsed };
+    return { status: 'failed', inserted: 0, pendingIds: [], cursor: source.cursor, error: parsed };
   }
 
   const enriched = await readLinks(parsed.publications, options.readers, options.deadline);
-  const inserted = await write(connector.id, source, parsed, { now: options.now, enriched });
-  if (inserted instanceof Error) return inserted;
+  const pendingIds = await write(connector.id, source, parsed, { now: options.now, enriched });
+  if (pendingIds instanceof Error) return pendingIds;
 
-  if (parsed.error !== undefined) {
-    return { status: 'failed', inserted, cursor: parsed.cursor, error: parsed.error };
-  }
-  return { status: parsed.more ? 'more' : 'done', inserted, cursor: parsed.cursor };
+  const written = { inserted: pendingIds.length, pendingIds, cursor: parsed.cursor };
+  if (parsed.error !== undefined) return { status: 'failed', ...written, error: parsed.error };
+  return { status: parsed.more ? 'more' : 'done', ...written };
 }

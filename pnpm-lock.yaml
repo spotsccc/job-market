@@ -26,9 +26,15 @@ importers:
       '@ai-sdk/gateway':
         specifier: 4.0.151
         version: 4.0.151(zod@4.6.7)
+      '@job-market/connectors':
+        specifier: workspace:*
+        version: link:../../packages/connectors
       '@job-market/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@job-market/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
       '@job-market/enricher':
         specifier: workspace:*
         version: link:../../packages/enricher

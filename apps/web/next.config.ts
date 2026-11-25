@@ -7,10 +7,18 @@ const nextConfig: NextConfig = {
   logging: { incomingRequests: false },
   experimental: { optimizePackageImports: ['@mantine/core', '@mantine/hooks'] },
   transpilePackages: [
+    '@job-market/apify',
+    '@job-market/classifier',
+    '@job-market/connectors',
     '@job-market/db',
+    '@job-market/engine',
+    '@job-market/enricher',
     '@job-market/errors',
+    '@job-market/extractor',
     '@job-market/geo',
+    '@job-market/http-client',
     '@job-market/logger',
+    '@job-market/publication-text',
   ],
 };
 

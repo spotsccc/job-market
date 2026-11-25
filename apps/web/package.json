@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "4.0.151",
+    "@job-market/connectors": "workspace:*",
     "@job-market/db": "workspace:*",
+    "@job-market/engine": "workspace:*",
     "@job-market/enricher": "workspace:*",
     "@job-market/extractor": "workspace:*",
     "@job-market/geo": "workspace:*",

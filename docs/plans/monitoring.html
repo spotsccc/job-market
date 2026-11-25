@@ -839,10 +839,10 @@
           <span class="badge chg">требует ревью</span>
         </div>
         <div class="tldr">
-          Как владелец, я хочу дашборд «Движок» в Grafana, который по дням показывает, сколько
-          найдено публикаций и вакансий, сколько было ошибок парсинга, дублей, не вакансий и ошибок
-          экстракции, с разбивкой по площадкам и источникам, чтобы видеть, что движок работает и где
-          он ломается.
+          Как владелец, я хочу открыть у себя в локальной Grafana дашборд «Движок» на данных прода,
+          который по дням показывает, сколько найдено публикаций и вакансий, сколько было ошибок
+          парсинга, дублей публикаций и вакансий, не вакансий и ошибок экстракции, с разбивкой по
+          площадкам и источникам, чтобы видеть, что движок работает и где он ломается.
         </div>
       </header>
 
@@ -850,15 +850,17 @@
         <h2><span class="num">1</span>Задача</h2>
         <p class="lead">
           Движок опрашивает источники (<a href="drain-source-job.html">план 3</a>,
-          <a href="engine.html">план 4</a>) и разбирает публикации моделями. Итог каждого шага уже
-          лежит в Postgres: статус публикации, вакансии, ссылки. Нет одного: истории опросов. У
-          источника хранится только последняя ошибка и счётчик ошибок подряд.
+          <a href="engine.html">план 4</a>) и разбирает публикации моделями (<a href="mine-job.html"
+            >план 5</a
+          >). Итог каждого шага уже лежит в Postgres: статус публикации, вакансии, ссылки. Нет двух
+          вещей. Первая — истории опросов: у источника хранится только последняя ошибка и счётчик
+          ошибок подряд. Вторая — дублей вакансий: разбор их пропускает и нигде не записывает.
         </p>
         <p class="lead">
-          План добавляет таблицу истории опросов <code>source_runs</code>, схему
-          <code>monitoring</code> с представлениями для Grafana и дашборд «Движок» в репозитории.
-          Grafana читает базу напрямую SQL-запросами: метрик в коде, Prometheus и OpenTelemetry не
-          нужно.
+          План добавляет таблицы <code>source_runs</code> и <code>vacancy_duplicates</code>, схему
+          <code>monitoring</code> с представлениями для Grafana и панели дашборда «Движок». Grafana
+          работает только локально, в Docker на машине владельца, и читает только базу прода на Neon
+          — напрямую SQL-запросами. Метрик в коде, Prometheus и OpenTelemetry не нужно.
         </p>
         <div class="card">
           <h3>Сценарии — критерии готовности</h3>
@@ -892,14 +894,16 @@
       <section id="now">
         <h2><span class="num">2</span>Исходное состояние</h2>
         <p class="small muted">
-          Факты сверены с рабочей копией 24 ноября 2026, коммит <code>1cf9eaa</code>.
+          Факты сверены с рабочей копией 24 ноября 2026: коммит <code>910e290</code> и
+          незакоммиченное подключение движка к Vercel (<code>apps/web/vercel.json</code>,
+          <code>apps/web/src/app/api</code>, <code>apps/web/src/engine</code>).
         </p>
         <div class="card"><table id="facts"></table></div>
         <div class="card">
           <h3>Что дают другие планы</h3>
           <p class="small muted">
-            Дашборд показывает то, что пишут другие планы. Пока их нет, часть панелей пуста — это
-            ожидаемо, а не ошибка этого плана.
+            Дашборд показывает то, что пишут другие планы. Пока их код не работает на проде, часть
+            панелей пуста — это ожидаемо, а не ошибка этого плана.
           </p>
           <table id="prereq"></table>
         </div>
@@ -926,7 +930,7 @@
             <figcaption>
               Grafana не зовёт код движка и не видит таблиц: только представления схемы
               <code>monitoring</code>. Представления считаются при каждом запросе, своих данных у
-              них нет. Локально Grafana работает в Docker (Э3), на проде — в Grafana Cloud (Э4).
+              них нет.
             </figcaption>
           </figure>
         </div>
@@ -985,7 +989,7 @@
       <section id="data">
         <h2><span class="num">4</span>Модель данных</h2>
         <div class="card">
-          <h3>Таблица source_runs</h3>
+          <h3>Таблицы source_runs и vacancy_duplicates</h3>
           <p class="small muted">
             Схема в нотации Crow's Foot. Значок на конце линии говорит, сколько строк этой таблицы
             может быть у одной строки на другом конце. Например, у источника ноль или много строк
@@ -1015,9 +1019,9 @@
           <figure class="scroll">
             <div id="er"></div>
             <figcaption>
-              У <code>sources</code> и <code>platforms</code> показаны только столбцы, которые нужны
-              плану; эти таблицы не меняются. Остальные таблицы, которые читают представления
-              (<code>publications</code>, <code>vacancies</code>, <code>publication_links</code>),
+              У <code>platforms</code>, <code>sources</code> и <code>publications</code> показаны
+              только столбцы, которые нужны плану; эти таблицы не меняются. Остальные таблицы,
+              которые читают представления (<code>vacancies</code>, <code>publication_links</code>),
               тоже не меняются.
             </figcaption>
           </figure>
@@ -1025,7 +1029,8 @@
           <p class="small muted">
             По каждой новой таблице и представлению: что значит одна строка, столбцы (что это за
             значение и, если неочевидно, почему оно такое), ограничения, индексы — в том же порядке,
-            что в <code>\d</code> в psql. Как представления считают свои строки — правила П1–П8.
+            что в <code>\d</code> в psql. Как представления считают свои строки — правила П1–П8 и
+            П14.
           </p>
           <div class="tabs" id="fieldTabs"></div>
           <div id="fields"></div>
@@ -1056,8 +1061,8 @@
         <div class="card">
           <h3>Открытые вопросы</h3>
           <p class="small muted">
-            Открытых вопросов нет. Где Grafana работает на проде, решил владелец: Grafana Cloud
-            (журнал раздела 9).
+            Открытых вопросов нет. Где работает Grafana, что она читает и что считать дублями, решил
+            владелец (журнал раздела 9).
           </p>
           <h3>Риски</h3>
           <table id="riskTable"></table>
@@ -1071,9 +1076,10 @@
           <figure class="scroll">
             <div id="stagesGraph"></div>
             <figcaption>
-              Клик по этапу — его карточка. Этапы идут по порядку: представлениям нужна таблица Э1,
-              дашборду — представления Э2. Каждый этап — отдельный коммит, который проходит
-              <code>pnpm check</code> и <code>pnpm test</code>.
+              Клик по этапу — его карточка. Э1 и Э2 независимы и могут идти параллельно;
+              представлениям Э3 нужны обе их таблицы. Права роли grafana в Э4 выдаются на схему Э3,
+              а панели Э5 проверяются на проде через источник данных Э4. Каждый этап — отдельный
+              коммит, который проходит <code>pnpm check</code> и <code>pnpm test</code>.
             </figcaption>
           </figure>
         </div>
@@ -1106,7 +1112,7 @@
           <h4>Результаты spike</h4>
           <p class="small">
             Spike не нужен: Grafana читает Postgres штатным источником данных, а представления
-            проверяет тест Э2 на тестовой базе.
+            проверяет тест Э3 на тестовой базе.
           </p>
           <h4>Находки и журнал изменений плана</h4>
           <ul class="small">
@@ -1121,6 +1127,21 @@
               Вопрос закрыт, статус — «требует ревью». Э4 подключает Neon к Grafana Cloud и
               импортирует engine.json; П12 на проде держится только на refresh в engine.json — новый
               риск.
+            </li>
+            <li>
+              24 ноября 2026, коммит 910e290: в коде уже есть сервис grafana в compose.yaml (образ
+              grafana/grafana:13.3.1), provisioning из docker/grafana и пакет packages/dashboards —
+              дашборд кодом на @grafana/grafana-foundation-sdk вместо engine.json в docker/grafana;
+              в дашборде пока только заглушка. План 5 (разбор) пишет duplicate и failed; статуса
+              empty больше нет, причины not_vacancy — empty и trash (миграция 0013).
+            </li>
+            <li>
+              24 ноября 2026, по решению владельца: Grafana работает только локально, в Docker, и
+              читает только базу прода на Neon. Grafana Cloud и локальная база в Grafana из плана
+              ушли: источник данных — Neon с паролем из docker/grafana/.env, переменной datasource
+              нет, импорта дашборда нет, П12 держит сама Grafana. Дубли считаются и у вакансий:
+              новая таблица vacancy_duplicates (Э2), правила П13 и П14. Этапы перенумерованы: Э2 —
+              дубли вакансий, Э3 — схема monitoring, Э4 — Grafana на Neon, Э5 — панели.
             </li>
           </ul>
         </div>
@@ -1184,7 +1205,10 @@
           id: "S1",
           t: "Вакансии за неделю",
           chat: [
-            ["me", "открывает «Движок»: последние 7 дней, все площадки и источники"],
+            [
+              "me",
+              "pnpm grafana:up, открывает «Движок»: последние 7 дней, все площадки и источники",
+            ],
             [
               "tool",
               "SELECT $__timeGroupAlias(at, '1d'), platform, count(*) FROM monitoring.events WHERE kind = 'vacancy' …",
@@ -1203,7 +1227,7 @@
           chat: [
             [
               "me",
-              "handleDrainSourceJob: Apify ответил 402, drain → { status: 'failed', inserted: 0 }",
+              "очередь drain-source → handleDrainSourceJob: Apify ответил 402, drain → { status: 'failed', inserted: 0 }",
             ],
             ["tool", "recordDrain: UPDATE sources; INSERT source_runs — одной транзакцией"],
             [
@@ -1232,32 +1256,55 @@
           id: "S4",
           t: "Не вакансии по причинам",
           chat: [
-            ["me", "разбор отметил 5 публикаций forhr как not_vacancy: 3 job_seeker, 2 not_hiring"],
+            ["me", "разбор отметил 5 публикаций forhr как not_vacancy: 3 trash, 2 empty"],
             ["tool", "monitoring.events: kind not_vacancy, detail = not_vacancy_reason"],
-            ["bot", "«Не вакансии»: geekjobs +5; по причинам: job_seeker — 3, not_hiring — 2"],
+            ["bot", "«Не вакансии»: geekjobs +5; по причинам: trash — 3, empty — 2"],
           ],
           eff: [],
           note: "время — когда закончился разбор, а не когда опубликован пост (П6)",
         },
         {
           id: "S5",
-          t: "Дубли и ошибки экстракции",
+          t: "Дубль публикации и ошибка экстракции",
           chat: [
             [
               "me",
-              "план разбора записал публикацию со статусом duplicate и публикацию со статусом failed",
+              "handleMineJob: у одной публикации нашёлся оригинал с тем же текстом, другая упала на третьей попытке",
             ],
             ["tool", "monitoring.events: kind duplicate и kind extraction_error"],
             [
               "bot",
-              "«Дубли»: geekjobs +1; «Ошибки экстракции»: linkedin +1, в таблице — текст last_error",
+              "«Дубли публикаций»: geekjobs +1; «Ошибки экстракции»: linkedin +1, в таблице — текст last_error",
             ],
           ],
           eff: [],
-          note: "пока плана разбора нет, эти панели пусты (раздел 2)",
+          note: "статусы пишет план 5; план их только читает (П5, П7)",
         },
         {
           id: "S6",
+          t: "Дубль вакансии",
+          chat: [
+            [
+              "me",
+              "разбор публикации forhr извлёк 3 роли; «Frontend-разработчик» компании Acme уже сохранена из публикации linkedin",
+            ],
+            [
+              "tool",
+              "saveVacancies: 2 вакансии; INSERT vacancy_duplicates (публикация forhr, оригинал linkedin, «Frontend-разработчик»)",
+            ],
+            [
+              "bot",
+              "«Дубли вакансий»: geekjobs +1; в таблице — «Frontend-разработчик», источник forhr",
+            ],
+          ],
+          eff: [
+            ["vacancies · публикация forhr", "+2 строки", "+2"],
+            ["vacancy_duplicates", "+1 строка", "+1"],
+          ],
+          note: "строка дубля пишется в той же транзакции, что вакансии (П13); публикация остаётся vacancy, а не duplicate: дубли только часть ролей",
+        },
+        {
+          id: "S7",
           t: "Фильтр по площадке",
           chat: [
             ["me", "выбирает площадку geekjobs"],
@@ -1278,7 +1325,15 @@
       const NOGO = [
         [
           "Запись статусов duplicate и failed",
-          "это решение плана разбора публикаций: когда публикация — дубль и после скольких попыток разбор считается упавшим. План задаёт только, как их считать (П5, П7)",
+          "их уже пишет план 5: когда публикация — копия и после скольких попыток разбор считается упавшим. План задаёт только, как их считать (П5, П7)",
+        ],
+        [
+          "Grafana Cloud или своя Grafana на сервере",
+          "решение владельца: дашборд смотрит только он, на своей машине. Не нужно ни хостинга, ни входа в Grafana из интернета, ни выгрузки дашборда — его берёт provisioning из репозитория",
+        ],
+        [
+          "Локальная база в Grafana",
+          "решение владельца: дашборд нужен только на данных прода. Запросы представлений проверяет тест Э3 на тестовой базе",
         ],
         [
           "Метрики в коде: Prometheus, OpenTelemetry",
@@ -1290,15 +1345,11 @@
         ],
         [
           "Алерты",
-          "сначала посмотреть на данные и по ним выбрать пороги; алерты Grafana строятся поверх тех же запросов",
+          "сначала посмотреть на данные и по ним выбрать пороги; цена локальной Grafana для алертов — в рисках",
         ],
         [
           "Журнал каждой попытки разбора",
           "считаем итог публикации (П7). Если понадобятся и неудачные попытки перед успехом, журнал заводит план разбора",
-        ],
-        [
-          "Выгрузка дашборда в прод Grafana скриптом",
-          "дашборд меняется редко; JSON импортируется руками (риски)",
         ],
         ["Страница состояния источников в apps/web", "позже; до неё — дашборд и таблица sources"],
       ];
@@ -1306,27 +1357,32 @@
       const FACTS = [
         [
           "История опросов",
-          "sources хранит last_fetched_at, last_success_at, consecutive_failures и last_error (packages/db/src/publication/source.ts). scheduleAfterDrain при успехе обнуляет счётчик и last_error (packages/engine/src/schedule.ts:40)",
+          "sources хранит last_fetched_at, last_success_at, consecutive_failures и last_error (packages/db/src/publication/source.ts). scheduleAfterDrain при успехе обнуляет счётчик и last_error; errorText уже экспортируется (packages/engine/src/schedule.ts)",
           "сколько опросов упало за день, по этим столбцам не посчитать — нужна таблица source_runs (Э1)",
         ],
         [
           "Запись расписания",
-          "handleDrainSourceJob после drain зовёт updateSourceSchedule отдельным UPDATE, без транзакции; при failed пишет в лог «Source drain failed» (packages/engine/src/drain-source-job.ts:72-82)",
+          "handleDrainSourceJob после drain зовёт updateSourceSchedule отдельным UPDATE, без транзакции; при failed пишет в лог «Source drain failed» (packages/engine/src/drain-source-job.ts:70, 81)",
           "строку истории пишем там же, одной транзакцией с расписанием (П9)",
         ],
         [
           "Итог разбора публикации",
-          "publications.status: pending, processing, vacancy, not_vacancy, duplicate, empty, failed; setOutcome пишет status и processed_at = now() (packages/db/src/publication/write-publication.ts:212)",
+          "publications.status: pending, processing, vacancy, not_vacancy, duplicate, failed; статуса empty нет с миграции 0013. Причины not_vacancy — empty и trash (packages/db/src/publication/values.ts). processed_at пишут setOutcome и updatePublicationState",
           "не вакансии, дубли и ошибки экстракции считаются по status и processed_at",
         ],
         [
           "Кто пишет duplicate и failed",
-          "никто: mine пишет только vacancy и not_vacancy, при сбое возвращает Error и статус не меняет (packages/connectors/src/mine.ts:84-113); mine в apps/web никто не зовёт",
-          "панели «Дубли» и «Ошибки экстракции» пусты, пока их не начнёт писать план разбора",
+          "handleMineJob плана 5: markCopy пишет duplicate с duplicate_of_id и processed_at, если у публикации есть оригинал с тем же content_hash (packages/engine/src/mine-job.ts:45-66); stateAfterMineError после третьей попытки пишет failed с last_error и processed_at (packages/engine/src/mine-attempts.ts:33-37); mine пишет duplicate, если дубли — все роли публикации (packages/connectors/src/mine.ts:69-75)",
+          "панели «Дубли публикаций» и «Ошибки экстракции» считают то, что пишет план 5; своего кода записи план не добавляет",
+        ],
+        [
+          "Дубли вакансий",
+          "saveVacancies с skipDuplicates не пишет роль, которая уже сохранена из другой публикации, и возвращает SaveSummary.duplicateOf — публикации-оригиналы (packages/db/src/vacancy/save-vacancies.ts:124-147, П18–П20 в packages/db/src/publication/README.md). Больше пропущенная роль нигде не остаётся",
+          "дубли вакансий не посчитать — нужна таблица vacancy_duplicates (Э2)",
         ],
         [
           "Вакансии",
-          "vacancies.created_at с индексом vacancies_created_at_index; повторный разбор перезаписывает строки по (publication_id, position), created_at не трогает, лишние позиции удаляет (packages/db/src/vacancy/save-vacancies.ts:55-136)",
+          "vacancies.created_at с индексом vacancies_created_at_index; повторная запись перезаписывает строки по (publication_id, position), created_at не трогает, лишние позиции удаляет (packages/db/src/vacancy/save-vacancies.ts:158-180)",
           "вакансия считается в день первого извлечения; повторный разбор её не удваивает (П2)",
         ],
         [
@@ -1341,36 +1397,41 @@
         ],
         [
           "Миграции",
-          "drizzle-kit generate из packages/db/src/schema.ts; 13 миграций, последняя 0012_publication_links; ручная миграция уже есть — 0006_geo_manual; CI сверяет миграции со схемой (.github/workflows/ci.yml, «Migrations match the schema»)",
-          "таблицу и представления генерирует drizzle-kit, ручной миграции план не добавляет",
+          "drizzle-kit generate из packages/db/src/schema.ts; 14 миграций, последняя 0013_not_vacancy_reasons; CI сверяет миграции со схемой (.github/workflows/ci.yml, «Migrations match the schema»). На проде миграции применяет сборка Vercel (apps/web/vercel.json, buildCommand)",
+          "таблицы и представления генерирует drizzle-kit; на Neon они появляются с деплоем этапа",
         ],
         [
-          "Локальная инфраструктура",
-          "compose.yaml поднимает только postgres:17-alpine на порту 5433; Grafana в проекте нет",
-          "Э3 добавляет в compose.yaml сервис grafana",
+          "Grafana в репозитории",
+          "compose.yaml: сервис grafana (grafana/grafana:13.3.1) на 127.0.0.1:3001, depends_on postgres, GF_DASHBOARDS_MIN_REFRESH_INTERVAL=5m. Источник данных — локальная база postgres:5432 (docker/grafana/provisioning/datasources/postgres.yaml). Дашборды — из packages/dashboards/dist, их собирает пакет @job-market/dashboards на @grafana/grafana-foundation-sdk; pnpm grafana:up собирает их и поднимает Grafana",
+          "Э4 меняет источник данных на Neon, Э5 добавляет панели",
+        ],
+        [
+          "Дашборд «Движок»",
+          "packages/dashboards/src/engine.ts: uid job-market-engine, часовой пояс UTC, refresh пустой, переменная datasource, одна текстовая панель-заглушка. Комментарии engine.ts и generate.ts говорят о Grafana Cloud и grafanactl",
+          "Э4 убирает переменную datasource и упоминания Grafana Cloud, Э5 заменяет заглушку панелями",
         ],
         [
           "Тесты",
-          "node --test 'src/**/*.test.ts' на тестовой базе job_market_test (apps/web/.env.test) в packages/db и packages/engine; файлы идут параллельно; тесты задания опроса берут ключи с префиксом test_engine_job_ (drain-source-job.test.ts:21)",
-          "тест представлений Э2 смотрит только свои источники (раздел 6)",
+          "node --test 'src/**/*.test.ts' на тестовой базе job_market_test (apps/web/.env.test) в packages/db и packages/engine; файлы идут параллельно; тесты задания опроса берут ключи с префиксом test_engine_job_ (drain-source-job.test.ts:21). У packages/dashboards тестов нет",
+          "тест представлений Э3 смотрит только свои источники (раздел 6)",
         ],
       ];
 
       const PREREQ = [
         [
           "План 3 — задание опроса",
-          "в коде (коммит 5a66b10): handleDrainSourceJob, scheduleAfterDrain, updateSourceSchedule",
+          "в коде: handleDrainSourceJob, scheduleAfterDrain, updateSourceSchedule",
           "Э1 меняет обработчик: вместо updateSourceSchedule — recordDrain с расписанием и строкой истории",
         ],
         [
-          "План 4 и план подключения Vercel",
-          "tick и подключение расписания и очереди ещё не в коде: на проде handleDrainSourceJob никто не зовёт",
-          "панель «Упавшие опросы» на проде заполнится после плана подключения Vercel; локально строки пишут тесты и ручные запуски",
+          "План 4 и подключение Vercel",
+          "tick в коде (910e290). Расписание sources-tick и роуты очередей drain-source и mine — в рабочей копии, ещё не закоммичены",
+          "панель «Упавшие опросы» на проде заполнится после деплоя подключения Vercel",
         ],
         [
-          "План разбора публикаций",
-          "плана ещё нет; mine есть, но его никто не зовёт",
-          "требование к нему: писать failed с last_error после последней попытки и duplicate с duplicate_of_id через setOutcome, чтобы processed_at был заполнен (П5, П7)",
+          "План 5 — задание разбора",
+          "в коде: handleMineJob пишет vacancy, not_vacancy, duplicate и failed. Первое задание разбора никто не кладёт: mineQueue зовёт только роут mine — для повтора после сбоя",
+          "панели разбора на проде пусты, пока публикации не начнут попадать в очередь mine; это работа плана 5 или плана подключения Vercel, не этого плана",
         ],
       ];
 
@@ -1384,46 +1445,65 @@
         },
         {
           id: "E2",
-          sit: "Тесты пакетов db и engine и файлы одного пакета идут параллельно на одной тестовой базе",
-          beh: "тест представлений заводит свою площадку test-monitoring и источники с префиксом test_db_monitoring_ и читает события только по их source_id; удаляет только свои строки",
-          test: "pnpm test дважды подряд — зелёный",
+          sit: "Транзакция разбора откатилась после saveVacancies (сбой setOutcome), handleMineJob повторяет разбор",
+          beh: "строки vacancy_duplicates откатились вместе с вакансиями; повтор пишет их один раз (П13)",
+          test: "duplicates.test",
           st: "Э2",
         },
         {
           id: "E3",
-          sit: "drizzle-kit пересоздаёт представление при изменении его SQL (DROP VIEW и CREATE VIEW)",
-          beh: "права роли grafana на новое представление даёт ALTER DEFAULT PRIVILEGES из ручного шага README; без него Grafana получит permission denied",
-          test: "ручная проверка Э4: изменить представление, применить миграцию, обновить дашборд",
-          st: "Э4",
+          sit: "Тесты пакетов db и engine и файлы одного пакета идут параллельно на одной тестовой базе",
+          beh: "тест представлений заводит свою площадку test-monitoring и источники с префиксом test_db_monitoring_ и читает события только по их source_id; удаляет только свои строки",
+          test: "pnpm test дважды подряд — зелёный",
+          st: "Э3",
         },
         {
           id: "E4",
-          sit: "Grafana в Docker обращается к базе по localhost:5433",
-          beh: "внутри сети compose база — postgres:5432; источник данных в provisioning смотрит туда",
-          test: "ручная проверка Э3: Save & test источника данных",
-          st: "Э3",
+          sit: "drizzle-kit пересоздаёт представление при изменении его SQL (DROP VIEW и CREATE VIEW)",
+          beh: "права роли grafana на новое представление даёт ALTER DEFAULT PRIVILEGES из ручного шага README; без него Grafana получит permission denied",
+          test: "ручная проверка Э4: изменить представление, задеплоить миграцию, обновить дашборд",
+          st: "Э4",
         },
         {
           id: "E5",
-          sit: "Сутки на графике: $__timeGroupAlias режет по UTC, а браузер показывает время в своём поясе",
-          beh: "часовой пояс дашборда — UTC: подпись столбца совпадает с сутками, по которым он посчитан",
-          test: "ручная проверка Э3",
-          st: "Э3",
+          sit: "Нет файла docker/grafana/.env с подключением к Neon",
+          beh: "docker compose не поднимает grafana и называет файл (env_file с required: true); README говорит скопировать docker/grafana/.env.example",
+          test: "ручная проверка Э4: pnpm grafana:up без файла",
+          st: "Э4",
         },
         {
           id: "E6",
+          sit: "Neon принимает только TLS-подключения",
+          beh: "источник данных — sslmode require; без него Neon отказывает в подключении",
+          test: "ручная проверка Э4: Save & test источника данных",
+          st: "Э4",
+        },
+        {
+          id: "E7",
           sit: "Neon засыпает без запросов; первый запрос дашборда будит его",
           beh: "первая загрузка — до нескольких секунд, таймаут запроса Grafana по умолчанию (30 с) это покрывает",
           test: "ручная проверка Э4",
           st: "Э4",
         },
+        {
+          id: "E8",
+          sit: "Сутки на графике: $__timeGroupAlias режет по UTC, а браузер показывает время в своём поясе",
+          beh: "часовой пояс дашборда — UTC: подпись столбца совпадает с сутками, по которым он посчитан",
+          test: "ручная проверка Э5",
+          st: "Э5",
+        },
       ];
 
       const RISKS = [
         [
-          "Панели «Дубли», «Ошибки экстракции» и «Упавшие опросы» на проде пусты",
+          "Панели «Упавшие опросы», разбора и дублей на проде пусты",
           "дашборд: нули при работающем сборе",
-          "это ожидаемо до плана разбора и плана подключения Vercel (раздел 2); требование к плану разбора записано там же",
+          "это ожидаемо до деплоя подключения Vercel и до того, как публикации начнут попадать в очередь mine (раздел 2)",
+        ],
+        [
+          "Дашборд есть только на машине владельца и только пока Grafana поднята",
+          "кому-то ещё нужен дашборд; нужны алерты",
+          "принимаем по решению владельца. Если понадобится — поднять ту же Grafana на сервере: дашборд и provisioning уже в репозитории",
         ],
         [
           "Автообновление дашборда не даёт Neon уснуть: платим за часы вычислений",
@@ -1431,19 +1511,19 @@
           "автообновление по умолчанию выключено, чаще раза в 5 минут его не включить (П12)",
         ],
         [
+          "Пароль роли grafana лежит на машине владельца в docker/grafana/.env",
+          "—",
+          "файл не попадает в git (.gitignore: .env.*); роль только читает схему monitoring (П11), текстов публикаций не видит. Утёк — сменить пароль роли",
+        ],
+        [
           "Счёт по итоговому статусу: публикация, которую разобрали повторно, уходит из «Ошибок экстракции» за прошлые дни",
           "числа за прошлые дни меняются",
           "принимаем: дашборд отвечает «сколько публикаций сейчас не разобрано из-за ошибки». Если нужны все попытки — журнал в плане разбора",
         ],
         [
-          "В Grafana Cloud минимальный интервал автообновления не настроить: его задаёт сервер, а не дашборд",
-          "кто-то включил автообновление 5s; графики потребления в консоли Neon",
-          "в engine.json автообновление выключено (П12); README предупреждает не включать его чаще 5 минут",
-        ],
-        [
-          "Дашборд в прод Grafana разойдётся с engine.json в репозитории",
-          "в README у импорта есть дата; ревью дашборда видит разницу",
-          "engine.json — источник правды; импорт после каждого изменения. Если меняется часто — скрипт выгрузки через API Grafana",
+          "Повторная запись ролей публикации переносит её дубли вакансий на день этой записи",
+          "числа «Дублей вакансий» за прошлые дни меняются",
+          "принимаем: повторно роли пишут только перенос и ручной разбор, это редко (П13)",
         ],
         [
           "Запросы по монитору станут медленными: у publications нет индексов по created_at и processed_at",
@@ -1453,11 +1533,11 @@
         [
           "source_runs растёт без предела",
           "размер таблицы в консоли Neon",
-          "100 источников раз в сутки — ~36 тыс. строк в год, это мало. Если вырастет — удалять строки старше 90 дней",
+          "100 источников с интервалом по умолчанию (раз в сутки, interval_minutes 1440) — ~36 тыс. строк в год, это мало. Если вырастет — удалять строки старше 90 дней",
         ],
         [
           "drizzle-kit 0.31 не сгенерирует представление в своей схеме из pgSchema().view()",
-          "pnpm db:generate в Э2",
+          "pnpm db:generate в Э3",
           "представление — ручной миграцией drizzle-kit generate --custom, в схеме — .existing(); проверка CI «Migrations match the schema» это допускает",
         ],
       ];
@@ -1522,7 +1602,8 @@
             "последние 20 ошибок: время, источник, текст",
           ],
           ["", "Непрочитанные ссылки", "link_error", "разбивка по хостам"],
-          ["3. Дубли", "Дубли", "duplicate", "—"],
+          ["3. Дубли", "Дубли публикаций", "duplicate", "—"],
+          ["", "Дубли вакансий", "vacancy_duplicate", "последние 20 дублей: время, источник, роль"],
           ["4. Не вакансии", "Не вакансии", "not_vacancy", "разбивка по причинам"],
           [
             "5. Ошибки экстракции",
@@ -1549,8 +1630,12 @@
             "строка истории до записи; finished_at ставит база (now())",
           ],
           [
+            "saveVacancies(db, publicationId, roles, { skipDuplicates })",
+            "@job-market/db, сигнатура не меняется: стирает строки vacancy_duplicates публикации и с skipDuplicates пишет строку на каждую пропущенную роль (П13)",
+          ],
+          [
             "monitoring.events",
-            "представление: одна строка — одно событие движка (at, kind, source_id, source, platform, connector, detail) по П1–П8",
+            "представление: одна строка — одно событие движка (at, kind, source_id, source, platform, connector, detail) по П1–П8 и П14",
           ],
           [
             "monitoring.sources",
@@ -1593,6 +1678,16 @@
             ["platform", "text", "FK", false],
             ["name", "text", "", false],
             ["enabled", "boolean", "", false],
+          ],
+        },
+        publications: {
+          k: "old",
+          x: 20,
+          y: 340,
+          w: 260,
+          f: [
+            ["id", "uuid", "PK", false],
+            ["source_id", "uuid", "FK", false],
           ],
         },
         source_runs: {
@@ -1670,11 +1765,75 @@
             ["(source_id)", "каскадное удаление источника и выбор по источнику"],
           ],
         },
+        vacancy_duplicates: {
+          x: 480,
+          y: 370,
+          w: 340,
+          dict: true,
+          grain:
+            "одна роль, которую разбор публикации извлёк, но не записал вакансией: она уже сохранена из другой публикации (П18 пакета db).",
+          f: [
+            ["id", "uuid", "PK", false, "gen_random_uuid()", "Идентификатор строки дубля.", ""],
+            [
+              "publication_id",
+              "uuid",
+              "FK",
+              false,
+              "",
+              "Публикация, при разборе которой роль оказалась дублем.",
+              "по ней дубль получает источник и площадку (П8).",
+            ],
+            [
+              "original_id",
+              "uuid",
+              "FK",
+              false,
+              "",
+              "Публикация, из которой роль уже сохранена вакансией: элемент SaveSummary.duplicateOf.",
+              "вакансию-оригинал findDuplicates не возвращает, а публикации достаточно, чтобы найти её глазами.",
+            ],
+            [
+              "title",
+              "text",
+              "",
+              false,
+              "",
+              "Название роли, как его извлекла модель.",
+              "по нему на дашборде видно, какие роли повторяются.",
+            ],
+            [
+              "created_at",
+              "timestamptz",
+              "",
+              false,
+              "now()",
+              "Когда записан разбор, который нашёл дубль.",
+              "",
+            ],
+          ],
+          c: [
+            ["PK", "(id)", ""],
+            [
+              "FK",
+              "(publication_id) → publications (id) ON DELETE CASCADE",
+              "дубли удалённой публикации не нужны",
+            ],
+            [
+              "FK",
+              "(original_id) → publications (id) ON DELETE CASCADE",
+              "без оригинала роль уже не дубль",
+            ],
+          ],
+          ix: [
+            ["(publication_id)", "стереть дубли публикации при повторной записи ролей (П13)"],
+            ["(created_at)", "период дашборда"],
+          ],
+        },
         "monitoring.events": {
           dict: true,
-          view: "UNION ALL семи SELECT — по одному на вид события (П1–П7), каждый соединён с sources (П8)",
+          view: "UNION ALL восьми SELECT — по одному на вид события (П1–П7, П14), каждый соединён с sources (П8)",
           grain:
-            "одно событие движка: найдена публикация, извлечена вакансия, упал опрос, не прочиталась ссылка, публикация оказалась дублём, не вакансией или не разобралась.",
+            "одно событие движка: найдена публикация, извлечена вакансия, упал опрос, не прочиталась ссылка, публикация оказалась дублём, не вакансией или не разобралась, роль оказалась дублём вакансии.",
           f: [
             [
               "at",
@@ -1682,7 +1841,7 @@
               "",
               false,
               "",
-              "Когда случилось событие. Откуда время, у каждого вида своё (П1–П7).",
+              "Когда случилось событие. Откуда время, у каждого вида своё (П1–П7, П14).",
               "",
             ],
             [
@@ -1691,7 +1850,7 @@
               "",
               false,
               "",
-              "Вид события: publication, vacancy, parse_error, link_error, duplicate, not_vacancy, extraction_error.",
+              "Вид события: publication, vacancy, parse_error, link_error, duplicate, vacancy_duplicate, not_vacancy, extraction_error.",
               "один столбец вида вместо представления на каждый показатель: запрос всех панелей одинаковый.",
             ],
             ["source_id", "uuid", "", false, "", "Источник события (П8).", ""],
@@ -1712,7 +1871,7 @@
               "",
               true,
               "",
-              "Подробность для разбивки: текст ошибки у parse_error и extraction_error, хост у link_error, причина у not_vacancy; у остальных видов пусто.",
+              "Подробность для разбивки: текст ошибки у parse_error и extraction_error, хост у link_error, причина у not_vacancy, название роли у vacancy_duplicate; у остальных видов пусто.",
               "",
             ],
           ],
@@ -1826,7 +1985,40 @@
           "one",
           "zeroMany",
         );
-        svg("er", 840, 340, b, "Таблица source_runs и её связи в нотации Crow's Foot");
+        rel(
+          [
+            [150, 284],
+            [150, 340],
+          ],
+          "one",
+          "zeroMany",
+        );
+        rel(
+          [
+            [280, 378],
+            [380, 378],
+            [380, 438],
+            [480, 438],
+          ],
+          "one",
+          "zeroMany",
+        );
+        rel(
+          [
+            [200, 420],
+            [200, 460],
+            [480, 460],
+          ],
+          "one",
+          "zeroMany",
+        );
+        svg(
+          "er",
+          840,
+          540,
+          b,
+          "Таблицы source_runs и vacancy_duplicates и их связи в нотации Crow's Foot",
+        );
         const names = Object.keys(TABLES).filter((n) => TABLES[n].dict);
         tabs(
           "fieldTabs",
@@ -1969,10 +2161,10 @@
             x: 290,
             y: 40,
             w: 260,
-            k: "new",
+            k: "chg",
             t: "Grafana",
             plain: true,
-            type: "[Контейнер: Docker; Grafana Cloud]",
+            type: "[Контейнер: Docker у владельца]",
             d: ["дашборд «Движок»:", "переменные площадка и источник"],
           },
           {
@@ -1981,9 +2173,9 @@
             y: 300,
             w: 170,
             k: "ext",
-            t: "Вызывающий",
-            type: "[Тесты; план Vercel]",
-            d: ["очередь заданий"],
+            t: "Роут drain-source",
+            type: "[apps/web; тесты]",
+            d: ["очередь заданий опроса"],
           },
           {
             id: "mine",
@@ -1991,9 +2183,9 @@
             y: 450,
             w: 170,
             k: "ext",
-            t: "План разбора",
-            type: "[Будущий план]",
-            d: ["пишет статусы", "duplicate и failed"],
+            t: "Задание разбора",
+            type: "[План 5: handleMineJob]",
+            d: ["статусы публикаций,", "роли через saveVacancies"],
           },
           {
             id: "eng",
@@ -2009,40 +2201,44 @@
             id: "dbp",
             x: 620,
             y: 300,
-            w: 200,
+            w: 220,
             k: "chg",
             t: "@job-market/db",
             type: "[Компонент: Drizzle]",
-            d: ["+ recordDrain,", "+ схема monitoring"],
+            d: ["+ recordDrain, дубли вакансий", "+ схема monitoring"],
           },
           {
             id: "pg",
-            x: 930,
+            x: 920,
             y: 290,
-            w: 250,
+            w: 270,
             h: 112,
             k: "chg",
             t: "Postgres",
             plain: true,
             type: "[Контейнер: Postgres 17 · Neon]",
-            d: ["+ source_runs", "+ monitoring.events, .sources", "publications, vacancies, …"],
+            d: [
+              "+ source_runs, vacancy_duplicates",
+              "+ monitoring.events, .sources",
+              "publications, vacancies, …",
+            ],
           },
         ],
         [
           {
             x: 240,
             y: 250,
-            w: 600,
+            w: 630,
             h: 300,
             label: "packages/* · библиотеки TypeScript [Контейнер]",
           },
         ],
         [
-          { a: "own", b: "gf", l: ["смотрит", "[HTTPS]"] },
+          { a: "own", b: "gf", l: ["смотрит", "[HTTP]"] },
           {
             a: "gf",
             b: "pg",
-            l: ["читает monitoring.*", "[SQL, роль только для чтения]"],
+            l: ["читает monitoring.*", "[SQL по TLS, роль grafana]"],
             via: [[1055, 86]],
             to: [1055, 287],
             lx: 800,
@@ -2054,7 +2250,7 @@
           {
             a: "mine",
             b: "dbp",
-            l: ["пишет статусы", "[setOutcome]"],
+            l: ["пишет статусы и роли", "[SQL]"],
             from: [193, 496],
             via: [[720, 496]],
             to: [720, 395],
@@ -2239,7 +2435,7 @@
       sequence(
         "seqA",
         [
-          ["вызывающий", "тест или план Vercel"],
+          ["роут drain-source", "Vercel Queues или тест"],
           ["drain-source-job.ts", "engine"],
           ["коннектор", "drain"],
           ["db", "write-publication.ts"],
@@ -2397,7 +2593,7 @@
         [
           ["Владелец", "", "actor"],
           ["Grafana", "дашборд «Движок»"],
-          ["Postgres", "схема monitoring"],
+          ["Neon", "схема monitoring"],
         ],
         [
           {
@@ -2413,7 +2609,7 @@
             b: 2,
             label: "SELECT … FROM monitoring.sources",
             mono: true,
-            note: "Списки переменных: площадки и источники выбранных площадок (S6).",
+            note: "Списки переменных: площадки и источники выбранных площадок (S7).",
           },
           {
             m: "ret",
@@ -2434,7 +2630,7 @@
                     b: 2,
                     label: "SELECT … FROM monitoring.events",
                     mono: true,
-                    note: "Запрос из раздела «Функции и запросы плана»: период — $__timeFilter, сутки по UTC.",
+                    note: "Запрос из раздела «Функции и запросы плана» под ролью grafana: период — $__timeFilter, сутки по UTC.",
                   },
                   {
                     m: "ret",
@@ -2536,17 +2732,32 @@
         { group: "Grafana" },
         [
           "П11",
-          "Grafana на проде читает базу ролью grafana: USAGE на схему monitoring и SELECT на её представления, больше ничего. Таблицы с текстом публикаций (content, payload) ей недоступны. Представления выполняются с правами владельца, поэтому прав на таблицы роли не нужно.",
+          "Grafana читает Neon ролью grafana: USAGE на схему monitoring и SELECT на её представления, больше ничего. Таблицы с текстом публикаций (content, payload) ей недоступны. Представления выполняются с правами владельца, поэтому прав на таблицы роли не нужно.",
           "поведение",
           "SQL ручного шага в README (Э4)",
           "ручная проверка Э4",
         ],
         [
           "П12",
-          "Дашборд по умолчанию не обновляется сам; локально автообновление не включить чаще раза в 5 минут, в Grafana Cloud этот предел не настраивается (риски). Почему: каждый запрос будит Neon, а часы его работы платные.",
+          "Дашборд по умолчанию не обновляется сам, а автообновление не включить чаще раза в 5 минут. Почему: каждый запрос будит Neon, а часы его работы платные.",
           "поведение",
-          "engine.json: refresh пустой; GF_DASHBOARDS_MIN_REFRESH_INTERVAL=5m в compose.yaml; в Grafana Cloud — только refresh в engine.json",
-          "ручная проверка Э3",
+          "engine.ts: refresh пустой; GF_DASHBOARDS_MIN_REFRESH_INTERVAL=5m в compose.yaml",
+          "ручная проверка Э4",
+        ],
+        { group: "Дубли вакансий" },
+        [
+          "П13",
+          "saveVacancies стирает строки vacancy_duplicates публикации и с skipDuplicates пишет по строке на каждую роль, которую не записал вакансией: публикация-оригинал из SaveSummary.duplicateOf и название роли. Всё — в транзакции вызывающего, вместе с вакансиями. Без skipDuplicates (перенос) строк дублей у публикации не остаётся. Почему стирать: повторная запись ролей не должна удваивать дубли, как не удваивает вакансии.",
+          "поведение",
+          "db/src/vacancy/save-vacancies.ts: saveVacancies",
+          "duplicates.test",
+        ],
+        [
+          "П14",
+          "Дубль вакансии — строка vacancy_duplicates. Время — created_at, detail — title. Источник и площадка — у публикации, при разборе которой нашёлся дубль. Публикация, у которой дубли все роли, считается и в «Дублях публикаций» (П5), и в «Дублях вакансий» — по строке на роль: это разные панели.",
+          "определение",
+          EV,
+          "monitoring.test",
         ],
       ];
 
@@ -2577,6 +2788,7 @@
           ctx: [
             ["packages/connectors/src/contract.ts", "old"],
             ["packages/db/src/index.ts", "old"],
+            ["packages/engine/src/schedule.ts", "old"],
             ["packages/engine/src/memory-job-queue.test-utils.ts", "old"],
           ],
           mods: [
@@ -2599,21 +2811,21 @@
               ["source-run.ts", "write-publication.ts"],
             ],
             [
-              "packages/db/migrations/0013_source_runs.sql",
+              "packages/db/src/publication/README.md",
+              "chg",
+              "строка recordDrain вместо updateSourceSchedule в таблице функций",
+              ["write-publication.ts"],
+            ],
+            [
+              "packages/db/migrations/0014_source_runs.sql",
               "new",
               "CREATE TABLE source_runs с ограничениями и индексами — pnpm db:generate",
               [],
             ],
             [
-              "packages/engine/src/schedule.ts",
-              "chg",
-              "errorText экспортируется (П10)",
-              ["contract.ts"],
-            ],
-            [
               "packages/engine/src/drain-source-job.ts",
               "chg",
-              "после drain — recordDrain с расписанием и строкой { status, inserted, error, startedAt: now } вместо updateSourceSchedule",
+              "после drain — recordDrain с расписанием и строкой { status, inserted, error: errorText при failed, startedAt: now } вместо updateSourceSchedule (П10)",
               ["schedule.ts", "db/src/index.ts", "contract.ts"],
             ],
           ],
@@ -2631,17 +2843,70 @@
               ["drain-source-job.ts", "memory-job-queue.test-utils.ts"],
             ],
           ],
-          note: "Меняет обработчик плана 3: его тесты «a failed drain counts the failure…» и «a repeat after the schedule was not written…» дополняются проверкой source_runs, а не переписываются.",
+          note: "Меняет обработчик плана 3: его тесты «a failed drain counts the failure…» и «a repeat after the schedule was not written…» дополняются проверкой source_runs, а не переписываются. Номер миграции — по порядку коммита: если Э2 закоммичен раньше, у Э1 будет 0015.",
         },
         {
           id: "Э2",
+          t: "Дубли вакансий",
+          res: "каждая роль, которую разбор не записал вакансией как дубль, оставляет строку в vacancy_duplicates; тест на тестовой базе это показывает",
+          gres: "строка на каждый дубль роли",
+          g: [0, 1],
+          ctx: [
+            ["packages/db/src/publication/publication.ts", "old"],
+            ["packages/db/src/vacancy/duplicates.ts", "old"],
+          ],
+          mods: [
+            [
+              "packages/db/src/vacancy/vacancy-duplicate.ts",
+              "new",
+              "таблица vacancy_duplicates и типы VacancyDuplicateRow, NewVacancyDuplicateRow (раздел 4)",
+              ["publication/publication.ts"],
+            ],
+            [
+              "packages/db/src/vacancy/save-vacancies.ts",
+              "chg",
+              "П13: DELETE строк vacancy_duplicates публикации; с skipDuplicates — INSERT строки на каждую роль, у которой findDuplicates нашёл оригинал. Сигнатура и SaveSummary не меняются",
+              ["vacancy-duplicate.ts", "duplicates.ts"],
+            ],
+            [
+              "packages/db/src/vacancy/index.ts",
+              "chg",
+              "экспорт vacancyDuplicates и типов",
+              ["vacancy-duplicate.ts", "save-vacancies.ts"],
+            ],
+            [
+              "packages/db/src/publication/README.md",
+              "chg",
+              "П20: пропущенный дубль пишется строкой vacancy_duplicates",
+              ["save-vacancies.ts"],
+            ],
+            [
+              "packages/db/migrations/0015_vacancy_duplicates.sql",
+              "new",
+              "CREATE TABLE vacancy_duplicates с ограничениями и индексами — pnpm db:generate",
+              [],
+            ],
+          ],
+          tests: [
+            [
+              "packages/db/src/vacancy/duplicates.test.ts",
+              "chg",
+              "db: публикация B с тремя ролями, «Frontend-разработчик» Acme уже сохранена из A → 2 вакансии и строка { publication B, original A, title «Frontend-разработчик» }; повторная запись B с skipDuplicates → снова одна строка, а не две; все три роли C — дубли → три строки; запись B без skipDuplicates → строк у B нет; saveVacancies в транзакции, которую тест откатывает, → строк нет",
+              ["save-vacancies.ts"],
+            ],
+          ],
+          note: "Код плана 5 не меняется: mine уже зовёт saveVacancies с skipDuplicates в своей транзакции, поэтому строки дублей пишутся и откатываются вместе с вакансиями. Журнал плана 5 получает строку об этом.",
+        },
+        {
+          id: "Э3",
           t: "Схема monitoring",
-          res: "представления monitoring.events и monitoring.sources в базе; тест на тестовой базе показывает, что каждый вид события считается по П1–П8",
+          res: "представления monitoring.events и monitoring.sources в базе; тест на тестовой базе показывает, что каждый вид события считается по П1–П8 и П14",
           gres: "события в одном представлении",
           g: [1, 0],
           newDirs: ["packages/db/src/monitoring"],
           ctx: [
             ["packages/db/src/publication/source-run.ts", "Э1"],
+            ["packages/db/src/vacancy/vacancy-duplicate.ts", "Э2"],
             ["packages/db/src/publication/publication.ts", "old"],
             ["packages/db/src/publication/publication-link.ts", "old"],
             ["packages/db/src/vacancy/vacancy.ts", "old"],
@@ -2650,9 +2915,10 @@
             [
               "packages/db/src/monitoring/monitoring.ts",
               "new",
-              "pgSchema('monitoring'), представления events (UNION ALL по П1–П8) и sources",
+              "pgSchema('monitoring'), представления events (UNION ALL по П1–П8 и П14) и sources",
               [
                 "source-run.ts",
+                "vacancy-duplicate.ts",
                 "publication/publication.ts",
                 "publication-link.ts",
                 "vacancy/vacancy.ts",
@@ -2665,13 +2931,19 @@
               ["monitoring/monitoring.ts"],
             ],
             [
+              "packages/db/src/monitoring/README.md",
+              "new",
+              "что считает каждый kind (П1–П8, П14) и что поменять при новом статусе публикации или новом виде события",
+              ["monitoring/monitoring.ts"],
+            ],
+            [
               "packages/db/src/schema.ts",
               "chg",
               "export * from './monitoring/index.ts'",
               ["monitoring/index.ts"],
             ],
             [
-              "packages/db/migrations/0014_monitoring.sql",
+              "packages/db/migrations/0016_monitoring.sql",
               "new",
               "CREATE SCHEMA monitoring и CREATE VIEW — pnpm db:generate",
               [],
@@ -2681,81 +2953,85 @@
             [
               "packages/db/src/monitoring/monitoring.test.ts",
               "new",
-              "db: площадка test-monitoring, источник A на ней и источник B на geekjobs. Публикации A: vacancy с двумя вакансиями, not_vacancy с job_seeker, duplicate оригинала из B, failed с last_error, pending, processing, empty; у одной — ссылки failed (host linkedin.com) и read; проходы A: done, more, failed с inserted 3. События A: publication × 7 с at = created_at; vacancy × 2 с at = vacancies.created_at; not_vacancy × 1, detail job_seeker; duplicate × 1 под A, а не под B; extraction_error × 1, detail = last_error; parse_error × 1, detail = error; link_error × 1, detail linkedin.com, at = created_at публикации; у pending, processing, empty, done, more и read — других событий нет; platform и source у всех — от A. monitoring.sources — A и B со своими площадками",
+              "db: площадка test-monitoring, источник A на ней и источник B на geekjobs. Публикации A: vacancy с двумя вакансиями и строкой vacancy_duplicates «Frontend-разработчик», not_vacancy с trash, duplicate оригинала из B, failed с last_error, pending, processing; у одной — ссылки failed (host linkedin.com) и read; проходы A: done, more, failed с inserted 3. События A: publication × 6 с at = created_at; vacancy × 2 с at = vacancies.created_at; vacancy_duplicate × 1, detail «Frontend-разработчик», at = vacancy_duplicates.created_at; not_vacancy × 1, detail trash; duplicate × 1 под A, а не под B; extraction_error × 1, detail = last_error; parse_error × 1, detail = error; link_error × 1, detail linkedin.com, at = created_at публикации; у pending, processing, done, more и read — других событий нет; platform и source у всех — от A. monitoring.sources — A и B со своими площадками",
               ["monitoring/monitoring.ts"],
             ],
           ],
-          note: "Представления drizzle объявляются в схеме с явными столбцами: pgView(…, { at: timestamp(), … }).as(sql`…`). Если drizzle-kit не сгенерирует их в своей схеме — запасной путь в рисках. Тест смотрит только свои источники (раздел 6).",
+          note: "Представления drizzle объявляются в схеме с явными столбцами: pgView(…, { at: timestamp(), … }).as(sql`…`). Если drizzle-kit не сгенерирует их в своей схеме — запасной путь в рисках. Тест смотрит только свои источники (раздел 6). На Neon схема появляется с деплоем этапа: миграции применяет сборка Vercel.",
         },
         {
-          id: "Э3",
-          t: "Grafana локально",
-          res: "pnpm grafana:up поднимает Grafana на localhost:3001 с источником данных и дашбордом «Движок» из репозитория; все панели загружаются без ошибок на локальной базе",
-          gres: "дашборд на localhost:3001",
+          id: "Э4",
+          t: "Grafana на Neon",
+          res: "pnpm grafana:up поднимает локальную Grafana, которая читает Neon под ролью grafana: Save & test источника данных проходит, роль не видит таблиц; README говорит, как завести роль и файл подключения",
+          gres: "локальная Grafana читает Neon",
           g: [2, 0],
-          newDirs: ["docker/grafana"],
-          ctx: [],
+          progress:
+            "заготовка из 910e290: сервис grafana в compose.yaml, provisioning, пакет dashboards с заглушкой — пока на локальной базе",
+          ctx: [
+            ["packages/db/src/monitoring/monitoring.ts", "Э3"],
+            ["docker/grafana/provisioning/dashboards/dashboards.yaml", "old"],
+          ],
           mods: [
             [
               "compose.yaml",
               "chg",
-              "сервис grafana: образ grafana/grafana-oss закреплённой версии, порт 127.0.0.1:3001:3000, тома provisioning и dashboards, GF_DASHBOARDS_MIN_REFRESH_INTERVAL=5m (П12), depends_on postgres",
-              ["postgres.yaml", "dashboards.yaml"],
+              "сервис grafana: без depends_on postgres, env_file docker/grafana/.env с required: true; комментарий — Grafana читает только Neon",
+              ["neon.yaml", "dashboards.yaml", "docker/grafana/.env.example"],
             ],
             [
-              "docker/grafana/provisioning/datasources/postgres.yaml",
+              "docker/grafana/provisioning/datasources/neon.yaml",
               "new",
-              "источник данных PostgreSQL с uid job-market-postgres: postgres:5432, база job_market, пользователь job_market",
+              "источник данных PostgreSQL с uid job-market-neon: хост $NEON_HOST, база $NEON_DATABASE, пользователь grafana, пароль $GRAFANA_DB_PASSWORD, sslmode require. Заменяет postgres.yaml — тот удаляется",
               [],
             ],
             [
-              "docker/grafana/provisioning/dashboards/dashboards.yaml",
+              "docker/grafana/.env.example",
               "new",
-              "провайдер файлов: дашборды из /var/lib/grafana/dashboards",
-              ["engine.json"],
-            ],
-            [
-              "docker/grafana/dashboards/engine.json",
-              "new",
-              "дашборд «Движок»: переменные datasource (источник данных PostgreSQL), platform и source, пять разделов по таблице раздела 1, часовой пояс UTC, refresh пустой",
+              "NEON_HOST, NEON_DATABASE и GRAFANA_DB_PASSWORD без значений",
               [],
             ],
             [
-              "package.json",
+              "packages/dashboards/src/engine.ts",
               "chg",
-              "скрипт grafana:up — docker compose up -d --wait grafana",
-              ["compose.yaml"],
+              "без переменной datasource: источник данных один — uid job-market-neon; комментарий без Grafana Cloud",
+              ["neon.yaml"],
             ],
-          ],
-          tests: [],
-          note: "Тестов нет: это конфигурация, а запросы панелей проверяет тест представлений Э2. Проверка руками: Save & test источника данных, у каждой панели нет ошибки запроса, переменная source меняется вслед за platform (S6); скриншот дашборда — в ход работ. Локально Grafana ходит в базу владельцем job_market: роль grafana из Э4 нужна только на проде. Вход в локальную Grafana — admin/admin по умолчанию: она слушает только 127.0.0.1.",
-        },
-        {
-          id: "Э4",
-          t: "Прод и документация",
-          res: "дашборд «Движок» открывается в прод Grafana на данных Neon, роль grafana не видит таблиц; README говорит, как поднять Grafana локально, подключить прод и обновить дашборд",
-          gres: "дашборд на проде, README",
-          g: [3, 0],
-          ctx: [
-            ["docker/grafana/dashboards/engine.json", "Э3"],
-            ["packages/db/src/monitoring/monitoring.ts", "Э2"],
-          ],
-          mods: [
+            [
+              "packages/dashboards/src/generate.ts",
+              "chg",
+              "комментарий: dist читает только локальная Grafana, grafanactl не нужен",
+              ["engine.ts"],
+            ],
             [
               "README.md",
               "chg",
-              "раздел «Мониторинг»: pnpm grafana:up; SQL роли grafana на Neon (CREATE ROLE … LOGIN, GRANT USAGE и SELECT на схему monitoring, ALTER DEFAULT PRIVILEGES); подключение Grafana Cloud: источник данных PostgreSQL на Neon с sslmode=require, пользователь grafana; импорт engine.json после каждого изменения",
-              ["engine.json"],
-            ],
-            [
-              "packages/db/src/monitoring/README.md",
-              "new",
-              "что считает каждый kind (П1–П8) и что поменять при новом статусе публикации или новом виде события",
-              ["monitoring/monitoring.ts"],
+              "раздел «Мониторинг»: SQL роли grafana на Neon (CREATE ROLE … LOGIN, GRANT USAGE на схему monitoring и SELECT на её представления, ALTER DEFAULT PRIVILEGES); docker/grafana/.env из .env.example; pnpm grafana:up и http://localhost:3001",
+              ["neon.yaml"],
             ],
           ],
           tests: [],
-          note: "Прод Grafana — Grafana Cloud, бесплатный тариф: provisioning из репозитория туда не попадает, поэтому источник данных заводится в интерфейсе, а engine.json импортируется (Dashboards → Import) — источник данных дашборд берёт из своей переменной datasource, поэтому uid не важен. Neon принимает подключения Grafana Cloud без списка IP: он у проекта выключен. Пароль роли grafana в репозиторий не попадает: роль заводит владелец по SQL из README, пароль хранится в настройках источника данных Grafana. Проверка руками на проде: под ролью grafana SELECT из publications → permission denied, из monitoring.events — строки; после миграции, которая меняет представление, дашборд работает без новых GRANT.",
+          note: "Тестов нет: это конфигурация. Grafana подставляет переменные окружения в файлы provisioning ($NAME), поэтому пароль в репозиторий не попадает: .gitignore уже исключает .env и .env.*, кроме .env.example. Роль grafana заводит владелец по SQL из README после деплоя Э3. Neon без списка IP — подключения с машины владельца он принимает. Проверка руками: под ролью grafana SELECT из publications → permission denied, из monitoring.events — строки; pnpm grafana:up без docker/grafana/.env → compose называет файл; после деплоя миграции, которая меняет представление, дашборд работает без новых GRANT.",
+        },
+        {
+          id: "Э5",
+          t: "Панели «Движка»",
+          res: "дашборд «Движок» на данных Neon: переменные площадка и источник, пять разделов по таблице раздела 1; все панели загружаются без ошибок",
+          gres: "дашборд на данных прода",
+          g: [3, 0],
+          ctx: [
+            ["docker/grafana/provisioning/datasources/neon.yaml", "Э4"],
+            ["packages/dashboards/src/generate.ts", "old"],
+          ],
+          mods: [
+            [
+              "packages/dashboards/src/engine.ts",
+              "chg",
+              "переменные platform (из monitoring.sources) и source (id, имя; зависит от platform); вместо заглушки — панели по таблице раздела 1: столбцы по дням стопкой по площадкам и таблица по источникам, у parse_error, extraction_error и vacancy_duplicate — последние 20, у link_error и not_vacancy — разбивка по detail. Часовой пояс UTC и пустой refresh остаются (П12)",
+              ["neon.yaml"],
+            ],
+          ],
+          tests: [],
+          note: "Тестов нет: запросы панелей проверяет тест представлений Э3, сборку дашборда — check-types пакета. Проверка руками после деплоя Э1–Э3 на прод: у каждой панели нет ошибки запроса, переменная source меняется вслед за platform (S7); скриншот дашборда — в ход работ.",
         },
       ];
 
@@ -2778,9 +3054,10 @@
             b += L(p.x + W / 2, down ? p.y + H : p.y, q.x + W / 2, down ? q.y - 2 : q.y + H + 2, o);
           } else b += L(p.x + W, p.y + H / 2, q.x - 3, q.y + H / 2, o);
         };
-        edge("Э1", "Э2");
+        edge("Э1", "Э3");
         edge("Э2", "Э3");
         edge("Э3", "Э4");
+        edge("Э4", "Э5");
         STAGES.forEach((s) => {
           const p = pos(s.id);
           b +=
@@ -2805,7 +3082,7 @@
               size: 12,
             }) + "</g>";
         });
-        svg("stagesGraph", 1150, 114, b, "Этапы и зависимости");
+        svg("stagesGraph", 1150, 224, b, "Этапы и зависимости");
       })();
       /** Размер — в `style`: правило страницы `.mono { font-size: 0.9em }` перебивает атрибут `font-size` у текста SVG. */
       const MONO = 12.5;

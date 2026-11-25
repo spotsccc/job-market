@@ -154,9 +154,7 @@
           "salaryRaw": null,
           "salaryGross": null,
           "equity": null,
-          "skills": [
-            "LinkedIn"
-          ],
+          "skills": ["LinkedIn"],
           "niceSkills": [],
           "languages": [],
           "relocation": null,
@@ -172,9 +170,7 @@
           "summary": "Workflows.io — AI-native GTM-компания для B2B, работающая с LinkedIn-контентом, outbound, RevOps и ABM. На роли — вовлечение аудитории в LinkedIn.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Flexible working hours"
-          ],
+          "benefits": ["Flexible working hours"],
           "places": []
         },
         {
@@ -196,9 +192,7 @@
           "salaryRaw": null,
           "salaryGross": null,
           "equity": null,
-          "skills": [
-            "LinkedIn"
-          ],
+          "skills": ["LinkedIn"],
           "niceSkills": [],
           "languages": [],
           "relocation": null,
@@ -214,9 +208,7 @@
           "summary": "Workflows.io — AI-native GTM-компания для B2B, работающая с LinkedIn-контентом, outbound, RevOps и ABM. На роли — написание контента для LinkedIn.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Flexible working hours"
-          ],
+          "benefits": ["Flexible working hours"],
           "places": []
         }
       ],
@@ -342,9 +334,7 @@
               "match": false,
               "truePositives": 0,
               "expected": [],
-              "actual": [
-                "linkedin"
-              ]
+              "actual": ["linkedin"]
             },
             "niceSkills": {
               "kind": "set",
@@ -502,9 +492,7 @@
               "match": false,
               "truePositives": 0,
               "expected": [],
-              "actual": [
-                "linkedin"
-              ]
+              "actual": ["linkedin"]
             },
             "niceSkills": {
               "kind": "set",
@@ -603,17 +591,13 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://geekjob.ru/vacancy/6af1f19e69ce62b9ac05eff7"
-            ],
+            "urls": ["https://geekjob.ru/vacancy/6af1f19e69ce62b9ac05eff7"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Ventora — AI-платформа без кода для нетехнических соло-фаундеров. Роль Middle Content Creator по созданию контента для продукта.",
           "responsibilities": [],
-          "requirements": [
-            "английский на хорошем уровне"
-          ],
+          "requirements": ["английский на хорошем уровне"],
           "benefits": [],
           "places": [
             {
@@ -637,9 +621,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Удалённая работа (США)"
-          ]
+          "locations": ["Удалённая работа (США)"]
         }
       ],
       "comparison": {
@@ -765,23 +747,15 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "en:null"
-              ],
-              "actual": [
-                "en:null"
-              ]
+              "expected": ["en:null"],
+              "actual": ["en:null"]
             },
             "places": {
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "hiring country:us"
-              ],
-              "actual": [
-                "hiring country:us"
-              ]
+              "expected": ["hiring country:us"],
+              "actual": ["hiring country:us"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -833,10 +807,7 @@
           "seniority": "middle",
           "experienceYearsMin": null,
           "workplace": "remote",
-          "employmentTypes": [
-            "part_time",
-            "freelance"
-          ],
+          "employmentTypes": ["part_time", "freelance"],
           "salaryMin": null,
           "salaryMax": null,
           "salaryCurrency": null,
@@ -859,16 +830,12 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://geekjob.ru/vacancy/6af3400fed0282151f0393c4"
-            ],
+            "urls": ["https://geekjob.ru/vacancy/6af3400fed0282151f0393c4"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Компания Allcorrect локализует и тестирует игры и ПО, переводит сайты и документы. Нужно переводить и редактировать тексты с английского на русский.",
-          "responsibilities": [
-            "Переводить и редактировать тексты с английского на русский"
-          ],
+          "responsibilities": ["Переводить и редактировать тексты с английского на русский"],
           "requirements": [],
           "benefits": [],
           "places": []
@@ -983,14 +950,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 2,
-              "expected": [
-                "part_time",
-                "freelance"
-              ],
-              "actual": [
-                "part_time",
-                "freelance"
-              ]
+              "expected": ["part_time", "freelance"],
+              "actual": ["part_time", "freelance"]
             },
             "skills": {
               "kind": "set",
@@ -1010,14 +971,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 2,
-              "expected": [
-                "en:null",
-                "ru:null"
-              ],
-              "actual": [
-                "en:null",
-                "ru:null"
-              ]
+              "expected": ["en:null", "ru:null"],
+              "actual": ["en:null", "ru:null"]
             },
             "places": {
               "kind": "set",
@@ -1124,9 +1079,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "On-site (Washington, DC, USA) or hybrid"
-          ]
+          "locations": ["On-site (Washington, DC, USA) or hybrid"]
         }
       ],
       "comparison": {
@@ -1259,12 +1212,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:4140963"
-              ],
-              "actual": [
-                "office city:4140963"
-              ]
+              "expected": ["office city:4140963"],
+              "actual": ["office city:4140963"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -1380,9 +1329,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Hybrid (New York, NY, USA)"
-          ]
+          "locations": ["Hybrid (New York, NY, USA)"]
         }
       ],
       "comparison": {
@@ -1515,12 +1462,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 0,
-              "expected": [
-                "office city:5128581"
-              ],
-              "actual": [
-                "office country:us"
-              ]
+              "expected": ["office city:5128581"],
+              "actual": ["office country:us"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -1586,18 +1529,14 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://geekjob.ru/vacancy/6af5de2a0b411376380d2dca"
-            ],
+            "urls": ["https://geekjob.ru/vacancy/6af5de2a0b411376380d2dca"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Независимая студия сюжетных игр для ПК и консолей ищет видеомонтажёра на удалённую работу с гибким графиком.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Гибкий график"
-          ],
+          "benefits": ["Гибкий график"],
           "places": []
         }
       ],
@@ -1799,17 +1738,13 @@
           "salaryRaw": null,
           "salaryGross": null,
           "equity": null,
-          "skills": [
-            "SAP BTP"
-          ],
+          "skills": ["SAP BTP"],
           "niceSkills": [],
           "languages": [],
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://lnkd.in/p/eF-8KPK2"
-            ],
+            "urls": ["https://lnkd.in/p/eF-8KPK2"],
             "emails": [],
             "directMessage": false
           },
@@ -2010,9 +1945,7 @@
               "match": false,
               "truePositives": 0,
               "expected": [],
-              "actual": [
-                "sap btp"
-              ]
+              "actual": ["sap btp"]
             },
             "niceSkills": {
               "kind": "set",
@@ -2121,9 +2054,7 @@
           "summary": "Banco Plata — финтех-платформа в Латинской Америке, работающая по принципу Open Finance. Роль Middle+ Product Manager по направлению Origination в Мехико.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Support in relocation"
-          ],
+          "benefits": ["Support in relocation"],
           "places": [
             {
               "role": "office",
@@ -2147,9 +2078,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "On-site or hybrid (Mexico City)"
-          ]
+          "locations": ["On-site or hybrid (Mexico City)"]
         }
       ],
       "comparison": {
@@ -2282,12 +2211,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:3530597"
-              ],
-              "actual": [
-                "office city:3530597"
-              ]
+              "expected": ["office city:3530597"],
+              "actual": ["office city:3530597"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -2353,9 +2278,7 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://lnkd.in/p/gNeQfxAd"
-            ],
+            "urls": ["https://lnkd.in/p/gNeQfxAd"],
             "emails": [],
             "directMessage": false
           },
@@ -2536,13 +2459,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 1,
-              "expected": [
-                "office city:524901"
-              ],
-              "actual": [
-                "office city:524901",
-                "hiring city:524901"
-              ]
+              "expected": ["office city:524901"],
+              "actual": ["office city:524901", "hiring city:524901"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -3043,14 +2961,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 1,
-              "expected": [
-                "ru:c1",
-                "en:c1"
-              ],
-              "actual": [
-                "ru:native",
-                "en:c1"
-              ]
+              "expected": ["ru:c1", "en:c1"],
+              "actual": ["ru:native", "en:c1"]
             },
             "places": {
               "kind": "set",
@@ -3225,14 +3137,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 1,
-              "expected": [
-                "ru:c1",
-                "en:c1"
-              ],
-              "actual": [
-                "ru:native",
-                "en:c1"
-              ]
+              "expected": ["ru:c1", "en:c1"],
+              "actual": ["ru:native", "en:c1"]
             },
             "places": {
               "kind": "set",
@@ -3323,18 +3229,14 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://lnkd.in/p/dQYEMWh2"
-            ],
+            "urls": ["https://lnkd.in/p/dQYEMWh2"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Студия разработки и продвижения мобильных игр TownLive Games ищет Product Builder на удалённую работу с гибким графиком.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Гибкий график"
-          ],
+          "benefits": ["Гибкий график"],
           "places": []
         }
       ],
@@ -3528,9 +3430,7 @@
           "seniority": null,
           "experienceYearsMin": 3,
           "workplace": "remote",
-          "employmentTypes": [
-            "full_time"
-          ],
+          "employmentTypes": ["full_time"],
           "salaryMin": null,
           "salaryMax": null,
           "salaryCurrency": null,
@@ -3538,11 +3438,7 @@
           "salaryRaw": null,
           "salaryGross": null,
           "equity": null,
-          "skills": [
-            "ROI/ROMI",
-            "CAC",
-            "CPL"
-          ],
+          "skills": ["ROI/ROMI", "CAC", "CPL"],
           "niceSkills": [
             "Опыт работы с коммерческими интеграциями и продажи партнёрских размещений или спонсорских пакетов",
             "Собственная база проверенных подрядчиков и контактов площадок",
@@ -3554,9 +3450,7 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://t.me/f_dash1k"
-            ],
+            "urls": ["https://t.me/f_dash1k"],
             "emails": [],
             "directMessage": true
           },
@@ -3734,23 +3628,15 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "full_time"
-              ],
-              "actual": [
-                "full_time"
-              ]
+              "expected": ["full_time"],
+              "actual": ["full_time"]
             },
             "skills": {
               "kind": "set",
               "match": false,
               "truePositives": 0,
               "expected": [],
-              "actual": [
-                "roi/romi",
-                "cac",
-                "cpl"
-              ]
+              "actual": ["roi/romi", "cac", "cpl"]
             },
             "niceSkills": {
               "kind": "set",
@@ -3776,13 +3662,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 0,
-              "expected": [
-                "hiring city:524901"
-              ],
-              "actual": [
-                "hiring country:ru",
-                "office city:524901"
-              ]
+              "expected": ["hiring city:524901"],
+              "actual": ["hiring country:ru", "office city:524901"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -3857,18 +3738,14 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://owlcat.games/careers/296"
-            ],
+            "urls": ["https://owlcat.games/careers/296"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Роль Project Manager в студии, которая разрабатывает крупные изометрические cRPG. Текст поста не описывает обязанности подробно; полное описание доступно по ссылке.",
           "responsibilities": [],
           "requirements": [],
-          "benefits": [
-            "Гибкий график"
-          ],
+          "benefits": ["Гибкий график"],
           "places": []
         }
       ],
@@ -4002,14 +3879,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 2,
-              "expected": [
-                "ru:b2",
-                "en:c1"
-              ],
-              "actual": [
-                "ru:b2",
-                "en:c1"
-              ]
+              "expected": ["ru:b2", "en:c1"],
+              "actual": ["ru:b2", "en:c1"]
             },
             "places": {
               "kind": "set",
@@ -4277,15 +4148,8 @@
               "kind": "set",
               "match": false,
               "truePositives": 0,
-              "expected": [
-                "office country:gb",
-                "office country:de",
-                "office country:fi"
-              ],
-              "actual": [
-                "hiring country:de",
-                "hiring country:fi"
-              ]
+              "expected": ["office country:gb", "office country:de", "office country:fi"],
+              "actual": ["hiring country:de", "hiring country:fi"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -4351,10 +4215,7 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://jobs.booking.com/booking/jobs/30513",
-              "https://lnkd.in/p/eScapAig"
-            ],
+            "urls": ["https://jobs.booking.com/booking/jobs/30513", "https://lnkd.in/p/eScapAig"],
             "emails": [],
             "directMessage": false
           },
@@ -4385,9 +4246,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Hybrid (Amsterdam, Netherlands)"
-          ]
+          "locations": ["Hybrid (Amsterdam, Netherlands)"]
         }
       ],
       "comparison": {
@@ -4520,12 +4379,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:2759794"
-              ],
-              "actual": [
-                "office city:2759794"
-              ]
+              "expected": ["office city:2759794"],
+              "actual": ["office city:2759794"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -4632,9 +4487,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Menlo Park, USA."
-          ]
+          "locations": ["Menlo Park, USA."]
         }
       ],
       "comparison": {
@@ -4767,12 +4620,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:5372223"
-              ],
-              "actual": [
-                "office city:5372223"
-              ]
+              "expected": ["office city:5372223"],
+              "actual": ["office city:5372223"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -4847,9 +4696,7 @@
           },
           "summary": "Senior Product Analyst в маркетплейсе частных площадок для выгула собак Sniffspot. Удалённая работа с существенным перекрытием по времени с US Eastern Time.",
           "responsibilities": [],
-          "requirements": [
-            "Значительное перекрытие рабочего времени с US Eastern Time"
-          ],
+          "requirements": ["Значительное перекрытие рабочего времени с US Eastern Time"],
           "benefits": [],
           "places": [
             {
@@ -4866,9 +4713,7 @@
         {
           "places": [],
           "isRemoteFromAnywhere": true,
-          "locations": [
-            "Remote work (significant overlap with US Eastern Time)"
-          ]
+          "locations": ["Remote work (significant overlap with US Eastern Time)"]
         }
       ],
       "comparison": {
@@ -5069,9 +4914,7 @@
           "salaryRaw": null,
           "salaryGross": null,
           "equity": null,
-          "skills": [
-            "Vue"
-          ],
+          "skills": ["Vue"],
           "niceSkills": [],
           "languages": [],
           "relocation": null,
@@ -5110,9 +4953,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Удалённая работа (только из РФ)"
-          ]
+          "locations": ["Удалённая работа (только из РФ)"]
         }
       ],
       "comparison": {
@@ -5224,12 +5065,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "vue"
-              ],
-              "actual": [
-                "vue"
-              ]
+              "expected": ["vue"],
+              "actual": ["vue"]
             },
             "niceSkills": {
               "kind": "set",
@@ -5249,12 +5086,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "hiring country:ru"
-              ],
-              "actual": [
-                "hiring country:ru"
-              ]
+              "expected": ["hiring country:ru"],
+              "actual": ["hiring country:ru"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -5492,9 +5325,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "New York. Hybrid work format."
-          ]
+          "locations": ["New York. Hybrid work format."]
         },
         {
           "places": [
@@ -5507,9 +5338,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "New York. Hybrid work format."
-          ]
+          "locations": ["New York. Hybrid work format."]
         },
         {
           "places": [
@@ -5522,9 +5351,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "New York. Hybrid work format."
-          ]
+          "locations": ["New York. Hybrid work format."]
         },
         {
           "places": [
@@ -5537,9 +5364,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "New York. Hybrid work format."
-          ]
+          "locations": ["New York. Hybrid work format."]
         }
       ],
       "comparison": {
@@ -5672,12 +5497,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:5128581"
-              ],
-              "actual": [
-                "office city:5128581"
-              ]
+              "expected": ["office city:5128581"],
+              "actual": ["office city:5128581"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -5834,12 +5655,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:5128581"
-              ],
-              "actual": [
-                "office city:5128581"
-              ]
+              "expected": ["office city:5128581"],
+              "actual": ["office city:5128581"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -5996,12 +5813,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:5128581"
-              ],
-              "actual": [
-                "office city:5128581"
-              ]
+              "expected": ["office city:5128581"],
+              "actual": ["office city:5128581"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -6158,12 +5971,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:5128581"
-              ],
-              "actual": [
-                "office city:5128581"
-              ]
+              "expected": ["office city:5128581"],
+              "actual": ["office city:5128581"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -6645,16 +6454,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 3,
-              "expected": [
-                "office city:5391959",
-                "office city:5128581",
-                "hiring country:us"
-              ],
-              "actual": [
-                "office city:5391959",
-                "office city:5128581",
-                "hiring country:us"
-              ]
+              "expected": ["office city:5391959", "office city:5128581", "hiring country:us"],
+              "actual": ["office city:5391959", "office city:5128581", "hiring country:us"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -6721,13 +6522,8 @@
           "salaryRaw": "€70–90k gross per year",
           "salaryGross": true,
           "equity": null,
-          "skills": [
-            "React",
-            "TypeScript"
-          ],
-          "niceSkills": [
-            "Next.js"
-          ],
+          "skills": ["React", "TypeScript"],
+          "niceSkills": ["Next.js"],
           "languages": [
             {
               "code": "en",
@@ -6737,17 +6533,13 @@
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://acme.dev/jobs/frontend"
-            ],
+            "urls": ["https://acme.dev/jobs/frontend"],
             "emails": [],
             "directMessage": false
           },
           "summary": "Команда B2B-платформы для логистики ищет Senior Frontend Engineer для разработки интерфейсов на React и TypeScript.",
           "responsibilities": [],
-          "requirements": [
-            "5+ years of commercial experience"
-          ],
+          "requirements": ["5+ years of commercial experience"],
           "benefits": [],
           "places": [
             {
@@ -6785,10 +6577,7 @@
             }
           ],
           "isRemoteFromAnywhere": false,
-          "locations": [
-            "Remote from EU",
-            "office in Berlin"
-          ]
+          "locations": ["Remote from EU", "office in Berlin"]
         }
       ],
       "comparison": {
@@ -6900,49 +6689,29 @@
               "kind": "set",
               "match": true,
               "truePositives": 2,
-              "expected": [
-                "react",
-                "typescript"
-              ],
-              "actual": [
-                "react",
-                "typescript"
-              ]
+              "expected": ["react", "typescript"],
+              "actual": ["react", "typescript"]
             },
             "niceSkills": {
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "next.js"
-              ],
-              "actual": [
-                "next.js"
-              ]
+              "expected": ["next.js"],
+              "actual": ["next.js"]
             },
             "languages": {
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "en:b2"
-              ],
-              "actual": [
-                "en:b2"
-              ]
+              "expected": ["en:b2"],
+              "actual": ["en:b2"]
             },
             "places": {
               "kind": "set",
               "match": true,
               "truePositives": 2,
-              "expected": [
-                "hiring region:eu",
-                "office city:2950159"
-              ],
-              "actual": [
-                "hiring region:eu",
-                "office city:2950159"
-              ]
+              "expected": ["hiring region:eu", "office city:2950159"],
+              "actual": ["hiring region:eu", "office city:2950159"]
             },
             "suggestedOccupation": {
               "kind": "exact",
@@ -7002,37 +6771,20 @@
           "salaryRaw": "250–300 тыс. ₽ на руки",
           "salaryGross": false,
           "equity": null,
-          "skills": [
-            "Go",
-            "PostgreSQL",
-            "Kafka"
-          ],
-          "niceSkills": [
-            "Kubernetes"
-          ],
+          "skills": ["Go", "PostgreSQL", "Kafka"],
+          "niceSkills": ["Kubernetes"],
           "languages": [],
           "relocation": null,
           "visaSponsorship": null,
           "apply": {
-            "urls": [
-              "https://t.me/finline_hr"
-            ],
+            "urls": ["https://t.me/finline_hr"],
             "emails": [],
             "directMessage": true
           },
           "summary": "Развитие сервиса скоринга для онлайн-кредитования малого бизнеса: проектирование API и написание тестов.",
-          "responsibilities": [
-            "Развивать сервис скоринга",
-            "Проектировать API",
-            "Писать тесты"
-          ],
-          "requirements": [
-            "Опыт коммерческой разработки от 2 лет"
-          ],
-          "benefits": [
-            "250–300 тыс. ₽ на руки",
-            "Удалённая работа из любой страны"
-          ],
+          "responsibilities": ["Развивать сервис скоринга", "Проектировать API", "Писать тесты"],
+          "requirements": ["Опыт коммерческой разработки от 2 лет"],
+          "benefits": ["250–300 тыс. ₽ на руки", "Удалённая работа из любой страны"],
           "places": [
             {
               "role": "hiring",
@@ -7048,9 +6800,7 @@
         {
           "places": [],
           "isRemoteFromAnywhere": true,
-          "locations": [
-            "Удалённо из любой страны"
-          ]
+          "locations": ["Удалённо из любой страны"]
         }
       ],
       "comparison": {
@@ -7162,27 +6912,15 @@
               "kind": "set",
               "match": true,
               "truePositives": 3,
-              "expected": [
-                "go",
-                "postgresql",
-                "kafka"
-              ],
-              "actual": [
-                "go",
-                "postgresql",
-                "kafka"
-              ]
+              "expected": ["go", "postgresql", "kafka"],
+              "actual": ["go", "postgresql", "kafka"]
             },
             "niceSkills": {
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "kubernetes"
-              ],
-              "actual": [
-                "kubernetes"
-              ]
+              "expected": ["kubernetes"],
+              "actual": ["kubernetes"]
             },
             "languages": {
               "kind": "set",
@@ -7428,12 +7166,8 @@
               "kind": "set",
               "match": true,
               "truePositives": 1,
-              "expected": [
-                "office city:2988507"
-              ],
-              "actual": [
-                "office city:2988507"
-              ]
+              "expected": ["office city:2988507"],
+              "actual": ["office city:2988507"]
             },
             "suggestedOccupation": {
               "kind": "exact",

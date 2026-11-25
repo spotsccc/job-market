@@ -2,9 +2,11 @@ import { createHash } from 'node:crypto';
 
 import type { Connector } from '@job-market/connectors';
 import { db, getSource, updateSourceSchedule } from '@job-market/db';
+import type { SourceRow } from '@job-market/db';
 import { log } from '@job-market/logger';
 
-import type { DrainSourceJob, JobQueue } from './job-queue.ts';
+import type { DrainSourceJob, JobQueue, MineJob } from './job-queue.ts';
+import { mineJobKey } from './mine-attempts.ts';
 import { REQUEUE_DELAY_SECONDS, scheduleAfterDrain } from './schedule.ts';
 
 const moduleLog = log.with({ module: 'engine' });
@@ -15,6 +17,8 @@ export type DrainSourceJobInput = {
   readonly connectors: ReadonlyMap<string, Connector>;
   /** Куда класть продолжение незаконченного прохода (П7). */
   readonly queue: JobQueue<DrainSourceJob>;
+  /** Куда класть задания разбора новых публикаций (П7 плана разбора). */
+  readonly mineQueue: JobQueue<MineJob>;
   readonly now: Date;
   /** `Date.now()`, после которого коннектор не начинает новый запрос к сервису. */
   readonly deadline: number;
@@ -38,29 +42,47 @@ function continuationKey(sourceId: string, cursor: unknown): string {
   return `${sourceId}:${hash}`;
 }
 
+/** Почему задание опроса пропущено: источника нет, он выключен или его коннектора нет. */
+function skipReason(source: Pick<SourceRow, 'enabled'> | undefined): string {
+  if (source === undefined) return 'source not found';
+  return source.enabled ? 'connector not registered' : 'source disabled';
+}
+
+/**
+ * Кладёт задание разбора на каждую новую публикацию `pending` (П7 плана разбора): сразу, с
+ * ключом первой попытки. Новых нет — очередь не зовётся.
+ */
+async function queueMining(
+  mineQueue: JobQueue<MineJob>,
+  pendingIds: readonly string[],
+): Promise<Error | undefined> {
+  if (pendingIds.length === 0) return undefined;
+  return mineQueue.enqueue(
+    pendingIds.map((publicationId) => ({
+      publicationId,
+      delaySeconds: 0,
+      idempotencyKey: mineJobKey(publicationId, 0),
+    })),
+  );
+}
+
 /**
  * Обработчик задания «опроси источник» (П1–П9). Читает источник заново, зовёт `drain` его
- * коннектора, пишет расписание, которое решил `scheduleAfterDrain`, и при `more` кладёт
- * продолжение в очередь. Вызов может прийти повторно. `Error` — сбой базы или отправки
- * продолжения: такое задание повторяет очередь.
+ * коннектора, пишет расписание, которое решил `scheduleAfterDrain`, кладёт задания разбора на
+ * новые публикации и при `more` — продолжение в очередь. Вызов может прийти повторно. `Error` —
+ * сбой базы или отправки заданий: такое задание повторяет очередь.
  */
 export async function handleDrainSourceJob(
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в задании `Date` и коннекторы, глубоко readonly их не сделать
   input: DrainSourceJobInput,
 ): Promise<Error | DrainSourceJobResult> {
-  const { sourceId, connectors, queue, now, deadline } = input;
+  const { sourceId, connectors, queue, mineQueue, now, deadline } = input;
   const source = await getSource(db, sourceId);
   if (source instanceof Error) return source;
 
   const connector = source === undefined ? undefined : connectors.get(source.connector);
   if (source === undefined || !source.enabled || connector === undefined) {
-    const reason =
-      source === undefined
-        ? 'source not found'
-        : source.enabled
-          ? 'connector not registered'
-          : 'source disabled';
-    moduleLog.info('Source drain skipped', { sourceId, reason });
+    moduleLog.info('Source drain skipped', { sourceId, reason: skipReason(source) });
     return { status: 'skipped', inserted: 0 };
   }
 
@@ -69,6 +91,10 @@ export async function handleDrainSourceJob(
 
   const saved = await updateSourceSchedule(db, source.id, scheduleAfterDrain(source, result, now));
   if (saved instanceof Error) return saved;
+  // После расписания и до продолжения, при любом итоге: прочитанное до сбоя тоже разбирается.
+  // Не отправились — Error, а повтор `drain` эти публикации уже не вернёт (E7 плана разбора).
+  const queued = await queueMining(mineQueue, result.pendingIds);
+  if (queued instanceof Error) return queued;
 
   const { inserted } = result;
   const fields = { sourceId, connector: source.connector, key: source.key, inserted };
