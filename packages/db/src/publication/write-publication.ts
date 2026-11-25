@@ -171,7 +171,7 @@ export type NewPublicationToSave = {
 };
 
 /**
- * Пишет новые публикации коннектора и их ссылки (П10, П13 плана коннекторов). Публикация с тем
+ * Пишет новые публикации коннектора и их ссылки (П10, П13 в packages/connectors/README.md). Публикация с тем
  * же `(connector, external_id)` пропускается в любом статусе, её ссылки не пишутся: уже
  * записанная не меняется. Ответ — id новых публикаций по `authorKey(connector, externalId)`.
  */
@@ -210,7 +210,7 @@ export type PublicationOutcome =
   | { readonly status: 'not_vacancy'; readonly reason: 'trash'; readonly note: string };
 
 /**
- * Пишет итог разбора (П12 плана коннекторов): статус, причину для `not_vacancy` и пояснение для
+ * Пишет итог разбора (П12 в packages/connectors/README.md): статус, причину для `not_vacancy` и пояснение для
  * `trash`, оригинал для `duplicate`, `processed_at` — сейчас. Поля других итогов стираются.
  */
 export async function setOutcome(
@@ -231,7 +231,7 @@ export async function setOutcome(
 }
 
 /**
- * Пишет курсор источника (П9 плана коннекторов). Остальные столбцы — расписание опроса — пишет
+ * Пишет курсор источника (П9 в packages/connectors/README.md). Остальные столбцы — расписание опроса — пишет
  * движок.
  */
 export async function saveCursor(db: DbExecutor, sourceId: string, cursor: unknown): Promise<void> {
@@ -265,7 +265,7 @@ export type SourceSchedule = Readonly<
 >;
 
 /**
- * Пишет итог прохода `drain` (П9 плана мониторинга): переданные поля расписания источника и
+ * Пишет итог прохода `drain` (П9 в packages/db/src/monitoring/README.md): переданные поля расписания источника и
  * строку `source_runs` — одной транзакцией: она своя, поэтому нужен клиент, а не транзакция
  * вызывающего. Ничего не решает: поля, которого нет в `schedule`,
  * не меняет, `null` пишет как NULL; курсор не трогает — его пишет `saveCursor`. `Error` — сбой

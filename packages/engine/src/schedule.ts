@@ -3,17 +3,17 @@ import { createHash } from 'node:crypto';
 import type { DrainResult } from '@job-market/connectors';
 import type { SourceRow, SourceRunToSave, SourceSchedule } from '@job-market/db';
 
-/** Пауза перед продолжением незаконченного прохода (П7). */
+/** Пауза перед продолжением незаконченного прохода (П7 опроса). */
 export const REQUEUE_DELAY_SECONDS = 60;
 
-/** Сколько источников берёт один тик самое большее (П1 плана тика). */
+/** Сколько источников берёт один тик самое большее (П1 тика). */
 export const TICK_LIMIT = 2000;
 
-/** Задержки заданий одного тика — в пределах 10 минут (П2 плана тика). */
+/** Задержки заданий одного тика — в пределах 10 минут (П2 тика). */
 const SPREAD_SECONDS = 600;
 
 /**
- * Задержка задания опроса в секундах (П2 плана тика): целое в [0, 600) из хэша id. Источники
+ * Задержка задания опроса в секундах (П2 тика): целое в [0, 600) из хэша id. Источники
  * одного тика не идут к сервисам разом, а у одного источника задержка всегда одна.
  */
 export function spreadDelay(sourceId: string): number {
@@ -22,11 +22,11 @@ export function spreadDelay(sourceId: string): number {
 
 const MINUTE_MS = 60 * 1000;
 
-/** Пауза после неудачи не длиннее суток (П5). */
+/** Пауза после неудачи не длиннее суток (П5 опроса). */
 const MAX_PAUSE_MS = 24 * 60 * MINUTE_MS;
 
 /**
- * Когда опрашивать после неудачи (П5): `now + min(intervalMinutes · 2^failures, 24 ч)`, где
+ * Когда опрашивать после неудачи (П5 опроса): `now + min(intervalMinutes · 2^failures, 24 ч)`, где
  * `failures` — ошибок подряд вместе с этой.
  */
 // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- `Date` глубоко readonly не сделать
@@ -43,7 +43,7 @@ export function errorText(error: Readonly<Error> | undefined): string {
 }
 
 /**
- * Поля расписания источника по итогу `drain` (П3, П5, П7, П8). `last_fetched_at` пишется
+ * Поля расписания источника по итогу `drain` (П3, П5, П7, П8 опроса). `last_fetched_at` пишется
  * всегда; `done` — успех, `failed` — ещё одна ошибка подряд и пауза, `more` — ни то ни другое.
  */
 export function scheduleAfterDrain(
@@ -67,7 +67,7 @@ export function scheduleAfterDrain(
 }
 
 /**
- * Строка истории опросов по итогу `drain` (П9, П10 плана мониторинга): итог как есть, текст
+ * Строка истории опросов по итогу `drain` (П9, П10 в packages/db/src/monitoring/README.md): итог как есть, текст
  * ошибки — тот же, что `last_error` источника, и только у `failed`.
  */
 export function runAfterDrain(

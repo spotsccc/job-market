@@ -30,7 +30,7 @@ import { handleMineJob } from './mine-job.ts';
 /**
  * Тесты идут в тестовую базу из `.env.test`: `pnpm db:up && pnpm db:migrate:test`. Ключ
  * источника, `external_id` и `content_hash` публикаций, авторы и компании начинаются с
- * `PREFIX`, а `next_run_at` источника — `infinity`: тесты других пакетов их не берут (E6).
+ * `PREFIX`, а `next_run_at` источника — `infinity`: тесты других пакетов их не берут (E6 разбора).
  */
 const PREFIX = 'test_engine_mine_';
 const COMPANY = `${PREFIX}Acme`;
@@ -308,7 +308,7 @@ describe('handleMineJob', () => {
 
   test('a failure does not overwrite the outcome another handler already wrote', async () => {
     const publication = await addPublication();
-    // Первый обработчик записал итог, пока второй ждал модель (E3).
+    // Первый обработчик записал итог, пока второй ждал модель (E3 разбора).
     const { connectors } = processing(async () => {
       await db
         .update(publications)

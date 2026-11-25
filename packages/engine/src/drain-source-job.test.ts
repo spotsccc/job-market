@@ -30,7 +30,7 @@ import type { MemoryJobQueue } from './memory-job-queue.test-utils.ts';
 /**
  * Тесты идут в тестовую базу из `.env.test`: `pnpm db:up && pnpm db:migrate:test`. Ключи
  * источников, публикаций и авторов начинаются с `PREFIX`, а `next_run_at` источников —
- * `infinity`: тесты других пакетов на той же базе их не берут (E5).
+ * `infinity`: тесты других пакетов на той же базе их не берут (E5 опроса).
  */
 const PREFIX = 'test_engine_job_';
 
@@ -78,7 +78,7 @@ async function assertChanged(previous: SourceRow, changes: Partial<SourceRow>): 
   assert.deepEqual(plain(row), plain({ ...previous, ...changes }));
 }
 
-/** Строки истории опросов источника по порядку записи (П9 плана мониторинга). */
+/** Строки истории опросов источника по порядку записи (П9 в packages/db/src/monitoring/README.md). */
 async function runsOf(
   source: Pick<SourceRow, 'id'>,
 ): Promise<Pick<SourceRunRow, 'status' | 'inserted' | 'error' | 'startedAt'>[]> {
@@ -153,7 +153,7 @@ async function run(
   });
 }
 
-/** Задания разбора, которые обработчик опроса кладёт на новые публикации источника (П7). */
+/** Задания разбора, которые обработчик опроса кладёт на новые публикации источника (П7 разбора). */
 async function firstMineJobs(source: Pick<SourceRow, 'id'>): Promise<MineJob[]> {
   const rows = await db
     .select({ id: publications.id })
@@ -228,7 +228,7 @@ describe('handleDrainSourceJob', () => {
     const source = await createSource({ consecutiveFailures: 2, lastError: 'HTTP 429' });
     const { connectors } = parsing(() => new Error('HTTP 503'));
     const queue = memoryJobQueue();
-    // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5).
+    // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5 опроса).
     const now = new Date('2100-01-01T00:00:00.000Z');
 
     const result = await run(source, connectors, { queue, now });
@@ -241,7 +241,7 @@ describe('handleDrainSourceJob', () => {
       nextRunAt: new Date(now.getTime() + 8 * HOUR_MS),
     });
     assert.deepEqual(queue.jobs, []);
-    // Текст ошибки истории — тот же, что у источника (П10 плана мониторинга).
+    // Текст ошибки истории — тот же, что у источника (П10 в packages/db/src/monitoring/README.md).
     assert.deepEqual(await runsOf(source), [
       { status: 'failed', inserted: 0, error: 'HTTP 503', startedAt: now },
     ]);
@@ -334,7 +334,7 @@ describe('handleDrainSourceJob', () => {
     const connectors = telegramRegistry(source.key);
     const connector = connectors.get('open-telegram');
     assert.ok(connector !== undefined);
-    // drain записал публикации и курсор, а запись расписания не случилась (E4).
+    // drain записал публикации и курсор, а запись расписания не случилась (E4 опроса).
     const drained = await connector.drain(source, { now: NOW, deadline: DEADLINE() });
     assert.ok(!(drained instanceof Error));
     assert.equal(drained.inserted, 10);
@@ -372,7 +372,7 @@ describe('handleDrainSourceJob', () => {
       error: new Error('HTTP 429'),
     }));
     const mineQueue = memoryJobQueue<MineJob>();
-    // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5).
+    // Пауза от далёкого `now`: источник не становится должным для тестов тика (E5 опроса).
     const now = new Date('2100-01-01T00:00:00.000Z');
 
     const result = await run(source, connectors, { mineQueue, now });

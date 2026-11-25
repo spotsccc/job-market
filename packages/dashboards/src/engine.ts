@@ -150,9 +150,9 @@ function multiVariable(name: string, label: string, sql: string): QueryVariableB
 }
 
 /**
- * Дашборд «Движок» (docs/plans/monitoring.html): пять разделов — спаршенное, ошибки парсинга,
+ * Дашборд «Движок»: пять разделов — спаршенное, ошибки парсинга,
  * дубли, не вакансии, ошибки экстракции. Переменные площадки и источника общие для всех панелей.
- * Сутки считаются по UTC, сам дашборд не обновляется: каждый запрос будит Neon (П12 плана).
+ * Сутки считаются по UTC, сам дашборд не обновляется: каждый запрос будит Neon (П12 в packages/db/src/monitoring/README.md).
  */
 export function engineDashboard(): Dashboard {
   return new DashboardBuilder('Движок')

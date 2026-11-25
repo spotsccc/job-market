@@ -5,7 +5,7 @@ import { publications } from '../publication/publication.ts';
 /**
  * Дубль вакансии: роль, которую разбор публикации извлёк, но не записал вакансией — она уже
  * сохранена из другой публикации (П18–П20, packages/db/src/publication/README.md). Строки пишет
- * `saveVacancies` с `skipDuplicates` вместе с вакансиями (П13 плана мониторинга); по ним дашборд
+ * `saveVacancies` с `skipDuplicates` вместе с вакансиями (П13 в packages/db/src/monitoring/README.md); по ним дашборд
  * считает дубли вакансий.
  */
 export const vacancyDuplicates = pgTable(

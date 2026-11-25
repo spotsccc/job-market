@@ -1,5 +1,5 @@
 /**
- * Схема `monitoring`: представления, которые читает Grafana (docs/plans/monitoring.html). Имена с
+ * Схема `monitoring`: представления, которые читает Grafana. Имена с
  * приставкой: в схеме `public` есть свои `sources`.
  */
 export {

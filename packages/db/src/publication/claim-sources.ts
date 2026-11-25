@@ -5,7 +5,7 @@ import { sources } from './source.ts';
 import type { Connector } from './values.ts';
 
 /**
- * Расписание тика опроса (план тика): взять источники, которые пора опросить, и вернуть тех,
+ * Расписание тика опроса (`packages/engine/README.md`): взять источники, которые пора опросить, и вернуть тех,
  * чьи задания не ушли в очередь. Расписание после опроса пишет `recordDrain`.
  */
 
@@ -24,7 +24,7 @@ export type ClaimDueOptions = {
 };
 
 /**
- * Берёт источники, которые пора опросить, одним запросом (П1 плана тика): включённые, с
+ * Берёт источники, которые пора опросить, одним запросом (П1 тика, packages/engine/README.md): включённые, с
  * `next_run_at ≤ now` и коннектором из `connectorIds`, не больше `limit`, самые ранние первыми.
  * Тем же запросом сдвигает им `next_run_at` на `now + interval_minutes`. Строки, которые держит
  * другой тик, пропускает (`SKIP LOCKED`), поэтому два тика одного источника не берут. Порядок
@@ -67,7 +67,7 @@ export async function claimDueSources(
 }
 
 /**
- * Возвращает источникам `next_run_at`, который был до `claimDueSources` (П3 плана тика): их
+ * Возвращает источникам `next_run_at`, который был до `claimDueSources` (П3 тика, packages/engine/README.md): их
  * задания не ушли в очередь, и источники берёт следующий тик. Сбой базы — `Error`.
  */
 export async function releaseSources(

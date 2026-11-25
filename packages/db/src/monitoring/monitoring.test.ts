@@ -19,7 +19,7 @@ import { events, sources as monitoringSources } from './monitoring.ts';
 /**
  * Тесты идут в тестовую базу из `apps/web/.env.test`: `pnpm db:up && pnpm db:migrate:test`. На той
  * же базе параллельно идут тесты других файлов, поэтому у теста своя площадка и свои источники,
- * а события читаются только по их `source_id` (E3 плана мониторинга).
+ * а события читаются только по их `source_id` (E3 в README схемы).
  */
 const PREFIX = 'test_db_monitoring_';
 const PLATFORM = 'test-monitoring';

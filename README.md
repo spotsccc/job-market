@@ -46,7 +46,7 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Коннекторы
 
-`packages/connectors` — код, который читает источники вакансий и разбирает их публикации. План — [docs/plans/connectors.html](docs/plans/connectors.html). Коннектора два: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify.
+`packages/connectors` — код, который читает источники вакансий и разбирает их публикации. Правила — [packages/connectors/README.md](packages/connectors/README.md). Коннектора два: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify.
 
 Снаружи у коннектора два метода, оба зовёт движок (раздел «Движок»):
 
@@ -67,7 +67,7 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Движок
 
-`packages/engine` — движок: опрос источников и разбор найденных публикаций. Планы — [docs/plans/engine.html](docs/plans/engine.html) (tick), [docs/plans/drain-source-job.html](docs/plans/drain-source-job.html) (задание опроса) и [docs/plans/mine-job.html](docs/plans/mine-job.html) (задание разбора).
+`packages/engine` — движок: опрос источников и разбор найденных публикаций. Правила тика, задания опроса и задания разбора — [packages/engine/README.md](packages/engine/README.md).
 
 На Vercel движок подключён в `apps/web` (`apps/web/vercel.json`, роуты в `src/app/api`, адаптер очереди и реестр коннекторов — `src/engine`):
 
@@ -106,7 +106,7 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Мониторинг
 
-Дашборд «Движок» — в локальной Grafana, на данных прода: по дням и источникам — новые публикации и вакансии, упавшие опросы и непрочитанные ссылки, дубли публикаций и вакансий, не вакансии, ошибки экстракции. План — [docs/plans/monitoring.html](docs/plans/monitoring.html). Grafana работает только на машине владельца, в Docker, и читает только базу прода на Neon — схему `monitoring` ([README схемы](packages/db/src/monitoring/README.md)). Дашборд — код в `packages/dashboards` на `@grafana/grafana-foundation-sdk`; JSON собирает `pnpm grafana:up`, а Grafana подхватывает его из `packages/dashboards/dist`.
+Дашборд «Движок» — в локальной Grafana, на данных прода: по дням и источникам — новые публикации и вакансии, упавшие опросы и непрочитанные ссылки, дубли публикаций и вакансий, не вакансии, ошибки экстракции. Grafana работает только на машине владельца, в Docker, и читает только базу прода на Neon — схему `monitoring` ([README схемы](packages/db/src/monitoring/README.md)). Дашборд — код в `packages/dashboards` на `@grafana/grafana-foundation-sdk`; JSON собирает `pnpm grafana:up`, а Grafana подхватывает его из `packages/dashboards/dist`.
 
 Один раз на Neon, той ролью, под которой сборка применяет миграции (`DATABASE_URL` прода), после деплоя миграции `0018_monitoring` — роль `grafana`, которая видит только схему `monitoring`:
 

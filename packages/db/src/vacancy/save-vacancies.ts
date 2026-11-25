@@ -125,7 +125,7 @@ export type SaveSummary = {
 
 /**
  * Роли, которые пишутся, с их компаниями: все или, с `skipDuplicates`, без дублей (П20). Дубли —
- * строки `vacancy_duplicates` с оригиналом и названием роли (П13 плана мониторинга).
+ * строки `vacancy_duplicates` с оригиналом и названием роли (П13 в packages/db/src/monitoring/README.md).
  */
 async function rolesToWrite(
   db: DbExecutor,
@@ -159,7 +159,7 @@ async function rolesToWrite(
 }
 
 /**
- * Заменяет строки дублей публикации (П13 плана мониторинга): прежние стираются — повторная запись
+ * Заменяет строки дублей публикации (П13 в packages/db/src/monitoring/README.md): прежние стираются — повторная запись
  * ролей не удваивает дубли, — новые пишутся.
  */
 async function replaceDuplicates(
@@ -177,7 +177,7 @@ async function replaceDuplicates(
  * стираются и пишутся заново по порядку. Компания каждой роли ищется заново при каждой записи
  * (П6, packages/db/src/company/README.md). С `skipDuplicates` дубли не пишутся, а номера
  * получают только записанные роли (П18–П20), а каждый пропущенный дубль пишется строкой
- * `vacancy_duplicates`; прежние строки дублей публикации стираются (П13 плана мониторинга).
+ * `vacancy_duplicates`; прежние строки дублей публикации стираются (П13 в packages/db/src/monitoring/README.md).
  * Транзакцию держит вызывающий: вакансии, места и компании пишутся вместе с публикацией.
  */
 export async function saveVacancies(

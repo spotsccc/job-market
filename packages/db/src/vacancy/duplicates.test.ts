@@ -97,7 +97,7 @@ async function titlesOf(publicationId: string): Promise<string[]> {
   return rows.map((row) => `${String(row.position)} ${row.title}`);
 }
 
-/** Строки дублей вакансий публикации: оригинал и название роли (П13 плана мониторинга). */
+/** Строки дублей вакансий публикации: оригинал и название роли (П13 в packages/db/src/monitoring/README.md). */
 async function duplicatesOf(
   publicationId: string,
 ): Promise<{ originalId: string; title: string }[]> {

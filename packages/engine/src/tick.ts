@@ -15,7 +15,7 @@ export type TickInput = {
   readonly connectors: ReadonlyMap<string, Connector>;
   /** Куда класть задания опроса. */
   readonly queue: JobQueue<DrainSourceJob>;
-  /** Сколько источников взять самое большее (П1). */
+  /** Сколько источников взять самое большее (П1 тика). */
   readonly limit?: number;
 };
 
@@ -35,7 +35,7 @@ function drainJob(sourceId: string, now: Date): DrainSourceJob {
 }
 
 /**
- * Тик опроса (П1–П3 плана тика): берёт источники, которые пора опросить, сдвигает их
+ * Тик опроса (П1–П3 тика): берёт источники, которые пора опросить, сдвигает их
  * `next_run_at` и кладёт на каждый задание опроса пачками по `BATCH_SIZE`. Если пачка не ушла,
  * источники этой и следующих пачек получают прежний `next_run_at`, а отправленные пачки
  * остаются в очереди. `Error` — сбой базы или отправки.
@@ -58,7 +58,7 @@ export async function tick(
     const batch = claimed.slice(start, start + BATCH_SIZE);
     // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в строке `Date`, глубоко readonly её не сделать
     const jobs = batch.map(({ id }) => drainJob(id, now));
-    // Пачки по очереди, а не разом: при сбое известно, какие источники вернуть (П3).
+    // Пачки по очереди, а не разом: при сбое известно, какие источники вернуть (П3 тика).
     // oxlint-disable-next-line no-await-in-loop
     const sent = await queue.enqueue(jobs);
     if (sent instanceof Error) {

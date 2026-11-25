@@ -122,7 +122,7 @@ export type DrainResult = {
   readonly inserted: number;
   /**
    * Id публикаций, которые этот `drain` записал впервые, — все они `pending` и ждут разбора
-   * (П8 плана разбора). Записанные раньше в него не входят.
+   * (П8 разбора, packages/engine/README.md). Записанные раньше в него не входят.
    */
   readonly pendingIds: readonly string[];
   readonly cursor: unknown;

@@ -8,7 +8,7 @@ import { publications } from './publication.ts';
 import type { Connector } from './values.ts';
 
 /**
- * Состояние разбора публикации для движка (план разбора): взять публикацию в разбор и записать,
+ * Состояние разбора публикации для движка (`packages/engine/README.md`): взять публикацию в разбор и записать,
  * чем попытка кончилась. Итог разбора с вакансиями пишет `setOutcome` в `mine` коннектора.
  * Сбой базы — `Error` значением: движок отдаёт его очереди, и та повторяет задание.
  */
@@ -37,7 +37,7 @@ export type ClaimOptions = {
 };
 
 /**
- * Берёт публикацию в разбор одним запросом (П1 плана разбора): только если она `pending` или
+ * Берёт публикацию в разбор одним запросом (П1 разбора, packages/engine/README.md): только если она `pending` или
  * `processing` с `claimed_at` раньше `staleBefore` и её коннектор в `connectorIds`. Взятая
  * получает `processing`, `attempts` + 1 и `claimed_at = now` и возвращается с автором.
  * `undefined` — брать нечего: публикации нет, она разобрана, её разбирает другой обработчик
@@ -87,7 +87,7 @@ export type PublicationState = Readonly<
 
 /**
  * Пишет переданные поля состояния разбора и ничего не решает — только пока публикация
- * `processing`: итог, который уже записал другой обработчик, не затирается (E3 плана разбора).
+ * `processing`: итог, который уже записал другой обработчик, не затирается (E3 разбора, packages/engine/README.md).
  */
 export async function updatePublicationState(
   db: DbExecutor,
