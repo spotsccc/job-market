@@ -71,7 +71,7 @@ pnpm check          # turbo run format:check lint check-types
 
 На Vercel движок подключён в `apps/web` (`apps/web/vercel.json`, роуты в `src/app/api`, адаптер очереди и реестр коннекторов — `src/engine`):
 
-- расписание `sources-tick` (`*/15 * * * *`) зовёт `GET /api/cron/tick` с `Authorization: Bearer $CRON_SECRET`; роут вызывает `tick` и отвечает `{ due, enqueued }`;
+- расписание `sources-tick` (`0 * * * *`, раз в час) зовёт `GET /api/cron/tick` с `Authorization: Bearer $CRON_SECRET`; роут вызывает `tick` и отвечает `{ due, enqueued }`;
 - топик Vercel Queues `drain-source` читает `/api/queues/drain-source` — `handleDrainSourceJob` с бюджетом опроса 120 с при `maxDuration` 300 с; одновременно не больше 20 опросов, сообщение доставляется не больше 3 раз;
 - топик `mine` читает `/api/queues/mine` — `handleMineJob`, `maxDuration` 300 с (меньше 15 минут `CLAIM_TIMEOUT_MINUTES`); одновременно не больше 5 разборов.
 
