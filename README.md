@@ -75,7 +75,7 @@ pnpm check          # turbo run format:check lint check-types
 - топик Vercel Queues `drain-source` читает `/api/queues/drain-source` — `handleDrainSourceJob` с бюджетом опроса 120 с при `maxDuration` 300 с; одновременно не больше 20 опросов, сообщение доставляется не больше 3 раз;
 - топик `mine` читает `/api/queues/mine` — `handleMineJob`, `maxDuration` 300 с (меньше 15 минут `CLAIM_TIMEOUT_MINUTES`); одновременно не больше 5 разборов.
 
-Источники опрашиваются, только если `sources.enabled`. Миграция `0014_enable_telegram_sources` включает Telegram-каналы GeekJobs, поэтому первый прод-деплой с ней запускает сбор. `linkedin/manual` выключен: ему нужен `config` с `queries` и `maxPosts`, и включать его — после того как config задан.
+Источники опрашиваются, только если `sources.enabled`. Миграция `0014_enable_telegram_sources` включает Telegram-каналы GeekJobs, поэтому первый прод-деплой с ней запускает сбор. `linkedin/manual` миграция `0015_linkedin_backend_search` включает с поиском вакансий бэкенда: четыре запроса, по 50 самых новых постов за сутки на каждый (до 200 постов Apify в день).
 
 `JobQueue` на Vercel — `vercelJobQueue(topic, toPayload)`: задания уходят `sendBatch` пачками по 100 с `delaySeconds` и `idempotencyKey` задания, тело — `{ v: 1, sourceId }` или `{ v: 1, publicationId }`. Не принятое очередью сообщение — `Error`. `Error` обработчика роут пишет в лог и бросает: очередь доставит сообщение снова через 60 с. Обычный итог, в том числе `failed` и `retrying`, подтверждает сообщение. Реестр коннекторов роуты создают из окружения: `APIFY_TOKEN` и AI Gateway.
 
