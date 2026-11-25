@@ -1143,6 +1143,16 @@
               новая таблица vacancy_duplicates (Э2), правила П13 и П14. Этапы перенумерованы: Э2 —
               дубли вакансий, Э3 — схема monitoring, Э4 — Grafana на Neon, Э5 — панели.
             </li>
+            <li>
+              25 ноября 2026, реализация Э1–Э5 (не закоммичена). Миграции — 0016_source_runs,
+              0017_vacancy_duplicates и 0018_monitoring: номера 0014 и 0015 уже заняты
+              (0014_enable_telegram_sources, 0015_linkedin_backend_search). recordDrain принимает
+              Database, а не DbExecutor: транзакцию открывает он сам. Строку истории собирает
+              runAfterDrain рядом со scheduleAfterDrain. drizzle-kit 0.31 сгенерировал представления
+              схемы monitoring сам — риск про pgSchema().view() не сбылся. В переменной source —
+              столбцы __text и __value: так источник данных PostgreSQL в Grafana отдаёт имя и id.
+              Проверки Э4 и Э5 на Neon не сделаны.
+            </li>
           </ul>
         </div>
       </section>
@@ -2781,6 +2791,9 @@
       const STAGES = [
         {
           id: "Э1",
+          status: "в коде",
+          progress:
+            "25 ноября 2026: source_runs (миграция 0016), recordDrain, runAfterDrain в engine/src/schedule.ts; drain-source-job.test проверяет строки истории в 8 случаях",
           t: "История опросов",
           res: "каждый проход задания опроса оставляет строку в source_runs с итогом, числом новых публикаций и текстом ошибки; тест задания это показывает на тестовой базе",
           gres: "строка на каждый опрос",
@@ -2817,7 +2830,7 @@
               ["write-publication.ts"],
             ],
             [
-              "packages/db/migrations/0014_source_runs.sql",
+              "packages/db/migrations/0016_source_runs.sql",
               "new",
               "CREATE TABLE source_runs с ограничениями и индексами — pnpm db:generate",
               [],
@@ -2831,7 +2844,7 @@
           ],
           api: [
             [
-              "recordDrain(db: DbExecutor, sourceId: string, schedule: SourceSchedule, run: SourceRunToSave): Promise<Error | undefined>",
+              "recordDrain(db: Database, sourceId: string, schedule: SourceSchedule, run: SourceRunToSave): Promise<Error | undefined>",
               "Error — сбой базы; тогда не записано ни расписание, ни строка.",
             ],
           ],
@@ -2843,10 +2856,13 @@
               ["drain-source-job.ts", "memory-job-queue.test-utils.ts"],
             ],
           ],
-          note: "Меняет обработчик плана 3: его тесты «a failed drain counts the failure…» и «a repeat after the schedule was not written…» дополняются проверкой source_runs, а не переписываются. Номер миграции — по порядку коммита: если Э2 закоммичен раньше, у Э1 будет 0015.",
+          note: "Меняет обработчик плана 3: его тесты «a failed drain counts the failure…» и «a repeat after the schedule was not written…» дополняются проверкой source_runs, а не переписываются.",
         },
         {
           id: "Э2",
+          status: "в коде",
+          progress:
+            "25 ноября 2026: vacancy_duplicates (миграция 0017), запись дублей в saveVacancies; 4 новых случая в duplicates.test",
           t: "Дубли вакансий",
           res: "каждая роль, которую разбор не записал вакансией как дубль, оставляет строку в vacancy_duplicates; тест на тестовой базе это показывает",
           gres: "строка на каждый дубль роли",
@@ -2881,7 +2897,7 @@
               ["save-vacancies.ts"],
             ],
             [
-              "packages/db/migrations/0015_vacancy_duplicates.sql",
+              "packages/db/migrations/0017_vacancy_duplicates.sql",
               "new",
               "CREATE TABLE vacancy_duplicates с ограничениями и индексами — pnpm db:generate",
               [],
@@ -2899,6 +2915,9 @@
         },
         {
           id: "Э3",
+          status: "в коде",
+          progress:
+            "25 ноября 2026: представления monitoring.events и monitoring.sources (миграция 0018) сгенерировал drizzle-kit, запасной путь из рисков не понадобился; monitoring.test зелёный, pnpm test дважды подряд — зелёный",
           t: "Схема monitoring",
           res: "представления monitoring.events и monitoring.sources в базе; тест на тестовой базе показывает, что каждый вид события считается по П1–П8 и П14",
           gres: "события в одном представлении",
@@ -2943,7 +2962,7 @@
               ["monitoring/index.ts"],
             ],
             [
-              "packages/db/migrations/0016_monitoring.sql",
+              "packages/db/migrations/0018_monitoring.sql",
               "new",
               "CREATE SCHEMA monitoring и CREATE VIEW — pnpm db:generate",
               [],
@@ -2965,8 +2984,9 @@
           res: "pnpm grafana:up поднимает локальную Grafana, которая читает Neon под ролью grafana: Save & test источника данных проходит, роль не видит таблиц; README говорит, как завести роль и файл подключения",
           gres: "локальная Grafana читает Neon",
           g: [2, 0],
+          status: "в коде, не проверен на проде",
           progress:
-            "заготовка из 910e290: сервис grafana в compose.yaml, provisioning, пакет dashboards с заглушкой — пока на локальной базе",
+            "25 ноября 2026: источник данных neon.yaml вместо postgres.yaml, env_file с required: true, .env.example, раздел «Мониторинг» в README; без docker/grafana/.env compose называет файл, а pnpm db:up работает. Не сделано: роль grafana на Neon, Save & test, permission denied на таблицах — нужен доступ к Neon",
           ctx: [
             ["packages/db/src/monitoring/monitoring.ts", "Э3"],
             ["docker/grafana/provisioning/dashboards/dashboards.yaml", "old"],
@@ -3014,6 +3034,9 @@
         },
         {
           id: "Э5",
+          status: "в коде, не проверен на проде",
+          progress:
+            "25 ноября 2026: 21 панель в 5 разделах и переменные platform и source; все запросы панелей с раскрытыми макросами выполнены на тестовой базе без ошибок. Не сделано: проверка на Neon и скриншот — после деплоя Э1–Э3 и заведения роли grafana",
           t: "Панели «Движка»",
           res: "дашборд «Движок» на данных Neon: переменные площадка и источник, пять разделов по таблице раздела 1; все панели загружаются без ошибок",
           gres: "дашборд на данных прода",

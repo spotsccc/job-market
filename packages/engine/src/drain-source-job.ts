@@ -1,13 +1,13 @@
 import { createHash } from 'node:crypto';
 
 import type { Connector } from '@job-market/connectors';
-import { db, getSource, updateSourceSchedule } from '@job-market/db';
+import { db, getSource, recordDrain } from '@job-market/db';
 import type { SourceRow } from '@job-market/db';
 import { log } from '@job-market/logger';
 
 import type { DrainSourceJob, JobQueue, MineJob } from './job-queue.ts';
 import { mineJobKey } from './mine-attempts.ts';
-import { REQUEUE_DELAY_SECONDS, scheduleAfterDrain } from './schedule.ts';
+import { REQUEUE_DELAY_SECONDS, runAfterDrain, scheduleAfterDrain } from './schedule.ts';
 
 const moduleLog = log.with({ module: 'engine' });
 
@@ -89,7 +89,10 @@ export async function handleDrainSourceJob(
   const result = await connector.drain(source, { now, deadline });
   if (result instanceof Error) return result;
 
-  const saved = await updateSourceSchedule(db, source.id, scheduleAfterDrain(source, result, now));
+  // Строка истории — вместе с расписанием; пропуск и сбой базы в `drain` её не пишут (П9 плана
+  // мониторинга).
+  const schedule = scheduleAfterDrain(source, result, now);
+  const saved = await recordDrain(db, source.id, schedule, runAfterDrain(result, now));
   if (saved instanceof Error) return saved;
   // После расписания и до продолжения, при любом итоге: прочитанное до сбоя тоже разбирается.
   // Не отправились — Error, а повтор `drain` эти публикации уже не вернёт (E7 плана разбора).

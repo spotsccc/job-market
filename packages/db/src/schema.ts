@@ -9,3 +9,4 @@ export * from './company/index.ts';
 export * from './vacancy/index.ts';
 export * from './legacy/index.ts';
 export * from './geo/index.ts';
+export * from './monitoring/index.ts';

@@ -57,7 +57,7 @@ pnpm check          # turbo run format:check lint check-types
 
 Внутри коннектор — каталог `src/<коннектор>` и определение `ConnectorDefinition`:
 
-- `configSchema` и `cursorSchema` — zod-схемы `sources.config` и `sources.cursor`. Курсор, который не проходит схему, — первый опрос на `DEPTH_DAYS` = 30 дней.
+- `configSchema` и `cursorSchema` — zod-схемы `sources.config` и `sources.cursor`. Курсор, который не проходит схему, — первый опрос на `DEPTH_DAYS` = 7 дней.
 - `parse({ config, cursor, key, since, deadline })` — читает сервис без базы и отвечает публикациями, курсором и `more`. После `deadline` новый запрос не начинает; сбой посреди прохода возвращает прочитанное и `error`.
 - `process(publication, { occupations })` — разбирает публикацию моделями без базы. Коннекторы с обычными постами берут общий `classifyAndExtract`.
 
@@ -83,7 +83,7 @@ pnpm check          # turbo run format:check lint check-types
 
 `handleDrainSourceJob({ sourceId, connectors, queue, mineQueue, now, deadline })` — обработчик задания «опроси источник» из очереди; вызов может прийти повторно. Он читает источник заново, зовёт `drain` его коннектора из реестра `createConnectors`, пишет расписание источника, кладёт в `mineQueue` задание разбора на каждый id из `pendingIds` и при необходимости кладёт продолжение в `queue`. Задания разбора уходят сразу (`delaySeconds` 0, ключ `mineJobKey(id, 0)`) при любом итоге `drain` — прочитанное до сбоя сервиса тоже разбирается — и до продолжения. Итог — `done`, `requeued`, `failed` или `skipped` (источника нет, он выключен или его коннектора нет в реестре) и `inserted` из `drain`. `Error` — сбой базы или отправки заданий: такое задание повторяет очередь. Повтор `drain` уже записанные публикации не вернёт, поэтому публикации, задания разбора которых не ушли, остаются `pending` без задания — тика, который их подбирает, пока нет. Сбой сервиса — `failed`, а не `Error`: у него своя пауза.
 
-Публикации и курсор пишет `drain`, расписание решает движок, а пишет `@job-market/db`: чистая `scheduleAfterDrain(source, result, now)` переводит итог `drain` в поля источника, `updateSourceSchedule(db, id, schedule)` пишет их и ничего не решает. Отдельной транзакцией после `drain`:
+Публикации и курсор пишет `drain`, расписание решает движок, а пишет `@job-market/db`: чистая `scheduleAfterDrain(source, result, now)` переводит итог `drain` в поля источника, `recordDrain(db, id, schedule, run)` пишет их и ничего не решает. Отдельной транзакцией после `drain`, вместе со строкой истории опросов `source_runs` (итог, `inserted`, текст ошибки у `failed`, `started_at` = now); пропуск задания и сбой базы в `drain` строку не пишут:
 
 - `done` — `consecutive_failures` = 0, `last_error` = NULL, `last_success_at` = now; `next_run_at` уже сдвинул tick.
 - `failed` — `consecutive_failures` + 1, `last_error` — текст ошибки, `next_run_at` = now + min(`interval_minutes` · 2^ошибок, 24 ч). Источник не выключается, продолжения нет.
@@ -103,6 +103,31 @@ pnpm check          # turbo run format:check lint check-types
 Очередь — интерфейс `JobQueue<Job>` (`enqueue(jobs)` → `Error` или ничего), одна на вид заданий: `DrainSourceJob` и `MineJob`. В тестах движка — `memoryJobQueue<Job>({ failOnBatch? })` из `src/memory-job-queue.test-utils.ts`.
 
 Тесты: `schedule.test` проверяет ветки расписания и `spreadDelay` без базы, `tick.test` — отбор, лимит, пачки и сбой отправки на тестовой базе (с `now` в 2001 году, чтобы не брать источники других тестов), `drain-source-job.test` — связку на тестовой базе с `open-telegram` на поддельном t.me, `mine-attempts.test` — паузы, `failed` и ключи заданий разбора без базы, `mine-job.test` — ветки разбора на тестовой базе с `testConnector`: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/engine test`.
+
+## Мониторинг
+
+Дашборд «Движок» — в локальной Grafana, на данных прода: по дням и источникам — новые публикации и вакансии, упавшие опросы и непрочитанные ссылки, дубли публикаций и вакансий, не вакансии, ошибки экстракции. План — [docs/plans/monitoring.html](docs/plans/monitoring.html). Grafana работает только на машине владельца, в Docker, и читает только базу прода на Neon — схему `monitoring` ([README схемы](packages/db/src/monitoring/README.md)). Дашборд — код в `packages/dashboards` на `@grafana/grafana-foundation-sdk`; JSON собирает `pnpm grafana:up`, а Grafana подхватывает его из `packages/dashboards/dist`.
+
+Один раз на Neon, той ролью, под которой сборка применяет миграции (`DATABASE_URL` прода), после деплоя миграции `0018_monitoring` — роль `grafana`, которая видит только схему `monitoring`:
+
+```sql
+CREATE ROLE grafana LOGIN PASSWORD '…';
+GRANT USAGE ON SCHEMA monitoring TO grafana;
+GRANT SELECT ON ALL TABLES IN SCHEMA monitoring TO grafana;
+-- drizzle-kit пересоздаёт представление, когда меняется его SQL: новое получает права само.
+ALTER DEFAULT PRIVILEGES IN SCHEMA monitoring GRANT SELECT ON TABLES TO grafana;
+```
+
+Представления выполняются с правами владельца, поэтому прав на таблицы роли не нужно: `SELECT` из `publications` под ней — `permission denied`. Пароль утёк — `ALTER ROLE grafana PASSWORD '…'`.
+
+Затем на своей машине:
+
+```bash
+cp docker/grafana/.env.example docker/grafana/.env   # хост Neon, база, пароль роли grafana
+pnpm grafana:up                                     # http://localhost:3001, admin / admin
+```
+
+Без `docker/grafana/.env` compose не поднимает Grafana и называет файл. Дашборд сам не обновляется, а автообновление не включить чаще раза в 5 минут: каждый запрос будит Neon. Сутки на графиках — по UTC.
 
 ## Перенос постов в новую модель
 

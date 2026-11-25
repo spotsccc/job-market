@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import type { DrainResult } from '@job-market/connectors';
-import type { SourceRow, SourceSchedule } from '@job-market/db';
+import type { SourceRow, SourceRunToSave, SourceSchedule } from '@job-market/db';
 
 /** Пауза перед продолжением незаконченного прохода (П7). */
 export const REQUEUE_DELAY_SECONDS = 60;
@@ -63,5 +63,23 @@ export function scheduleAfterDrain(
     consecutiveFailures: failures,
     lastError: errorText(result.error),
     nextRunAt: nextRunAt(now, source.intervalMinutes, failures),
+  };
+}
+
+/**
+ * Строка истории опросов по итогу `drain` (П9, П10 плана мониторинга): итог как есть, текст
+ * ошибки — тот же, что `last_error` источника, и только у `failed`.
+ */
+export function runAfterDrain(
+  // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- в итоге `Error`, глубоко readonly его не сделать
+  result: Pick<DrainResult, 'status' | 'inserted' | 'error'>,
+  // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- `Date` глубоко readonly не сделать
+  now: Date,
+): SourceRunToSave {
+  return {
+    status: result.status,
+    inserted: result.inserted,
+    error: result.status === 'failed' ? errorText(result.error) : null,
+    startedAt: now,
   };
 }

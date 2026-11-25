@@ -113,6 +113,27 @@
       "when": 1795575671397,
       "tag": "0015_linkedin_backend_search",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795575755983,
+      "tag": "0016_source_runs",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795575756751,
+      "tag": "0017_vacancy_duplicates",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795575785940,
+      "tag": "0018_monitoring",
+      "breakpoints": true
     }
   ]
 }

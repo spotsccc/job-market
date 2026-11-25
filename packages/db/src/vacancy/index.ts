@@ -14,6 +14,8 @@ export { DUPLICATE_WINDOW_DAYS, isSameRole, titleKey } from './duplicates.ts';
 export type { DuplicateFields } from './duplicates.ts';
 export { saveVacancies } from './save-vacancies.ts';
 export type { PlaceToSave, SaveOptions, SaveSummary, VacancyToSave } from './save-vacancies.ts';
+export { vacancyDuplicates } from './vacancy-duplicate.ts';
+export type { NewVacancyDuplicateRow, VacancyDuplicateRow } from './vacancy-duplicate.ts';
 export { vacancyLocations } from './vacancy-location.ts';
 export type { NewVacancyLocationRow, VacancyLocationRow } from './vacancy-location.ts';
 export { vacancies } from './vacancy.ts';

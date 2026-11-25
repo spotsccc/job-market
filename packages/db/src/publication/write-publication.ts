@@ -1,11 +1,13 @@
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 
-import type { DbExecutor } from '../client.ts';
+import type { Database, DbExecutor } from '../client.ts';
 import type { NewAuthorRow } from './author.ts';
 import { authors } from './author.ts';
 import { publicationLinks } from './publication-link.ts';
 import type { NewPublicationRow } from './publication.ts';
 import { publications } from './publication.ts';
+import { sourceRuns } from './source-run.ts';
+import type { SourceRunToSave } from './source-run.ts';
 import { sources } from './source.ts';
 import type { NewSourceRow, SourceRow } from './source.ts';
 import type { Connector } from './values.ts';
@@ -263,19 +265,29 @@ export type SourceSchedule = Readonly<
 >;
 
 /**
- * Пишет в источник переданные поля расписания и ничего не решает: поля, которого нет в
- * `schedule`, не меняет, `null` пишет как NULL. Курсор не трогает — его пишет `saveCursor`.
+ * Пишет итог прохода `drain` (П9 плана мониторинга): переданные поля расписания источника и
+ * строку `source_runs` — одной транзакцией: она своя, поэтому нужен клиент, а не транзакция
+ * вызывающего. Ничего не решает: поля, которого нет в `schedule`,
+ * не меняет, `null` пишет как NULL; курсор не трогает — его пишет `saveCursor`. `Error` — сбой
+ * базы: не записано ни расписание, ни строка истории.
  */
-export async function updateSourceSchedule(
-  db: DbExecutor,
-  id: string,
+export async function recordDrain(
+  db: Database,
+  sourceId: string,
   schedule: SourceSchedule,
+  run: SourceRunToSave,
 ): Promise<Error | undefined> {
   const written = await db
-    .update(sources)
-    .set({ ...schedule })
-    .where(eq(sources.id, id))
-    .catch((cause: unknown) => new Error(`Writing schedule of source ${id} failed`, { cause }));
+    .transaction(async (tx) => {
+      await tx
+        .update(sources)
+        .set({ ...schedule })
+        .where(eq(sources.id, sourceId));
+      await tx.insert(sourceRuns).values({ ...run, sourceId });
+    })
+    .catch(
+      (cause: unknown) => new Error(`Recording drain of source ${sourceId} failed`, { cause }),
+    );
   if (written instanceof Error) return written;
   return undefined;
 }

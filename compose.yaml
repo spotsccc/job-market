@@ -25,12 +25,14 @@ services:
       retries: 15
 
   # Grafana с дашбордом «Движок»: `pnpm grafana:up`, затем http://localhost:3001
-  # (admin / admin). Дашборды — JSON, который собирает `packages/dashboards`.
+  # (admin / admin). Дашборды — JSON, который собирает `packages/dashboards`. Grafana читает
+  # только базу прода на Neon, а не локальную: подключение — в docker/grafana/.env (README,
+  # раздел «Мониторинг»).
   grafana:
     image: grafana/grafana:13.3.1
-    depends_on:
-      postgres:
-        condition: service_healthy
+    env_file:
+      - path: docker/grafana/.env
+        required: true
     environment:
       # Автообновление дашборда — не чаще раза в 5 минут: каждый запрос будит Neon.
       GF_DASHBOARDS_MIN_REFRESH_INTERVAL: 5m

@@ -1,0 +1,23 @@
+# База прода на Neon — единственный источник данных Grafana. Роль `grafana` читает только схему
+# `monitoring` (корневой README, раздел «Мониторинг»). Подключение — из docker/grafana/.env:
+# Grafana подставляет переменные окружения в provisioning, и пароль в репозиторий не попадает.
+apiVersion: 1
+# Источник прежней версии с локальной базой: убрать у тех, у кого он уже заведён в grafana-data.
+deleteDatasources:
+  - name: job-market
+    orgId: 1
+datasources:
+  - name: Neon
+    uid: job-market-neon
+    type: grafana-postgresql-datasource
+    url: $NEON_HOST
+    user: grafana
+    isDefault: true
+    editable: false
+    jsonData:
+      database: $NEON_DATABASE
+      # Neon принимает только TLS-подключения.
+      sslmode: require
+      postgresVersion: 1700
+    secureJsonData:
+      password: $GRAFANA_DB_PASSWORD

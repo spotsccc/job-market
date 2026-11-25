@@ -3,7 +3,7 @@
   "buildCommand": "if [ \"$VERCEL_ENV\" = production ]; then NODE_ENV=production pnpm db:migrate; fi && pnpm build",
   "schedules": {
     "sources-tick": {
-      "schedule": "0 * * * *",
+      "schedule": "*/15 * * * *",
       "path": "/api/cron/tick",
       "requestMethod": "GET"
     }

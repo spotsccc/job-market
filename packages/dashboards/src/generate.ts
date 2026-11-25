@@ -1,6 +1,6 @@
 /**
- * Пишет JSON дашбордов в `dist/`. Локальная Grafana читает эту папку (compose.yaml), в Grafana Cloud
- * её выгружает grafanactl.
+ * Пишет JSON дашбордов в `dist/`. Его читает только локальная Grafana (compose.yaml, provisioning из
+ * файлов): дашборд никуда не выгружается.
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 

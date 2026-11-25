@@ -1116,6 +1116,12 @@
               теперь даёт и копия по <code>content_hash</code> (П2), и такой итог
               <code>mine</code> (П3). Изменены П2, П3 и случаи <code>mine-job.test</code> Э1.
             </li>
+            <li>
+              25 ноября 2026, по плану мониторинга (docs/plans/monitoring.html, Э2): saveVacancies с
+              skipDuplicates пишет строку vacancy_duplicates на каждую пропущенную роль. mine зовёт
+              его в своей транзакции, поэтому строки дублей пишутся и откатываются вместе с
+              вакансиями. Код плана не меняется.
+            </li>
           </ul>
         </div>
       </section>

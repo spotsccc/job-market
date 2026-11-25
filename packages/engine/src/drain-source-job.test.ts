@@ -6,8 +6,20 @@ import { after, before, describe, test } from 'node:test';
 import { createConnectors, createLinkedinChannel } from '@job-market/connectors';
 import type { Connector, ParseResult } from '@job-market/connectors';
 import { fakeTelegram, telegramMessage, testConnector } from '@job-market/connectors/test-utils';
-import { authors, db, eq, getDb, inArray, like, publications, sources, sql } from '@job-market/db';
-import type { NewSourceRow, SourceRow } from '@job-market/db';
+import {
+  asc,
+  authors,
+  db,
+  eq,
+  getDb,
+  inArray,
+  like,
+  publications,
+  sourceRuns,
+  sources,
+  sql,
+} from '@job-market/db';
+import type { NewSourceRow, SourceRow, SourceRunRow } from '@job-market/db';
 import { fakeReader } from '@job-market/enricher/test-utils';
 
 import { handleDrainSourceJob } from './drain-source-job.ts';
@@ -64,6 +76,22 @@ function plain(row: SourceRow): unknown {
 async function assertChanged(previous: SourceRow, changes: Partial<SourceRow>): Promise<void> {
   const row = await sourceRow(previous.id);
   assert.deepEqual(plain(row), plain({ ...previous, ...changes }));
+}
+
+/** Строки истории опросов источника по порядку записи (П9 плана мониторинга). */
+async function runsOf(
+  source: Pick<SourceRow, 'id'>,
+): Promise<Pick<SourceRunRow, 'status' | 'inserted' | 'error' | 'startedAt'>[]> {
+  return db
+    .select({
+      status: sourceRuns.status,
+      inserted: sourceRuns.inserted,
+      error: sourceRuns.error,
+      startedAt: sourceRuns.startedAt,
+    })
+    .from(sourceRuns)
+    .where(eq(sourceRuns.sourceId, source.id))
+    .orderBy(asc(sourceRuns.finishedAt), asc(sourceRuns.id));
 }
 
 /** Реестр из одного коннектора. */
@@ -189,6 +217,10 @@ describe('handleDrainSourceJob', () => {
       .where(eq(publications.sourceId, source.id));
     assert.equal(statuses.filter((row) => row.status === 'pending').length, 10);
     // Разбор — на каждую новую публикацию, пост из эмодзи тоже; повтор новых не дал.
+    assert.deepEqual(await runsOf(source), [
+      { status: 'done', inserted: 10, error: null, startedAt: NOW },
+      { status: 'done', inserted: 0, error: null, startedAt: NOW },
+    ]);
     assert.deepEqual(sorted(mineQueue.jobs), sorted(await firstMineJobs(source)));
   });
 
@@ -209,6 +241,10 @@ describe('handleDrainSourceJob', () => {
       nextRunAt: new Date(now.getTime() + 8 * HOUR_MS),
     });
     assert.deepEqual(queue.jobs, []);
+    // Текст ошибки истории — тот же, что у источника (П10 плана мониторинга).
+    assert.deepEqual(await runsOf(source), [
+      { status: 'failed', inserted: 0, error: 'HTTP 503', startedAt: now },
+    ]);
   });
 
   test('an unfinished drain records only the fetch time and queues a continuation', async () => {
@@ -235,6 +271,9 @@ describe('handleDrainSourceJob', () => {
       queue.jobs.map(({ sourceId, delaySeconds }) => ({ sourceId, delaySeconds })),
       [{ sourceId: source.id, delaySeconds: 60 }],
     );
+    assert.deepEqual(await runsOf(source), [
+      { status: 'more', inserted: 1, error: null, startedAt: NOW },
+    ]);
   });
 
   test('continuations with different cursors get different keys, with the same — the same', async () => {
@@ -269,6 +308,8 @@ describe('handleDrainSourceJob', () => {
     assert.equal(calls(), 0);
     await assertChanged(disabled, {});
     await assertChanged(unregistered, {});
+    assert.deepEqual(await runsOf(disabled), []);
+    assert.deepEqual(await runsOf(unregistered), []);
   });
 
   test('returns the database failure of drain and leaves the source as it was', async () => {
@@ -285,6 +326,7 @@ describe('handleDrainSourceJob', () => {
     assert.ok(result instanceof Error);
     await assertChanged(source, {});
     assert.deepEqual(mineQueue.jobs, []);
+    assert.deepEqual(await runsOf(source), []);
   });
 
   test('a repeat after the schedule was not written continues from the new cursor', async () => {
@@ -305,6 +347,10 @@ describe('handleDrainSourceJob', () => {
       lastFetchedAt: NOW,
       lastSuccessAt: NOW,
     });
+    // Первый проход истории не оставил: его расписание не записалось. Повтор пишет одну строку.
+    assert.deepEqual(await runsOf(source), [
+      { status: 'done', inserted: 0, error: null, startedAt: NOW },
+    ]);
   });
 
   test('returns the failure to send the continuation, with the cursor already written', async () => {
@@ -333,6 +379,9 @@ describe('handleDrainSourceJob', () => {
 
     assert.deepEqual(result, { status: 'failed', inserted: 5 });
     assert.equal(mineQueue.jobs.length, 5);
+    assert.deepEqual(await runsOf(source), [
+      { status: 'failed', inserted: 5, error: 'HTTP 429', startedAt: now },
+    ]);
     assert.deepEqual(sorted(mineQueue.jobs), sorted(await firstMineJobs(source)));
   });
 

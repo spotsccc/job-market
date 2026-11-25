@@ -1,3 +1,4 @@
+// oxlint-disable max-lines -- правило дубля и его запись делят одну тестовую базу и помощники
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
@@ -10,6 +11,7 @@ import { isSameRole, titleKey } from './duplicates.ts';
 import type { DuplicateFields } from './duplicates.ts';
 import { saveVacancies } from './save-vacancies.ts';
 import type { PlaceToSave, VacancyToSave } from './save-vacancies.ts';
+import { vacancyDuplicates } from './vacancy-duplicate.ts';
 import { vacancies } from './vacancy.ts';
 
 /** Тесты идут в тестовую базу из `apps/web/.env.test`: `pnpm db:up && pnpm db:migrate:test`. */
@@ -93,6 +95,17 @@ async function titlesOf(publicationId: string): Promise<string[]> {
     .where(eq(vacancies.publicationId, publicationId))
     .orderBy(asc(vacancies.position));
   return rows.map((row) => `${String(row.position)} ${row.title}`);
+}
+
+/** Строки дублей вакансий публикации: оригинал и название роли (П13 плана мониторинга). */
+async function duplicatesOf(
+  publicationId: string,
+): Promise<{ originalId: string; title: string }[]> {
+  return db
+    .select({ originalId: vacancyDuplicates.originalId, title: vacancyDuplicates.title })
+    .from(vacancyDuplicates)
+    .where(eq(vacancyDuplicates.publicationId, publicationId))
+    .orderBy(asc(vacancyDuplicates.title));
 }
 
 async function removePublications(): Promise<void> {
@@ -291,5 +304,64 @@ describe('saveVacancies with skipDuplicates', () => {
 
     assert.deepEqual(far, { saved: 1, duplicateOf: [] });
     assert.equal(close.saved, 0);
+  });
+
+  test('a skipped duplicate leaves a row, and a second write does not double it', async () => {
+    const first = await addPublication(1);
+    const second = await addPublication(2);
+    await saveVacancies(db, first, [role('Frontend-разработчик')], { skipDuplicates: true });
+    const roles = [role('Frontend-разработчик'), role('QA Engineer'), role('Designer')];
+
+    await saveVacancies(db, second, roles, { skipDuplicates: true });
+    await saveVacancies(db, second, roles, { skipDuplicates: true });
+
+    assert.deepEqual(await titlesOf(second), ['0 QA Engineer', '1 Designer']);
+    assert.deepEqual(await duplicatesOf(second), [
+      { originalId: first, title: 'Frontend-разработчик' },
+    ]);
+    assert.deepEqual(await duplicatesOf(first), []);
+  });
+
+  test('a publication whose roles are all duplicates leaves a row per role', async () => {
+    const first = await addPublication(1);
+    const second = await addPublication(2);
+    const roles = [role('Frontend-разработчик'), role('QA Engineer'), role('Designer')];
+    await saveVacancies(db, first, roles, { skipDuplicates: true });
+
+    const summary = await saveVacancies(db, second, roles, { skipDuplicates: true });
+
+    assert.equal(summary.saved, 0);
+    assert.deepEqual(await duplicatesOf(second), [
+      { originalId: first, title: 'Designer' },
+      { originalId: first, title: 'Frontend-разработчик' },
+      { originalId: first, title: 'QA Engineer' },
+    ]);
+  });
+
+  test('a write without skipDuplicates clears the duplicates of the publication', async () => {
+    const first = await addPublication(1);
+    const second = await addPublication(2);
+    await saveVacancies(db, first, [role('Frontend-разработчик')], { skipDuplicates: true });
+    await saveVacancies(db, second, [role('Frontend-разработчик')], { skipDuplicates: true });
+
+    await saveVacancies(db, second, [role('Frontend-разработчик')]);
+
+    assert.deepEqual(await duplicatesOf(second), []);
+  });
+
+  test('duplicates are written in the transaction of the caller', async () => {
+    const first = await addPublication(1);
+    const second = await addPublication(2);
+    await saveVacancies(db, first, [role('Frontend-разработчик')], { skipDuplicates: true });
+
+    await assert.rejects(
+      db.transaction(async (tx) => {
+        await saveVacancies(tx, second, [role('Frontend-разработчик')], { skipDuplicates: true });
+        throw new Error('rollback');
+      }),
+      /rollback/u,
+    );
+
+    assert.deepEqual(await duplicatesOf(second), []);
   });
 });

@@ -15,6 +15,8 @@ export type { NewPublicationRow, PublicationRow } from './publication.ts';
 export { publicationLinks } from './publication-link.ts';
 export type { NewPublicationLinkRow, PublicationLinkRow } from './publication-link.ts';
 export { sources } from './source.ts';
+export { SOURCE_RUN_STATUSES, sourceRuns } from './source-run.ts';
+export type { NewSourceRunRow, SourceRunRow, SourceRunToSave } from './source-run.ts';
 export type { NewSourceRow, SourceRow } from './source.ts';
 export { contentHash } from './content-hash.ts';
 export {
@@ -26,7 +28,7 @@ export {
   markFailed,
   saveCursor,
   setOutcome,
-  updateSourceSchedule,
+  recordDrain,
   upsertAuthors,
 } from './write-publication.ts';
 export type {

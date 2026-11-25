@@ -4,6 +4,8 @@ import type { DbExecutor } from '../client.ts';
 import { keysOf } from '../company/company-keys.ts';
 import { lockKeys, matchCompany } from '../company/match-company.ts';
 import { findDuplicates } from './duplicates.ts';
+import { vacancyDuplicates } from './vacancy-duplicate.ts';
+import type { NewVacancyDuplicateRow } from './vacancy-duplicate.ts';
 import type { NewVacancyLocationRow } from './vacancy-location.ts';
 import { vacancyLocations } from './vacancy-location.ts';
 import type { NewVacancyRow } from './vacancy.ts';
@@ -121,7 +123,10 @@ export type SaveSummary = {
   readonly duplicateOf: readonly string[];
 };
 
-/** Роли, которые пишутся, с их компаниями: все или, с `skipDuplicates`, без дублей (П20). */
+/**
+ * Роли, которые пишутся, с их компаниями: все или, с `skipDuplicates`, без дублей (П20). Дубли —
+ * строки `vacancy_duplicates` с оригиналом и названием роли (П13 плана мониторинга).
+ */
 async function rolesToWrite(
   db: DbExecutor,
   publicationId: string,
@@ -131,20 +136,39 @@ async function rolesToWrite(
   roles: readonly VacancyToSave[];
   companyIds: readonly (string | null)[];
   summary: SaveSummary;
+  duplicates: readonly NewVacancyDuplicateRow[];
 }> {
   const allCompanyIds = allRoles.length === 0 ? [] : await matchCompanies(db, allRoles);
   const originals =
     options.skipDuplicates === true
       ? await findDuplicates(db, publicationId, allRoles, allCompanyIds)
       : allRoles.map(() => null);
+  const duplicates = allRoles.flatMap((role, index) => {
+    const originalId = originals[index] ?? null;
+    return originalId === null ? [] : [{ publicationId, originalId, title: role.title }];
+  });
   const kept = allRoles.flatMap((role, index) =>
     originals[index] === null ? [{ role, companyId: allCompanyIds[index] ?? null }] : [],
   );
   return {
     roles: kept.map((item) => item.role),
     companyIds: kept.map((item) => item.companyId),
-    summary: { saved: kept.length, duplicateOf: originals.filter((id) => id !== null) },
+    summary: { saved: kept.length, duplicateOf: duplicates.map((row) => row.originalId) },
+    duplicates,
   };
+}
+
+/**
+ * Заменяет строки дублей публикации (П13 плана мониторинга): прежние стираются — повторная запись
+ * ролей не удваивает дубли, — новые пишутся.
+ */
+async function replaceDuplicates(
+  db: DbExecutor,
+  publicationId: string,
+  duplicates: readonly NewVacancyDuplicateRow[],
+): Promise<void> {
+  await db.delete(vacancyDuplicates).where(eq(vacancyDuplicates.publicationId, publicationId));
+  if (duplicates.length > 0) await db.insert(vacancyDuplicates).values([...duplicates]);
 }
 
 /**
@@ -152,7 +176,8 @@ async function rolesToWrite(
  * `(publication_id, position)`, лишние вакансии прежней записи удаляются; места каждой вакансии
  * стираются и пишутся заново по порядку. Компания каждой роли ищется заново при каждой записи
  * (П6, packages/db/src/company/README.md). С `skipDuplicates` дубли не пишутся, а номера
- * получают только записанные роли (П18–П20).
+ * получают только записанные роли (П18–П20), а каждый пропущенный дубль пишется строкой
+ * `vacancy_duplicates`; прежние строки дублей публикации стираются (П13 плана мониторинга).
  * Транзакцию держит вызывающий: вакансии, места и компании пишутся вместе с публикацией.
  */
 export async function saveVacancies(
@@ -161,7 +186,15 @@ export async function saveVacancies(
   allRoles: readonly VacancyToSave[],
   options: SaveOptions = {},
 ): Promise<SaveSummary> {
-  const { roles, companyIds, summary } = await rolesToWrite(db, publicationId, allRoles, options);
+  const { roles, companyIds, summary, duplicates } = await rolesToWrite(
+    db,
+    publicationId,
+    allRoles,
+    options,
+  );
+
+  // До записи вакансий: публикация, у которой дубли все роли, тоже пишет свои строки дублей.
+  await replaceDuplicates(db, publicationId, duplicates);
 
   await db
     .delete(vacancies)
