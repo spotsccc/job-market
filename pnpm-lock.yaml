@@ -233,6 +233,9 @@ importers:
       '@job-market/geo':
         specifier: workspace:*
         version: link:../geo
+      '@job-market/http-client':
+        specifier: workspace:*
+        version: link:../http-client
       '@job-market/logger':
         specifier: workspace:*
         version: link:../logger

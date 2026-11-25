@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
+import { fakeGreenhouse } from './greenhouse/fake-greenhouse.test-utils.ts';
 import { createConnectors, createLinkedinChannel } from './index.ts';
 import { mockModel } from './models.test-utils.ts';
 import { fakeTelegram } from './open-telegram/fake-telegram.test-utils.ts';
@@ -15,6 +16,7 @@ function registry(): {
   const connectors = createConnectors({
     telegram,
     linkedin: createLinkedinChannel({ token: 'test-token' }),
+    greenhouse: fakeGreenhouse(new Map()),
     models: { classifier: mockModel({}), extractor: mockModel({}) },
     readers: [],
   });
@@ -25,9 +27,13 @@ describe('createConnectors', () => {
   test('gives a connector by its id and nothing for an unknown id', () => {
     const { connectors } = registry();
 
-    assert.deepEqual([...connectors.keys()].toSorted(), ['linkedin', 'open-telegram']);
+    assert.deepEqual([...connectors.keys()].toSorted(), [
+      'greenhouse',
+      'linkedin',
+      'open-telegram',
+    ]);
     assert.equal(connectors.get('open-telegram')?.id, 'open-telegram');
-    assert.equal(connectors.get('greenhouse'), undefined);
+    assert.equal(connectors.get('lever'), undefined);
   });
 
   test('open-telegram fails a source whose channel has @ or is empty, without reading t.me', async () => {

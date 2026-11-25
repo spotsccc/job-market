@@ -5,7 +5,7 @@ import type { OccupationNode } from '@job-market/extractor';
 import type { PublicationForModel } from '@job-market/publication-text';
 import { MockLanguageModelV4 } from 'ai/test';
 
-import { classifyAndExtract } from './classify-extract.ts';
+import { classifyAndExtract, extractOnly } from './classify-extract.ts';
 import { mockModel, roleOutput } from './models.test-utils.ts';
 
 const TREE: readonly OccupationNode[] = [
@@ -95,6 +95,39 @@ describe('classifyAndExtract', () => {
       classifier: mockModel({ verdict: 'vacancy', note: '' }),
       extractor: failing(new Error('Gateway unavailable')),
     });
+
+    const outcome = await process(publication, { occupations: TREE });
+
+    assert.ok(outcome instanceof Error);
+  });
+});
+
+describe('extractOnly', () => {
+  test('a role from the extractor is a vacancy without a classifier verdict', async () => {
+    const process = extractOnly({ extractor: mockModel({ vacancies: [roleOutput()] }) });
+
+    const outcome = await process(publication, { occupations: TREE });
+
+    assert.ok(!(outcome instanceof Error), outcome instanceof Error ? String(outcome.cause) : '');
+    assert.equal(outcome.kind, 'vacancy');
+    assert.deepEqual(
+      outcome.roles.map((role) => role.title),
+      ['Senior Frontend'],
+    );
+  });
+
+  test('a text without letters is empty and the extractor is not called', async () => {
+    const extractor = mockModel({ vacancies: [] });
+    const process = extractOnly({ extractor });
+
+    const outcome = await process({ ...publication, content: '🔥🔥🔥' }, { occupations: TREE });
+
+    assert.deepEqual(outcome, { kind: 'not_vacancy', reason: 'empty' });
+    assert.equal(extractor.doGenerateCalls.length, 0);
+  });
+
+  test('an extractor answer out of schema is an Error', async () => {
+    const process = extractOnly({ extractor: mockModel({ roles: 'nope' }) });
 
     const outcome = await process(publication, { occupations: TREE });
 

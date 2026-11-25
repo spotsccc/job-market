@@ -36,7 +36,10 @@ export const publications = pgTable(
      * она у источника.
      */
     connector: text({ enum: CONNECTORS }).notNull(),
-    /** Id публикации внутри коннектора: `forhr/9120` у open-telegram, id поста у linkedin. */
+    /**
+     * Id публикации внутри коннектора: `forhr/9120` у open-telegram, id поста у linkedin,
+     * `wrike/4664056005` (токен доски и id вакансии) у greenhouse.
+     */
     externalId: text().notNull(),
     url: text().notNull(),
     /**

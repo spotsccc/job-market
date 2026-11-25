@@ -10,7 +10,7 @@ export const DEPTH_DAYS = 7;
 
 /** Автор публикации, как его отдаёт сервис (П7). */
 export type ParsedAuthor = {
-  /** Id автора внутри коннектора: юзернейм канала, `in/<handle>` или `company/<имя>`. */
+  /** Id автора внутри коннектора: юзернейм канала, `in/<handle>`, `company/<имя>`, токен доски. */
   readonly externalId: string;
   readonly name: string;
   readonly url: string;
@@ -20,7 +20,10 @@ export type ParsedAuthor = {
 
 /** Публикация, прочитанная `parse`, до записи (П7). */
 export type ParsedPublication = {
-  /** Id публикации внутри коннектора: `forhr/9120` у open-telegram, id поста у linkedin. */
+  /**
+   * Id публикации внутри коннектора: `forhr/9120` у open-telegram, id поста у linkedin,
+   * `wrike/4664056005` у greenhouse.
+   */
   readonly externalId: string;
   readonly url: string;
   /** Текст в Markdown; пустая строка — текста нет. */
@@ -37,7 +40,7 @@ export type ParseInput<Config, Cursor> = {
   readonly config: Config;
   /** `null` — опросов не было или курсор не прошёл `cursorSchema`: первый опрос (П4). */
   readonly cursor: Cursor | null;
-  /** Ключ источника внутри коннектора: юзернейм канала, имя поискового запроса. */
+  /** Ключ источника внутри коннектора: юзернейм канала, имя поискового запроса, токен доски. */
   readonly key: string;
   /** Публикации старше не берутся: `now − DEPTH_DAYS` (П4, П9). */
   readonly since: Date;

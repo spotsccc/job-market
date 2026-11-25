@@ -25,9 +25,15 @@ export const sources = pgTable(
   'sources',
   {
     id: uuid().primaryKey().defaultRandom(),
-    /** Код, который читает источник и разбирает его публикации: `open-telegram`, `linkedin`. */
+    /**
+     * Код, который читает источник и разбирает его публикации: `open-telegram`, `linkedin`,
+     * `greenhouse`.
+     */
     connector: text({ enum: CONNECTORS }).notNull(),
-    /** Id источника внутри коннектора: юзернейм канала, имя поискового запроса LinkedIn. */
+    /**
+     * Id источника внутри коннектора: юзернейм канала, имя поискового запроса LinkedIn, токен
+     * доски Greenhouse.
+     */
     key: text().notNull(),
     /**
      * Бренд источника: `geekjobs` у каналов GeekJobs, `linkedin`. Площадка публикации — здесь,

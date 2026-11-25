@@ -1,5 +1,6 @@
 import {
   createConnectors,
+  createGreenhouseChannel,
   createLinkedinChannel,
   createTelegramChannel,
 } from '@job-market/connectors';
@@ -26,6 +27,7 @@ export function engineConnectors(): Error | ReadonlyMap<string, Connector> {
   registry = createConnectors({
     telegram: createTelegramChannel(),
     linkedin: createLinkedinChannel({ token: apifyToken }),
+    greenhouse: createGreenhouseChannel(),
     models: defaultPostProcessingModels,
     readers: createReaders({ apifyToken }),
   });

@@ -24,6 +24,7 @@
     "@job-market/errors": "workspace:*",
     "@job-market/extractor": "workspace:*",
     "@job-market/geo": "workspace:*",
+    "@job-market/http-client": "workspace:*",
     "@job-market/logger": "workspace:*",
     "@job-market/publication-text": "workspace:*",
     "@spotsccc/error-as-value": "0.16.0",

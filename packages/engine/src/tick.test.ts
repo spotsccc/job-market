@@ -3,7 +3,12 @@ import { after, beforeEach, describe, test } from 'node:test';
 
 import { createConnectors, createLinkedinChannel } from '@job-market/connectors';
 import type { Connector } from '@job-market/connectors';
-import { fakeTelegram, telegramMessage, testConnector } from '@job-market/connectors/test-utils';
+import {
+  fakeGreenhouse,
+  fakeTelegram,
+  telegramMessage,
+  testConnector,
+} from '@job-market/connectors/test-utils';
 import { authors, db, eq, getDb, inArray, like, publications, sources } from '@job-market/db';
 import type { NewSourceRow, SourceRow } from '@job-market/db';
 import { fakeReader } from '@job-market/enricher/test-utils';
@@ -245,6 +250,7 @@ describe('tick', () => {
     const connectors = createConnectors({
       telegram: fakeTelegram(new Map([[source.key, messages]])),
       linkedin: createLinkedinChannel({ token: 'test-token' }),
+      greenhouse: fakeGreenhouse(new Map()),
       models: { classifier: 'unused-in-drain', extractor: 'unused-in-drain' },
       readers: [fakeReader({ match: () => null })],
     });

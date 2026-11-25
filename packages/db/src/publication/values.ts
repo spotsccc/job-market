@@ -8,7 +8,7 @@
  * Коннектор — код, который читает источник и разбирает его публикации. Это не площадка:
  * коннектор говорит, как читать, а площадка — где опубликовано.
  */
-export const CONNECTORS = ['open-telegram', 'linkedin'] as const;
+export const CONNECTORS = ['open-telegram', 'linkedin', 'greenhouse'] as const;
 export type Connector = (typeof CONNECTORS)[number];
 
 /**
