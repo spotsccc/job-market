@@ -134,6 +134,13 @@
       "when": 1795575785940,
       "tag": "0018_monitoring",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795579529642,
+      "tag": "0019_tech_telegram_sources",
+      "breakpoints": true
     }
   ]
 }
