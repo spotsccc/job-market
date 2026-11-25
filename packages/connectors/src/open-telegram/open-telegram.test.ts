@@ -46,8 +46,8 @@ const ids = (result: ParseResult<TelegramCursor>): string[] =>
     .toSorted((a, b) => Number(a.split('/')[1]) - Number(b.split('/')[1]));
 
 describe('open-telegram parse', () => {
-  test('first pass takes the last 30 days, the next one only what is newer', async () => {
-    const history = Array.from({ length: 10 }, (_, index) => message(index + 1, 20 - index));
+  test('first pass takes everything within the depth, the next one only what is newer', async () => {
+    const history = Array.from({ length: 10 }, (_, index) => message(index + 1, (10 - index) / 2));
     const telegram = fakeTelegram(new Map([[CHANNEL, history]]));
 
     const first = await parse(telegram, null);
@@ -65,8 +65,10 @@ describe('open-telegram parse', () => {
   });
 
   test('stops at the depth boundary', async () => {
-    // Номера 1–10 через три дня: 1–2 старше 30 дней, 3 — ровно на границе и попадает.
-    const history = Array.from({ length: 10 }, (_, index) => message(index + 1, 36 - index * 3));
+    // Номера 1–10 через день: 1–2 старше глубины, 3 — ровно на границе и попадает.
+    const history = Array.from({ length: 10 }, (_, index) =>
+      message(index + 1, DEPTH_DAYS + 2 - index),
+    );
 
     const result = await parse(fakeTelegram(new Map([[CHANNEL, history]])), null);
 
@@ -78,7 +80,7 @@ describe('open-telegram parse', () => {
   });
 
   test('a failed page keeps what was read and the next call resumes without a gap', async () => {
-    const history = Array.from({ length: 12 }, (_, index) => message(index + 1, 12 - index));
+    const history = Array.from({ length: 12 }, (_, index) => message(index + 1, (12 - index) / 2));
     const messages = new Map([[CHANNEL, history]]);
 
     const failed = await parse(fakeTelegram(messages, { pageSize: 7, failOnCall: 2 }), null);

@@ -6,7 +6,7 @@ import type { z } from 'zod';
 type PublicationStatus = (typeof PUBLICATION_STATUSES)[number];
 
 /** Глубина первого опроса источника: публикации не старше стольких дней (П4). */
-export const DEPTH_DAYS = 30;
+export const DEPTH_DAYS = 7;
 
 /** Автор публикации, как его отдаёт сервис (П7). */
 export type ParsedAuthor = {
