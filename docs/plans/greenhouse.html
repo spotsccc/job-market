@@ -1106,6 +1106,13 @@
               двойными пробелами и пробелом в конце: <code>jobContent</code> сводит пробелы в заголовке.
               (4) На 25 ноября на доске wrike 62 вакансии, а не 61.
             </li>
+            <li>
+              25 ноября 2026, по решению владельца: бесплатные источники, в том числе доски greenhouse,
+              опрашиваются каждый час, а не раз в сутки (П11). Миграция
+              <code>0021_hourly_free_sources</code> ставит всем источникам, кроме linkedin,
+              <code>interval_minutes</code> 50: тик идёт раз в час, 10 минут — запас на разброс его
+              времени запуска.
+            </li>
           </ul>
         </div>
       </section>
@@ -2176,7 +2183,7 @@
         { group: "Источники" },
         [
           "П11",
-          "Миграция заводит платформу greenhouse и 42 источника: abbyy, affirm, ahrefsjobs, appodeal, avride, behavox, bigid, coherentsolutions, compasspathways, dbeaver, eqvilentjobs, finom, flohealth, fxpro, gitlab, groupib, humansignal, inbank, innovecs, lokalise, momentus, nebius, nix, noomgrowth, nortal, novacredit, orioninnovation, pandadoc, platacard, prodlyjobs, realtimeboardglobal, seranking, silananotechnologies, stackadapt, toloka, transfergo, veeamsoftware, veriff, wargamingen, wheely, wrike, xometryeurope. Имя источника — название компании, интервал — сутки. 38 источников включены; четыре крупных — nebius, gitlab, affirm и veeamsoftware — заведены выключенными: их включают отдельной миграцией, когда разбор на остальных досках проверен. Источник, который уже есть, не меняется.",
+          "Миграция заводит платформу greenhouse и 42 источника: abbyy, affirm, ahrefsjobs, appodeal, avride, behavox, bigid, coherentsolutions, compasspathways, dbeaver, eqvilentjobs, finom, flohealth, fxpro, gitlab, groupib, humansignal, inbank, innovecs, lokalise, momentus, nebius, nix, noomgrowth, nortal, novacredit, orioninnovation, pandadoc, platacard, prodlyjobs, realtimeboardglobal, seranking, silananotechnologies, stackadapt, toloka, transfergo, veeamsoftware, veriff, wargamingen, wheely, wrike, xometryeurope. Имя источника — название компании. Интервал — сутки; миграция 0021 сделала его 50 минут, опрос каждый час. 38 источников включены; четыре крупных — nebius, gitlab, affirm и veeamsoftware — заведены выключенными: их включают отдельной миграцией, когда разбор на остальных досках проверен. Источник, который уже есть, не меняется.",
           "поведение",
           "packages/db/migrations/0020_greenhouse_sources.sql",
           "шаги CI: применение миграций",
