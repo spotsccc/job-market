@@ -46,22 +46,24 @@ pnpm check          # turbo run format:check lint check-types
 
 ## Коннекторы
 
-`packages/connectors` — код, который читает источники вакансий и разбирает их публикации. Правила — [packages/connectors/README.md](packages/connectors/README.md). Коннектора два: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify.
+`packages/connectors` — код, который читает источники вакансий и разбирает их публикации. Правила — [packages/connectors/README.md](packages/connectors/README.md). Коннекторов три: `open-telegram` — публичные каналы через `t.me/s/<канал>`, `linkedin` — поиск постов через актор Apify, `greenhouse` — доски вакансий компаний через открытый Job Board API Greenhouse без ключа ([план](docs/plans/greenhouse.html)).
 
 Снаружи у коннектора два метода, оба зовёт движок (раздел «Движок»):
 
 - `drain(source, { now, deadline })` — выкачивает новые публикации источника, дочитывает в них ссылки LinkedIn и одной транзакцией пишет авторов, публикации, их ссылки (`publication_links`) и курсор `sources.cursor`. Расписание источника (`next_run_at`, ошибки подряд) не трогает. Итог — `done`, `more` или `failed` и `pendingIds` — id публикаций, записанных этим проходом впервые (все они `pending`); `Error` — только сбой базы.
 - `mine(publication)` — разбирает публикацию в `pending` или `processing` классификатором и экстрактором, сводит места ролей к гео-справочнику и одной транзакцией пишет вакансии и итог разбора. Роли, уже сохранённые из других публикаций, не пишет. Итог — `vacancy`, `not_vacancy`, `duplicate` (все роли уже сохранены, `duplicate_of_id` — публикация первой такой роли) или `skipped`; `Error` — сбой модели, справочника или базы, статус публикации прежний. Взять публикацию в разбор и повторить после сбоя — дело движка.
 
-Коннекторы берёт реестр `createConnectors({ telegram, linkedin, models, readers })`: каналы сервисов (`createTelegramChannel`, `createLinkedinChannel`), модели и читатели енричера (`createReaders`) приходят снаружи, тесты подставляют фейки. Для тестов вызывающих `@job-market/connectors/test-utils` даёт `fakeTelegram`, `testConnector` и `extractedRole` — роль для фейкового `process`.
+Коннекторы берёт реестр `createConnectors({ telegram, linkedin, greenhouse, models, readers })`: каналы сервисов (`createTelegramChannel`, `createLinkedinChannel`, `createGreenhouseChannel`), модели и читатели енричера (`createReaders`) приходят снаружи, тесты подставляют фейки. Для тестов вызывающих `@job-market/connectors/test-utils` даёт `fakeTelegram`, `fakeGreenhouse` и `greenhouseJob`, `testConnector` и `extractedRole` — роль для фейкового `process`.
 
 Внутри коннектор — каталог `src/<коннектор>` и определение `ConnectorDefinition`:
 
 - `configSchema` и `cursorSchema` — zod-схемы `sources.config` и `sources.cursor`. Курсор, который не проходит схему, — первый опрос на `DEPTH_DAYS` = 7 дней.
 - `parse({ config, cursor, key, since, deadline })` — читает сервис без базы и отвечает публикациями, курсором и `more`. После `deadline` новый запрос не начинает; сбой посреди прохода возвращает прочитанное и `error`.
-- `process(publication, { occupations })` — разбирает публикацию моделями без базы. Коннекторы с обычными постами берут общий `classifyAndExtract`.
+- `process(publication, { occupations })` — разбирает публикацию моделями без базы. Коннекторы с обычными постами берут общий `classifyAndExtract`; `greenhouse`, у которого каждая публикация — вакансия, берёт `extractOnly`: только экстрактор.
 
 Новый коннектор: id в `CONNECTORS` (`packages/db/src/publication/values.ts`) и метка в `CONNECTOR_LABELS` (`packages/publication-text`), каталог с `parse` и схемами, строка в `createConnectors`. `drain` и `mine` писать не нужно — они общие.
+
+Источник `greenhouse` — одна доска: ключ источника — токен доски из адреса `job-boards.greenhouse.io/<токен>`, имя — название компании. Первый опрос берёт все открытые вакансии доски, следующие — опубликованные позже курсора. Новую доску заводит миграция по образцу `packages/db/migrations/0020_greenhouse_sources.sql` (`INSERT … ON CONFLICT DO NOTHING`). Перед этим откройте `https://boards-api.greenhouse.io/v1/boards/<токен>/jobs` и сверьте `company_name` вакансий с компанией: токен может вести на доску другой компании, например портфельной компании фонда.
 
 Тесты `drain` и `mine` идут в тестовую базу: `pnpm db:up && pnpm db:migrate:test`, затем `pnpm --filter @job-market/connectors test`.
 
